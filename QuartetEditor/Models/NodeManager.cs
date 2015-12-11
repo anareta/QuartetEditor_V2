@@ -10,30 +10,30 @@ namespace QuartetEditor.Models
     /// <summary>
     /// QEDファイルに記述可能なデータモデルクラス
     /// </summary>
-    class QEDModel
+    class NodeManager
     {
         /// <summary>
         /// システムのデータ
         /// </summary>
-        public static QEDModel Current { get; } = new QEDModel();
+        public static NodeManager Current { get; } = new NodeManager();
 
         /// <summary>
         /// 内部データクラス
         /// </summary>
-        private ObservableCollection<NodeModel> TreeSource { get; } = new ObservableCollection<NodeModel>();
+        private ObservableCollection<Node> TreeSource { get; } = new ObservableCollection<Node>();
 
         /// <summary>
         /// 読み取り専用データツリー
         /// </summary>
-        public ReadOnlyObservableCollection<NodeModel> Tree { get; }
+        public ReadOnlyObservableCollection<Node> Tree { get; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private QEDModel()
+        private NodeManager()
         {
             // 接続
-            this.Tree = new ReadOnlyObservableCollection<NodeModel>(this.TreeSource);
+            this.Tree = new ReadOnlyObservableCollection<Node>(this.TreeSource);
         }
     }
 }

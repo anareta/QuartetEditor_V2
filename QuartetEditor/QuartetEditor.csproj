@@ -122,11 +122,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\NodeModel.cs" />
-    <Compile Include="Models\QEDModel.cs" />
+    <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\NodeManager.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NodeViewModel.cs" />
-    <Compile Include="ViewModels\QEDViewModel.cs" />
     <Compile Include="Views\Contorls\BindableTextEditor.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
