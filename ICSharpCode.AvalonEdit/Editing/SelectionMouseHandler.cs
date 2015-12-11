@@ -222,8 +222,6 @@ namespace ICSharpCode.AvalonEdit.Editing
 				DragDropEffects effect = GetEffect(e);
 				e.Effects = effect;
 				if (effect != DragDropEffects.None) {
-					string text = e.Data.GetData(DataFormats.UnicodeText, true) as string;
-					if (text != null) {
 						int start = textArea.Caret.Offset;
 						if (mode == SelectionMode.Drag && textArea.Selection.Contains(start)) {
 							Debug.WriteLine("Drop: did not drop: drop target is inside selection");
@@ -231,25 +229,15 @@ namespace ICSharpCode.AvalonEdit.Editing
 						} else {
 							Debug.WriteLine("Drop: insert at " + start);
 							
-							bool rectangular = e.Data.GetDataPresent(RectangleSelection.RectangularSelectionDataType);
-							
-							string newLine = TextUtilities.GetNewLineFromDocument(textArea.Document, textArea.Caret.Line);
-							text = TextUtilities.NormalizeNewLines(text, newLine);
-							
-							string pasteFormat;
-							// fill the suggested DataFormat used for the paste action:
-							if (rectangular)
-								pasteFormat = RectangleSelection.RectangularSelectionDataType;
-							else
-								pasteFormat = DataFormats.UnicodeText;
-							
-							var pastingEventArgs = new DataObjectPastingEventArgs(e.Data, true, pasteFormat);
+						var pastingEventArgs = new DataObjectPastingEventArgs(e.Data, true, DataFormats.UnicodeText);
 							textArea.RaiseEvent(pastingEventArgs);
 							if (pastingEventArgs.CommandCancelled)
 								return;
 							
-							// DataObject.PastingEvent handlers might have changed the format to apply.
-							rectangular = pastingEventArgs.FormatToApply == RectangleSelection.RectangularSelectionDataType;
+						string text = EditingCommandHandler.GetTextToPaste(pastingEventArgs, textArea);
+						if (text == null)
+							return;
+						bool rectangular = pastingEventArgs.DataObject.GetDataPresent(RectangleSelection.RectangularSelectionDataType);
 							
 							// Mark the undo group with the currentDragDescriptor, if the drag
 							// is originating from the same control. This allows combining
@@ -268,7 +256,6 @@ namespace ICSharpCode.AvalonEdit.Editing
 						}
 						e.Handled = true;
 					}
-				}
 			} catch (Exception ex) {
 				OnDragException(ex);
 			}
@@ -644,11 +631,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 					textArea.Selection = Selection.Create(textArea,
 					                                      Math.Min(newWord.Offset, startWord.Offset),
 					                                      Math.Max(newWord.EndOffset, startWord.EndOffset));
-					// Set caret offset, but limit the caret to stay inside the selection.
-					// in whole-word selection, it's otherwise possible that we get the caret outside the
-					// selection - but the TextArea doesn't like that and will reset the selection, causing
-					// flickering.
-					SetCaretOffsetToMousePosition(e, textArea.Selection.SurroundingSegment);
+					// moves caret to start or end of selection
+					if( newWord.Offset < startWord.Offset) 
+						textArea.Caret.Offset = newWord.Offset;
+					else 
+						textArea.Caret.Offset = Math.Max(newWord.EndOffset, startWord.EndOffset);
 				}
 			}
 			textArea.Caret.BringCaretToView(5.0);

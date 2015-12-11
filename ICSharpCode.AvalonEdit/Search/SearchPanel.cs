@@ -179,8 +179,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// <summary>
 		/// Creates a new SearchPanel.
 		/// </summary>
-		[Obsolete("Use the Install method instead")]
-		public SearchPanel()
+		SearchPanel()
 		{
 		}
 		
@@ -213,12 +212,19 @@ namespace ICSharpCode.AvalonEdit.Search
 		{
 			if (textArea == null)
 				throw new ArgumentNullException("textArea");
-			#pragma warning disable 618
 			SearchPanel panel = new SearchPanel();
 			panel.AttachInternal(textArea);
 			panel.handler = new SearchInputHandler(textArea, panel);
 			textArea.DefaultInputHandler.NestedInputHandlers.Add(panel.handler);
 			return panel;
+		}
+		
+		/// <summary>
+		/// Adds the commands used by SearchPanel to the given CommandBindingCollection.
+		/// </summary>
+		public void RegisterCommands(CommandBindingCollection commandBindings)
+		{
+			handler.RegisterGlobalCommands(commandBindings);
 		}
 		
 		/// <summary>
@@ -325,7 +331,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			}
 		}
 		
-		ToolTip messageView = new ToolTip { Placement = PlacementMode.Bottom, StaysOpen = false };
+		ToolTip messageView = new ToolTip { Placement = PlacementMode.Bottom, StaysOpen = true, Focusable = false };
 
 		void DoSearch(bool changeSelection)
 		{
@@ -370,7 +376,6 @@ namespace ICSharpCode.AvalonEdit.Search
 			switch (e.Key) {
 				case Key.Enter:
 					e.Handled = true;
-					messageView.IsOpen = false;
 					if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
 						FindPrevious();
 					else
