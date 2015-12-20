@@ -34,6 +34,16 @@ namespace QuartetEditor.Models
         {
             // 接続
             this.Tree = new ReadOnlyObservableCollection<Node>(this.TreeSource);
+
+
+#if DEBUG
+            var item = new Node("ノード１");
+            item.AddChild().Name = "ノード1-1";
+            item.AddChild().Name = "ノード1-2";
+            this.TreeSource.Add(item);
+            this.TreeSource.Add(new Node("ノード２"));
+            this.TreeSource.Add(new Node("ノード３"));
+#endif
         }
     }
 }

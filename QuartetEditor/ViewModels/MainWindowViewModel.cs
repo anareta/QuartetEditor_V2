@@ -27,5 +27,16 @@ namespace QuartetEditor.ViewModels
         /// 現在選択中のノード
         /// </summary>
         public ReactiveProperty<NodeViewModel> SelectedNode { get; } = new ReactiveProperty<NodeViewModel>();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public MainWindowViewModel()
+        {
+            this.Tree = this.Model
+                .Tree
+                .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
+        }
+
     }
 }

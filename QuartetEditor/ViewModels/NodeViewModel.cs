@@ -53,6 +53,21 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<bool> IsExpanded { get; }
 
+        /// <summary>
+        /// 選択状態
+        /// </summary>
+        public ReactiveProperty<bool> IsSelected { get; }
+
+        /// <summary>
+        /// ノード名編集モード
+        /// </summary>
+        public ReactiveProperty<bool> IsNameEditMode { get; }
+
+        /// <summary>
+        /// 参照状態
+        /// </summary>
+        public ReactiveProperty<bool> IsReferred { get; }
+
 
         public NodeViewModel(Node model)
         {
@@ -70,6 +85,11 @@ namespace QuartetEditor.ViewModels
 
             this.Content = this.Model
                 .ObserveProperty(x => x.Content)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsExpanded = this.Model
+                .ObserveProperty(x => x.IsExpanded)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 

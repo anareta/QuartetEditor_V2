@@ -80,10 +80,31 @@ namespace QuartetEditor.Models
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private Node()
+        public Node()
         {
             // 接続
             this.Children = new ReadOnlyObservableCollection<Node>(this.ChildrenSource);
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="name">ノードの名前</param>
+        public Node(string name) : this()
+        {
+            this._Name = name;
+        }
+
+
+        /// <summary>
+        /// 子ノードを追加する
+        /// </summary>
+        /// <returns>追加した子ノードへの参照</returns>
+        public Node AddChild()
+        {
+            var item = new Node();
+            this.ChildrenSource.Add(item);
+            return item;
         }
     }
 }
