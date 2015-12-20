@@ -42,12 +42,6 @@ namespace QuartetEditor.Models
             this.Tree = new ReadOnlyObservableCollection<Node>(this.TreeSource);
 
             // プロパティの変更を監視する
-            this.TreeSource.ObserveElementProperty(x => x.Name)
-                .Subscribe(x => this.IsEdited = true);
-
-            this.TreeSource.ObserveElementProperty(x => x.Content)
-                .Subscribe(x => this.IsEdited = true);
-
             this.TreeSource.ObserveElementProperty(x => x.IsEdited)
                 .Subscribe(x =>
                 {

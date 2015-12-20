@@ -92,10 +92,10 @@ namespace QuartetEditor.Models
             this.Children = new ReadOnlyObservableCollection<Node>(this.ChildrenSource);
 
             // プロパティの変更を監視する
-            this.ChildrenSource.ObserveElementProperty(x => x.Name)
+            this.ObserveProperty(x => x.Name)
                 .Subscribe(x => this.IsEdited = true);
 
-            this.ChildrenSource.ObserveElementProperty(x => x.Content)
+            this.ObserveProperty(x => x.Content)
                 .Subscribe(x => this.IsEdited = true);
 
             this.ChildrenSource.ObserveElementProperty(x => x.IsEdited)
