@@ -1,5 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
 using Prism.Mvvm;
+using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -78,12 +79,36 @@ namespace QuartetEditor.Models
         public bool IsExpanded { set; get; }
 
         /// <summary>
+        /// 編集されたか
+        /// </summary>
+        public bool IsEdited { get; private set; } = false;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Node()
         {
             // 接続
             this.Children = new ReadOnlyObservableCollection<Node>(this.ChildrenSource);
+
+            // プロパティの変更を監視する
+            this.ChildrenSource.ObserveElementProperty(x => x.Name)
+                .Subscribe(x => this.IsEdited = true);
+
+            this.ChildrenSource.ObserveElementProperty(x => x.Content)
+                .Subscribe(x => this.IsEdited = true);
+
+            this.ChildrenSource.ObserveElementProperty(x => x.IsEdited)
+                .Subscribe(x =>
+                {
+                    if (x.Instance.IsEdited)
+                    {
+                        this.IsEdited = true;
+                    }
+                });
+
+            this.ChildrenSource.CollectionChangedAsObservable()
+                .Subscribe(x => this.IsEdited = true);
         }
 
         /// <summary>

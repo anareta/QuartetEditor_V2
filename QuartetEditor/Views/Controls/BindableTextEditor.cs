@@ -18,7 +18,7 @@ namespace QuartetEditor.Views.Controls
     /// バインド可能なTextEditorクラス
     /// TextEditorクラスのラッパー
     /// </summary>
-    public class BindableTextEditor : TextEditor, INotifyPropertyChanged
+    public class BindableTextEditor : TextEditor
     {
         /// <summary>
         /// バインド可能なTextプロパティ
@@ -184,23 +184,6 @@ namespace QuartetEditor.Views.Controls
             }
 
 
-        }
-
-        /// <summary>
-        /// プロパティ変更イベント
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// プロパティ変更イベントを発行
-        /// </summary>
-        /// <param name="info"></param>
-        public void RaisePropertyChanged(string info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
         }
     }
 }
