@@ -5,11 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QuartetEditor.Views.Controls"
              mc:Ignorable="d" 
+             PreviewDragOver="UserControl_PreviewDragOver"
+             MinWidth="40"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <TextBlock Name="TextBlock" 
+        <Border Name="_TextBlockBorder"
+                BorderThickness="1.5"
+                Visibility="Hidden"
+                Height="{Binding ActualHeight, ElementName=_TextBlock}"
+                BorderBrush="{StaticResource ResourceKey=HighlightBrush}" />
+
+        <TextBlock Name="_TextBlock" 
                    Margin="0,0,0,0"/>
-        <TextBox Name="TextEditor"
+
+        <TextBox Name="_TextEditor"
                  BorderThickness="0"
                  KeyDown="TextEditor_KeyDown"
                  LostFocus="TextEditor_LostFocus"
@@ -17,6 +26,7 @@
                  TextBlock.FontSize="{Binding FontSize,
                                               ElementName=TextBlock}"
                  Visibility="Collapsed" />
-        <Ellipse Name="Mark" Fill="#1BA1E2" Width="5" Height="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-8,0,0,0"/>
+        <Ellipse Name="_Mark" Fill="#1BA1E2" Width="5" Height="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-8,0,0,0"/>
+        <local:HorizontalInsertionCursor x:Name="_InsertCursor" Visibility="Hidden"/>
     </Grid>
 </UserControl>

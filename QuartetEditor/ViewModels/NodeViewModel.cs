@@ -1,4 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
+using Prism.Mvvm;
+using QuartetEditor.Enums;
 using QuartetEditor.Models;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -16,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace QuartetEditor.ViewModels
 {
-    class NodeViewModel : IDisposable
+    class NodeViewModel : BindableBase, IDisposable
     {
         /// <summary>
         /// 破棄用
@@ -56,18 +58,60 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 選択状態
         /// </summary>
-        public ReactiveProperty<bool> IsSelected { get; }
+        private bool _IsSelected;
+
+        public bool IsSelected
+        {
+            get { return this._IsSelected; }
+            set { this.SetProperty(ref this._IsSelected, value); }
+        }
 
         /// <summary>
         /// ノード名編集モード
         /// </summary>
-        public ReactiveProperty<bool> IsNameEditMode { get; }
+        private bool _IsNameEditMode;
+
+        public bool IsNameEditMode
+        {
+            get { return this._IsNameEditMode; }
+            set { this.SetProperty(ref this._IsNameEditMode, value); }
+        }
 
         /// <summary>
         /// 参照状態
         /// </summary>
-        public ReactiveProperty<bool> IsReferred { get; }
+        private bool _IsReferred;
 
+        public bool IsReferred
+        {
+            get { return this._IsReferred; }
+            set { this.SetProperty(ref this._IsReferred, value); }
+        }
+
+        /// <summary>
+        /// ドラッグオーバーしているか
+        /// </summary>
+        private bool _IsDragOver;
+
+        public bool IsDragOver
+        {
+            get { return this._IsDragOver; }
+            set { this.SetProperty(ref this._IsDragOver, value); }
+        }
+
+        /// <summary>
+        /// ドロップする位置
+        /// </summary>
+        private DropPositionEnum _DropPosition;
+
+        public DropPositionEnum DropPosition
+        {
+            get { return this._DropPosition; }
+            set
+            {
+                this.SetProperty(ref this._DropPosition, value);
+            }
+        }
 
         public NodeViewModel(Node model)
         {

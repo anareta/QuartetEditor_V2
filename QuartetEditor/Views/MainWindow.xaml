@@ -4,6 +4,7 @@
                    xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
                    xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
                    xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
+                   xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:local="clr-namespace:QuartetEditor"
@@ -280,6 +281,10 @@
                       KeyboardNavigation.IsTabStop="True"
                       KeyboardNavigation.TabNavigation="Once">
 
+                <i:Interaction.Behaviors>
+                    <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
+                </i:Interaction.Behaviors>
+                
                 <TreeView.InputBindings>
                     <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
                     <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
@@ -300,18 +305,27 @@
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
                         <Border>
+                            <i:Interaction.Behaviors>
+                                <dragdrop:DragStartBehavior AllowedEffects="Move" DragDropData="{Binding}" />
+                            </i:Interaction.Behaviors>
                             <controls:EditBox Margin="3"
-                                              CanEdit="{Binding IsNameEditMode.Value,
+                                              CanEdit="{Binding IsNameEditMode,
                                                                 Mode=TwoWay,
                                                                 UpdateSourceTrigger=PropertyChanged}"
                                               FontFamily="Meiryo UI"
                                               FontSize="13"
-                                              IsReferred="{Binding IsReferred.Value,
+                                              IsReferred="{Binding IsReferred,
                                                                    Mode=TwoWay,
                                                                    UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding Name.Value,
                                                              Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}" />
+                                                             UpdateSourceTrigger=PropertyChanged}"
+                                              IsDragOver="{Binding IsDragOver,
+                                                                   Mode=TwoWay,
+                                                                   UpdateSourceTrigger=PropertyChanged}"
+                                              DragOverPosition="{Binding DropPosition,
+                                                                         Mode=TwoWay,
+                                                                         UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
