@@ -1,17 +1,18 @@
 ﻿<metro:MetroWindow x:Class="QuartetEditor.Views.MainWindow"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-                   xmlns:prism="http://prismlibrary.com/"
+                   xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
                    xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
                    xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
-                   xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
-                   xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
-                   xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
+                   xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:local="clr-namespace:QuartetEditor"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
+                   xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+                   xmlns:prism="http://prismlibrary.com/"
                    Width="800"
                    Height="600"
                    MinWidth="300"
@@ -23,18 +24,10 @@
                    SaveWindowPosition="True"
                    TitleCaps="False"
                    WindowTransitionsEnabled="False"
-                   mc:Ignorable="d"
-                   prism:ViewModelLocator.AutoWireViewModel="True">
-    <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
-            <messenger:PanelOpenAction />
-        </prism:InteractionRequestTrigger>
+                   prism:ViewModelLocator.AutoWireViewModel="True"
+                   mc:Ignorable="d">
 
-        <i:EventTrigger EventName="ContentRendered">
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    
-    <Window.Resources>
+    <metro:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Icons.xaml" />
@@ -55,7 +48,7 @@
                 <Separator />
                 <MenuItem Command="{Binding DeleteNodeCommand}" Header="削除（Del）" />
             </ContextMenu>
-            <Style BasedOn="{StaticResource {x:Type TreeView}}" TargetType="TreeView">
+            <Style BasedOn="{StaticResource {x:Type TreeView}}" TargetType="{x:Type TreeView}">
                 <Setter Property="ContextMenu" Value="{StaticResource TreeViewContextMenu}" />
                 <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush10}" />
             </Style>
@@ -91,7 +84,17 @@
 
             <converters:Boolean2TextWrapping x:Key="Boolean2TextWrapping" />
         </ResourceDictionary>
-    </Window.Resources>
+    </metro:MetroWindow.Resources>
+
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
+            <messenger:PanelOpenAction />
+        </prism:InteractionRequestTrigger>
+
+        <i:EventTrigger EventName="ContentRendered">
+            <ei:CallMethodAction MethodName="Initialize" TargetObject="{Binding}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <DockPanel AllowDrop="True">
         <Rectangle Height="15" DockPanel.Dock="Bottom" />
@@ -102,7 +105,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button Name="_OpenButton"
+                <Button x:Name="_OpenButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -119,7 +122,7 @@
                     </Rectangle>
                 </Button>
 
-                <Button Name="_SaveButton"
+                <Button x:Name="_SaveButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -136,7 +139,7 @@
                     </Rectangle>
                 </Button>
 
-                <Button Name="_RenameButton"
+                <Button x:Name="_RenameButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -153,7 +156,7 @@
                     </Rectangle>
                 </Button>
 
-                <Button Name="_ExportButton"
+                <Button x:Name="_ExportButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -170,7 +173,7 @@
                     </Rectangle>
                 </Button>
 
-                <Button Name="_ConfigButton"
+                <Button x:Name="_ConfigButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -187,7 +190,7 @@
                     </Rectangle>
                 </Button>
 
-                <Button Name="_AboutButton"
+                <Button x:Name="_AboutButton"
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
@@ -208,13 +211,13 @@
             <StackPanel Grid.Column="2"
                         VerticalAlignment="Bottom"
                         Orientation="Horizontal">
-                <ToggleButton Name="_LeftPanelSwitch"
+                <ToggleButton x:Name="_LeftPanelSwitch"
                               Width="35"
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding LeftPanelOpen, 
-                                                  Mode=TwoWay, 
+                              IsChecked="{Binding LeftPanelOpen,
+                                                  Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="左パネル（Ctrl＋L）">
@@ -226,13 +229,13 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </ToggleButton>
-                <ToggleButton Name="_TopPanelSwitch"
+                <ToggleButton x:Name="_TopPanelSwitch"
                               Width="35"
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding TopPanelOpen, 
-                                                  Mode=TwoWay, 
+                              IsChecked="{Binding TopPanelOpen,
+                                                  Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="上パネル（Ctrl＋T）">
@@ -251,13 +254,13 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </ToggleButton>
-                <ToggleButton Name="_BottomPanelSwitch"
+                <ToggleButton x:Name="_BottomPanelSwitch"
                               Width="35"
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding BottomPanelOpen, 
-                                                  Mode=TwoWay, 
+                              IsChecked="{Binding BottomPanelOpen,
+                                                  Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="下参照パネル（Ctrl+B）">
@@ -278,7 +281,7 @@
                 </ToggleButton>
             </StackPanel>
         </Grid>
-        <Grid Name="_MainGrid"
+        <Grid x:Name="_MainGrid"
               Margin="0,5,0,0"
               DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
@@ -286,12 +289,12 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TreeView Name="_NodeView"
+            <TreeView x:Name="_NodeView"
                       Grid.Column="0"
                       Margin="0"
                       AllowDrop="True"
-                      BorderBrush="{Binding RelativeSource={RelativeSource Self},
-                                            Path=Background}"
+                      BorderBrush="{Binding Background,
+                                            RelativeSource={RelativeSource Self}}"
                       BorderThickness="1"
                       FontSize="15"
                       ItemsSource="{Binding Tree}"
@@ -301,7 +304,7 @@
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
                 </i:Interaction.Behaviors>
-                
+
                 <TreeView.InputBindings>
                     <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
                     <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
@@ -329,25 +332,25 @@
                                               CanEdit="{Binding IsNameEditMode,
                                                                 Mode=TwoWay,
                                                                 UpdateSourceTrigger=PropertyChanged}"
+                                              DragOverPosition="{Binding DropPosition,
+                                                                         Mode=TwoWay,
+                                                                         UpdateSourceTrigger=PropertyChanged}"
                                               FontFamily="Meiryo UI"
                                               FontSize="13"
+                                              IsDragOver="{Binding IsDragOver,
+                                                                   Mode=TwoWay,
+                                                                   UpdateSourceTrigger=PropertyChanged}"
                                               IsReferred="{Binding IsReferred,
                                                                    Mode=TwoWay,
                                                                    UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding Name.Value,
                                                              Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}"
-                                              IsDragOver="{Binding IsDragOver,
-                                                                   Mode=TwoWay,
-                                                                   UpdateSourceTrigger=PropertyChanged}"
-                                              DragOverPosition="{Binding DropPosition,
-                                                                         Mode=TwoWay,
-                                                                         UpdateSourceTrigger=PropertyChanged}"/>
+                                                             UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
                 <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem">
+                    <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
                         <Setter Property="ItemsPanel">
@@ -366,7 +369,7 @@
                           HorizontalAlignment="Center"
                           VerticalAlignment="Stretch"
                           BorderThickness="0" />
-            <Grid Name="_EditorGrid"
+            <Grid x:Name="_EditorGrid"
                   Grid.Column="2"
                   DockPanel.Dock="Bottom">
                 <Grid.RowDefinitions>
@@ -387,16 +390,15 @@
                         Grid.Column="0"
                         BorderThickness="2"
                         Focusable="False">
-                    <controls:BindableTextEditor x:Name="_LeftTextBox"
-                                                 IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto"/>
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}"
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_LeftTextBox"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto" />
                 </Border>
-                <GridSplitter Name="_LeftSplitter"
+                <GridSplitter x:Name="_LeftSplitter"
                               Grid.Row="0"
                               Grid.RowSpan="5"
                               Grid.Column="1"
@@ -408,17 +410,15 @@
                         Grid.Column="2"
                         BorderThickness="2"
                         Focusable="False">
-                    <controls:BindableTextEditor x:Name="_TopTextBox" 
-                                                 IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto"
-                                                 />
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_TopTextBox"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto" />
                 </Border>
-                <GridSplitter Name="_TopSplitter"
+                <GridSplitter x:Name="_TopSplitter"
                               Grid.Row="1"
                               Grid.Column="2"
                               Height="3"
@@ -429,18 +429,17 @@
                         Grid.Column="2"
                         BorderThickness="2"
                         Focusable="False">
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
+                    </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
+                                                 HorizontalScrollBarVisibility="Auto"
                                                  LineHeight="5"
                                                  VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto"
-                                                 WordWrap="True"/>
-                    <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
-                    </i:Interaction.Behaviors>
+                                                 WordWrap="True" />
                 </Border>
 
-                <GridSplitter Name="_BottomSplitter"
+                <GridSplitter x:Name="_BottomSplitter"
                               Grid.Row="3"
                               Grid.Column="2"
                               Height="3"
@@ -451,15 +450,13 @@
                         Grid.Column="2"
                         BorderThickness="2"
                         Focusable="False">
-                    <controls:BindableTextEditor x:Name="_BottomTextBox"
-                                                 IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto"
-                                                 />
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}"
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_BottomTextBox"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto" />
                 </Border>
             </Grid>
         </Grid>

@@ -190,6 +190,17 @@ namespace QuartetEditor.ViewModels
 #endif
         }
 
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        public void Initialize()
+        {
+            /* パネルの開閉初期状態などはここで設定する */
+            this.LeftPanelOpen = true;
+            this.TopPanelOpen = true;
+            this.BottomPanelOpen = true;
+        }
+
         private void ResetDragFlag()
         {
             this.Tree.ForEach(node => this.ResetDragFlag(node));
