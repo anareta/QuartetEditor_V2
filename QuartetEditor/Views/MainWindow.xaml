@@ -5,6 +5,7 @@
                    xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
                    xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
                    xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
+                   xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:local="clr-namespace:QuartetEditor"
@@ -371,7 +372,13 @@
                         BorderThickness="2"
                         Focusable="False">
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
-                                                 IsReadOnly="True"/>
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 HorizontalScrollBarVisibility="Auto"/>
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}"
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
                 </Border>
                 <GridSplitter Name="_LeftSplitter"
                               Grid.Row="0"
@@ -386,7 +393,14 @@
                         BorderThickness="2"
                         Focusable="False">
                     <controls:BindableTextEditor x:Name="_TopTextBox" 
-                                                 IsReadOnly="True"/>
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 />
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
                 </Border>
                 <GridSplitter Name="_TopSplitter"
                               Grid.Row="1"
@@ -401,7 +415,13 @@
                         Focusable="False">
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
                                                  LineHeight="5"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 HorizontalScrollBarVisibility="Auto"
                                                  WordWrap="True"/>
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
+                    </i:Interaction.Behaviors>
                 </Border>
 
                 <GridSplitter Name="_BottomSplitter"
@@ -416,7 +436,14 @@
                         BorderThickness="2"
                         Focusable="False">
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
-                                                 IsReadOnly="True"/>
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 />
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}"
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
                 </Border>
             </Grid>
         </Grid>

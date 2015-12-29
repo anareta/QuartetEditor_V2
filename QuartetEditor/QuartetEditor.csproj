@@ -133,10 +133,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Enums\DropPositionEnum.cs" />
+    <Compile Include="Extensions\IEnumerableExtension.cs" />
+    <Compile Include="Extensions\DependencyObjectExtension.cs" />
     <Compile Include="Models\Node.cs" />
     <Compile Include="Models\NodeManager.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\NodeViewModel.cs" />
+    <Compile Include="Views\Behaviors\ContentBorderBehavior.cs" />
     <Compile Include="Views\Controls\BindableTextEditor.cs" />
     <Compile Include="Views\Controls\EditBox.xaml.cs">
       <DependentUpon>EditBox.xaml</DependentUpon>
@@ -189,9 +192,7 @@
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Behaviors\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>

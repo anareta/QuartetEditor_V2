@@ -1,4 +1,5 @@
-﻿using QuartetEditor.Models;
+﻿using QuartetEditor.Extensions;
+using QuartetEditor.Models;
 using QuartetEditor.Views.DraggableTreeView.Description;
 using Reactive.Bindings;
 using System;
@@ -116,23 +117,20 @@ namespace QuartetEditor.ViewModels
 
         private void ResetDragFlag()
         {
-            foreach (var node in this.Tree)
-            {
-                this.ResetDragFlag(node);
-            }
+            this.Tree.ForEach(node => this.ResetDragFlag(node));
         }
 
         private void ResetDragFlag(NodeViewModel node)
         {
             node.IsDragOver = false;
-            foreach (var item in node.Children)
+            node.Children.ForEach(item =>
             {
                 item.IsDragOver = false;
                 if (item.Children.Count > 0)
                 {
                     this.ResetDragFlag(item);
                 }
-            }
+            });
         }
 
     }
