@@ -1,4 +1,7 @@
-﻿using QuartetEditor.Extensions;
+﻿using Prism.Interactivity.InteractionRequest;
+using Prism.Mvvm;
+using QuartetEditor.Entities;
+using QuartetEditor.Extensions;
 using QuartetEditor.Models;
 using QuartetEditor.Views.DraggableTreeView.Description;
 using Reactive.Bindings;
@@ -14,7 +17,7 @@ namespace QuartetEditor.ViewModels
     /// <summary>
     /// メインウィンドウViewModel
     /// </summary>
-    class MainWindowViewModel
+    class MainWindowViewModel : BindableBase
     {
         /// <summary>
         /// モデルクラス
@@ -36,6 +39,77 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public DragAcceptDescription DragAcceptDescription { get; } = new DragAcceptDescription();
 
+        #region PanelOpen
+
+        /// <summary>
+        /// パネルの開閉要求
+        /// </summary>
+        private InteractionRequest<Confirmation> panelOpenRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest PanelOpenRequest { get { return this.panelOpenRequest; } }
+
+        /// <summary>
+        /// 左参照パネルの開閉状態
+        /// </summary>
+        private bool? _LeftPanelOpen = true;
+
+        public bool? LeftPanelOpen
+        {
+            get { return this._LeftPanelOpen; }
+            set
+            {
+                this.SetProperty(ref this._LeftPanelOpen, value);
+                this.RisePanelState();
+            }
+        }
+
+        /// <summary>
+        /// 上参照パネルの開閉状態
+        /// </summary>
+        private bool? _TopPanelOpen = true;
+
+        public bool? TopPanelOpen
+        {
+            get { return this._TopPanelOpen; }
+            set
+            {
+                this.SetProperty(ref this._TopPanelOpen, value);
+                this.RisePanelState();
+            }
+        }
+
+        /// <summary>
+        /// 下参照パネルの開閉状態
+        /// </summary>
+        private bool? _BottomPanelOpen = true;
+
+        public bool? BottomPanelOpen
+        {
+            get { return this._BottomPanelOpen; }
+            set
+            {
+                this.SetProperty(ref this._BottomPanelOpen, value);
+                this.RisePanelState();
+            }
+        }
+
+        /// <summary>
+        /// パネルの開閉リクエストをViewに投げる
+        /// </summary>
+        private void RisePanelState()
+        {
+            var state = new PanelStateEntity()
+            {
+                LeftPanelOpen = this.LeftPanelOpen.Value,
+                TopPanelOpen = this.TopPanelOpen.Value,
+                BottomPanelOpen = this.BottomPanelOpen.Value,
+            };
+            // Viewにリクエストを投げる
+            panelOpenRequest.Raise(new Confirmation { Content = state});
+        }
+
+        #endregion PanelOpen
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -44,6 +118,7 @@ namespace QuartetEditor.ViewModels
             this.Tree = this.Model
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
+
 
             // 仮
 #if DEBUG
