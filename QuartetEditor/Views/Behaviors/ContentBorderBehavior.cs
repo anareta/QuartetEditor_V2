@@ -51,11 +51,6 @@ namespace QuartetEditor.Views.Behaviors
             new PropertyMetadata((Brush)Brushes.Black));
 
         /// <summary>
-        /// Borderのコンテンツ
-        /// </summary>
-        private Control control;
-
-        /// <summary>
         /// アタッチ
         /// </summary>
         protected override void OnAttached()
@@ -66,22 +61,18 @@ namespace QuartetEditor.Views.Behaviors
                 return;
             }
             this.AssociatedObject.BorderBrush = this.NotFocusedBrush;
-            this.control = this.AssociatedObject.Descendants<Control>().FirstOrDefault();
 
-            if (this.control != null)
-            {
-                var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
-                h => (s, e) => h(e),
-                h => this.AssociatedObject.GotFocus += h,
-                h => this.AssociatedObject.GotFocus -= h);
-                gotFocus.Subscribe(this.OnGotFocus);
+            var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            h => (s, e) => h(e),
+            h => this.AssociatedObject.GotFocus += h,
+            h => this.AssociatedObject.GotFocus -= h);
+            gotFocus.Subscribe(this.OnGotFocus);
 
-                var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
-                h => (s, e) => h(e),
-                h => this.AssociatedObject.LostFocus += h,
-                h => this.AssociatedObject.LostFocus -= h);
-                lostFocus.Subscribe(this.OnLostFocus);
-            }
+            var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            h => (s, e) => h(e),
+            h => this.AssociatedObject.LostFocus += h,
+            h => this.AssociatedObject.LostFocus -= h);
+            lostFocus.Subscribe(this.OnLostFocus);
         }
 
         /// <summary>
