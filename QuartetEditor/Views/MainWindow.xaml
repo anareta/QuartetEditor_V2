@@ -330,18 +330,18 @@
                                 <dragdrop:DragStartBehavior AllowedEffects="Move" DragDropData="{Binding}" />
                             </i:Interaction.Behaviors>
                             <controls:EditBox Margin="3"
-                                              CanEdit="{Binding IsNameEditMode,
+                                              CanEdit="{Binding IsNameEditMode.Value,
                                                                 Mode=TwoWay,
                                                                 UpdateSourceTrigger=PropertyChanged}"
-                                              DragOverPosition="{Binding DropPosition,
-                                                                         Mode=TwoWay,
-                                                                         UpdateSourceTrigger=PropertyChanged}"
+                                              DropPosition="{Binding DropPosition.Value,
+                                                                     Mode=TwoWay,
+                                                                     UpdateSourceTrigger=PropertyChanged}"
                                               FontFamily="Meiryo UI"
                                               FontSize="13"
-                                              IsDragOver="{Binding IsDragOver,
+                                              IsDragOver="{Binding IsDragOver.Value,
                                                                    Mode=TwoWay,
                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                              IsReferred="{Binding IsReferred,
+                                              IsReferred="{Binding IsReferred.Value,
                                                                    Mode=TwoWay,
                                                                    UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding Name.Value,
@@ -352,7 +352,7 @@
                 </TreeView.ItemTemplate>
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
                         <Setter Property="ItemsPanel">
                             <Setter.Value>

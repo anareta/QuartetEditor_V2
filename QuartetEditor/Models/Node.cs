@@ -1,5 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
 using Prism.Mvvm;
+using QuartetEditor.Enums;
+using QuartetEditor.Extensions;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
@@ -76,12 +78,83 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 展開状態
         /// </summary>
-        public bool IsExpanded { set; get; }
+        public bool _IsExpanded;
+
+        public bool IsExpanded
+        {
+            get { return this._IsExpanded; }
+            set { this.SetProperty(ref this._IsExpanded, value); }
+        }
+
+        /// <summary>
+        /// 選択状態
+        /// </summary>
+        public bool _IsSelected;
+
+        public bool IsSelected
+        {
+            get { return this._IsSelected; }
+            set { this.SetProperty(ref this._IsSelected, value); }
+        }
+
+        /// <summary>
+        /// ノード名編集モード
+        /// </summary>
+        public bool _IsNameEditMode;
+
+        public bool IsNameEditMode
+        {
+            get { return this._IsNameEditMode; }
+            set { this.SetProperty(ref this._IsNameEditMode, value); }
+        }
+
+        /// <summary>
+        /// 参照状態
+        /// </summary>
+        public bool _IsReferred;
+
+        public bool IsReferred
+        {
+            get { return this._IsReferred; }
+            set { this.SetProperty(ref this._IsReferred, value); }
+        }
+
+        /// <summary>
+        /// ドラッグオーバーしているか
+        /// </summary>
+        public bool _IsDragOver;
+
+        public bool IsDragOver
+        {
+            get { return this._IsDragOver; }
+            set { this.SetProperty(ref this._IsDragOver, value); }
+        }
+
+        /// <summary>
+        /// ドロップする位置
+        /// </summary>
+        public DropPositionEnum _DropPosition;
+
+        public DropPositionEnum DropPosition
+        {
+            get { return this._DropPosition; }
+            set
+            {
+                this._DropPosition = value;
+                this.OnPropertyChanged(() => this.DropPosition);
+            }
+        }
 
         /// <summary>
         /// 編集されたか
         /// </summary>
-        public bool IsEdited { get; private set; } = false;
+        public bool _IsEdited = false;
+
+        public bool IsEdited
+        {
+            get { return this._IsEdited; }
+            private set { this.SetProperty(ref this._IsEdited, value); }
+        }
 
         /// <summary>
         /// コンストラクタ
@@ -130,6 +203,15 @@ namespace QuartetEditor.Models
             var item = new Node();
             this.ChildrenSource.Add(item);
             return item;
+        }
+
+        /// <summary>
+        /// IsDragOverフラグをすべてfalseにします
+        /// </summary>
+        public void ResetDragOverFlag()
+        {
+            this.IsDragOver = false;
+            this.Children.ForEach(node => node.ResetDragOverFlag());
         }
     }
 }

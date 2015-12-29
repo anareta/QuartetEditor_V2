@@ -58,61 +58,32 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 選択状態
         /// </summary>
-        private bool _IsSelected;
-
-        public bool IsSelected
-        {
-            get { return this._IsSelected; }
-            set { this.SetProperty(ref this._IsSelected, value); }
-        }
+        public ReactiveProperty<bool> IsSelected { get; }
 
         /// <summary>
         /// ノード名編集モード
         /// </summary>
-        private bool _IsNameEditMode;
-
-        public bool IsNameEditMode
-        {
-            get { return this._IsNameEditMode; }
-            set { this.SetProperty(ref this._IsNameEditMode, value); }
-        }
+        public ReactiveProperty<bool> IsNameEditMode { get; }
 
         /// <summary>
         /// 参照状態
         /// </summary>
-        private bool _IsReferred;
-
-        public bool IsReferred
-        {
-            get { return this._IsReferred; }
-            set { this.SetProperty(ref this._IsReferred, value); }
-        }
+        public ReactiveProperty<bool> IsReferred { get; }
 
         /// <summary>
         /// ドラッグオーバーしているか
         /// </summary>
-        private bool _IsDragOver;
-
-        public bool IsDragOver
-        {
-            get { return this._IsDragOver; }
-            set { this.SetProperty(ref this._IsDragOver, value); }
-        }
+        public ReactiveProperty<bool> IsDragOver { get; }
 
         /// <summary>
         /// ドロップする位置
         /// </summary>
-        private DropPositionEnum _DropPosition;
+        public ReactiveProperty<DropPositionEnum> DropPosition { get; }
 
-        public DropPositionEnum DropPosition
-        {
-            get { return this._DropPosition; }
-            set
-            {
-                this.SetProperty(ref this._DropPosition, value);
-            }
-        }
-
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="model"></param>
         public NodeViewModel(Node model)
         {
             this.Model = model;
@@ -134,6 +105,31 @@ namespace QuartetEditor.ViewModels
 
             this.IsExpanded = this.Model
                 .ObserveProperty(x => x.IsExpanded)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsSelected = this.Model
+                .ObserveProperty(x => x.IsSelected)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsNameEditMode = this.Model
+                .ObserveProperty(x => x.IsNameEditMode)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsReferred = this.Model
+                .ObserveProperty(x => x.IsReferred)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.IsDragOver = this.Model
+                .ObserveProperty(x => x.IsDragOver)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.DropPosition = this.Model
+                .ObserveProperty(x => x.DropPosition)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 

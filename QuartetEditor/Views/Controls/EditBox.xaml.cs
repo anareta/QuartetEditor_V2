@@ -197,43 +197,44 @@ namespace QuartetEditor.Views.Controls
 
         #endregion IsDragOver
 
-        #region DragOverPosition
+        #region DropPosition
 
         /// <summary>
         /// ドラッグオーバーしている位置
         /// </summary>
-        public DropPositionEnum DragOverPosition
+        public DropPositionEnum DropPosition
         {
             get
             {
-                return (DropPositionEnum)GetValue(DragOverPositionProperty);
+                return (DropPositionEnum)GetValue(DropPositionProperty);
             }
             set
             {
-                SetValue(DragOverPositionProperty, value);
+                SetValue(DropPositionProperty, value);
+                this.SetDragOverEffect();
             }
         }
 
         /// <summary>
-        /// DragOverPositionプロパティ
+        /// DropPositionプロパティ
         /// </summary>
-        public static readonly DependencyProperty DragOverPositionProperty =
-            DependencyProperty.RegisterAttached("DragOverPosition", typeof(DropPositionEnum), typeof(EditBox),
-            new PropertyMetadata(DropPositionEnum.NONE, DragOverPositionPropertyChanged));
+        public static readonly DependencyProperty DropPositionProperty =
+            DependencyProperty.RegisterAttached("DropPosition", typeof(DropPositionEnum), typeof(EditBox),
+            new PropertyMetadata(DropPositionEnum.NONE, DropPositionPropertyChanged));
 
 
         /// <summary>
-        /// DragOverPosition変更イベント
+        /// DropPosition変更イベント
         /// </summary>
         /// <param name="d"></param>
         /// <param name="e"></param>
-        private static void DragOverPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void DropPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var thisInstance = d as EditBox;
             var flg = e.NewValue as DropPositionEnum?;
             if (flg.HasValue)
             {
-                thisInstance.DragOverPosition = flg.Value;
+                thisInstance.DropPosition = flg.Value;
             }
         }
         #endregion DragOverPosition
@@ -290,22 +291,19 @@ namespace QuartetEditor.Views.Controls
         {
             if (e.GetPosition(this).X < this.ActualWidth / 2)
             {
-                
                 if (e.GetPosition(this).Y < this.ActualHeight / 2)
                 {
-                    this.DragOverPosition = DropPositionEnum.Prev;
+                    this.DropPosition = DropPositionEnum.Prev;
                 }
                 else
                 {
-                    this.DragOverPosition = DropPositionEnum.Next;
+                    this.DropPosition = DropPositionEnum.Next;
                 }
             }
             else
             {
-                this.DragOverPosition = DropPositionEnum.Child;
-
+                this.DropPosition = DropPositionEnum.Child;
             }
-            this.SetDragOverEffect();
         }
 
         #endregion Event
@@ -346,7 +344,7 @@ namespace QuartetEditor.Views.Controls
 
             if (this.IsDragOver)
             {
-                switch (this.DragOverPosition)
+                switch (this.DropPosition)
                 {
                     case DropPositionEnum.NONE:
                         break;

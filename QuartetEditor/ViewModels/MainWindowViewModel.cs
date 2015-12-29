@@ -161,9 +161,8 @@ namespace QuartetEditor.ViewModels
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
+            #region DragDrop
 
-            // 仮
-#if DEBUG
             this.DragAcceptDescription.DragOverAction += (System.Windows.DragEventArgs args) => 
             {
                 if (args.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) &&
@@ -178,16 +177,7 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-
-                if (target != null && target.IsDragOver)
-                {
-                    
-                }
-                else if(target == null)
-                {
-                    this.Tree.Last().DropPosition = Enums.DropPositionEnum.Next;
-                    this.Tree.Last().IsDragOver = true;
-                }
+                this.Model.DragOverAction(target?.Model);
             };
 
             this.DragAcceptDescription.DragEnterAction += (System.Windows.DragEventArgs args) =>
@@ -198,11 +188,7 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                this.ResetDragFlag();
-                if (target != null)
-                {
-                    target.IsDragOver = true;
-                }
+                this.Model.DragEnterAction(target?.Model);
             };
 
             this.DragAcceptDescription.DragLeaveAction += (System.Windows.DragEventArgs args) =>
@@ -213,9 +199,7 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-
-                this.ResetDragFlag();
-
+                this.Model.DragLeaveAction(target?.Model);
             };
 
             this.DragAcceptDescription.DragDropAction += (System.Windows.DragEventArgs args) =>
@@ -226,10 +210,13 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                this.ResetDragFlag();
+                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
+
+                this.Model.DragDropAction(target?.Model, data?.Model);
 
             };
-#endif
+
+            #endregion DragDrop
         }
 
         /// <summary>
@@ -242,26 +229,7 @@ namespace QuartetEditor.ViewModels
             this.TopPanelOpen = true;
             this.BottomPanelOpen = true;
 
-            this.Tree.First().IsSelected = true;
             this.SelectedItem = this.Tree.First();
-        }
-
-        private void ResetDragFlag()
-        {
-            this.Tree.ForEach(node => this.ResetDragFlag(node));
-        }
-
-        private void ResetDragFlag(NodeViewModel node)
-        {
-            node.IsDragOver = false;
-            node.Children.ForEach(item =>
-            {
-                item.IsDragOver = false;
-                if (item.Children.Count > 0)
-                {
-                    this.ResetDragFlag(item);
-                }
-            });
         }
 
     }
