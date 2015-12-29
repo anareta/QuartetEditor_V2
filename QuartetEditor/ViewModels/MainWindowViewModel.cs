@@ -1,4 +1,5 @@
-﻿using Prism.Interactivity.InteractionRequest;
+﻿using ICSharpCode.AvalonEdit.Document;
+using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using QuartetEditor.Entities;
 using QuartetEditor.Extensions;
@@ -38,6 +39,47 @@ namespace QuartetEditor.ViewModels
         /// ノードのドラッグドロップ処理の媒介
         /// </summary>
         public DragAcceptDescription DragAcceptDescription { get; } = new DragAcceptDescription();
+
+        #region Content
+
+        /// <summary>
+        /// 選択中のノード
+        /// </summary>
+        public NodeViewModel _SelectedItem;
+
+        public NodeViewModel SelectedItem
+        {
+            get
+            {
+                return this._SelectedItem;
+            }
+            set
+            {
+                this.SetProperty(ref this._SelectedItem, value);
+                this.OnPropertyChanged(() => this.TextContent);
+            }
+        }
+
+        /// <summary>
+        /// 編集中のコンテンツ
+        /// </summary>
+        public TextDocument TextContent
+        {
+            get
+            {
+                return this.SelectedItem == null ? new TextDocument() : this.SelectedItem.Content.Value;
+            }
+            set
+            {
+                if (this.SelectedItem != null)
+                {
+                    this.SelectedItem.Content.Value = value;
+                    this.OnPropertyChanged(() => this.TextContent);
+                }
+            }
+        }
+
+        #endregion Content
 
         #region PanelOpen
 
@@ -199,6 +241,9 @@ namespace QuartetEditor.ViewModels
             this.LeftPanelOpen = true;
             this.TopPanelOpen = true;
             this.BottomPanelOpen = true;
+
+            this.Tree.First().IsSelected = true;
+            this.SelectedItem = this.Tree.First();
         }
 
         private void ResetDragFlag()

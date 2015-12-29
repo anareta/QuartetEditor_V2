@@ -303,6 +303,7 @@
 
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
+                    <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
                 </i:Interaction.Behaviors>
 
                 <TreeView.InputBindings>
@@ -351,7 +352,7 @@
                 </TreeView.ItemTemplate>
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
@@ -391,7 +392,8 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
                                                  HorizontalScrollBarVisibility="Auto"
@@ -411,7 +413,8 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
                                                  HorizontalScrollBarVisibility="Auto"
@@ -430,10 +433,14 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
                                                  HorizontalScrollBarVisibility="Auto"
+                                                 Document="{Binding Path=TextContent,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  LineHeight="5"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="True" />
@@ -451,7 +458,8 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
                                                  HorizontalScrollBarVisibility="Auto"

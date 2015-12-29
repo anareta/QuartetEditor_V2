@@ -112,6 +112,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
