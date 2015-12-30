@@ -112,6 +112,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Config.cs" />
+    <Compile Include="Models\ConfigManager.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\Controls\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
@@ -142,7 +144,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Entities\PanelStateEntity.cs" />
+    <Compile Include="Entities\PanelOpenStateEntity.cs" />
     <Compile Include="Enums\DropPositionEnum.cs" />
     <Compile Include="Extensions\IEnumerableExtension.cs" />
     <Compile Include="Extensions\DependencyObjectExtension.cs" />

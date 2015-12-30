@@ -21,6 +21,59 @@ namespace QuartetEditor.Views
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        #region PanelState
+        /// <summary>
+        /// 最後にパネルが開いていたときの大きさ
+        /// </summary>
+        public GridLength LeftPanelSize { get; set; }
+
+        /// <summary>
+        /// パネルが開いているか
+        /// </summary>
+        public bool LeftPanelOpen
+        {
+            get
+            {
+                return this._LeftTextBox.Visibility == Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// 最後にパネルが開いていたときの大きさ
+        /// </summary>
+        public GridLength TopPanelSize { get; set; }
+
+        /// <summary>
+        /// パネルが開いているか
+        /// </summary>
+        public bool TopPanelOpen
+        {
+            get
+            {
+                return this._TopTextBox.Visibility == Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// 最後にパネルが開いていたときの大きさ
+        /// </summary>
+        public GridLength BottomPanelSize { get; set; }
+
+        /// <summary>
+        /// パネルが開いているか
+        /// </summary>
+        public bool BottomPanelOpen
+        {
+            get
+            {
+                return this._BottomTextBox.Visibility == Visibility.Visible;
+            }
+        }
+        #endregion PanelState
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
