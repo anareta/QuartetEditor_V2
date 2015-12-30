@@ -289,7 +289,7 @@ namespace QuartetEditor.Views.Controls
         /// <param name="e"></param>
         private void UserControl_PreviewDragOver(object sender, DragEventArgs e)
         {
-            if (e.GetPosition(this).X < this.ActualWidth / 2)
+            if (e.GetPosition(this).X < (this.ActualWidth*0.7))
             {
                 if (e.GetPosition(this).Y < this.ActualHeight / 2)
                 {
@@ -340,7 +340,7 @@ namespace QuartetEditor.Views.Controls
         private void SetDragOverEffect()
         {
             this._TextBlockBorder.Visibility = Visibility.Hidden;
-            this._InsertCursor.Visibility = Visibility.Hidden;
+            this.HideAdorner();
 
             if (this.IsDragOver)
             {
@@ -349,24 +349,51 @@ namespace QuartetEditor.Views.Controls
                     case DropPositionEnum.NONE:
                         break;
                     case DropPositionEnum.Prev:
-                        this._InsertCursor.Visibility = Visibility.Visible;
-                        this._InsertCursor.VerticalAlignment = VerticalAlignment.Top;
+                        this.ShowAdorner(VerticalAlignment.Top);
                         break;
                     case DropPositionEnum.Next:
-                        this._InsertCursor.Visibility = Visibility.Visible;
-                        this._InsertCursor.VerticalAlignment = VerticalAlignment.Bottom;
+                        this.ShowAdorner(VerticalAlignment.Bottom);
                         break;
                     case DropPositionEnum.Child:
                         this._TextBlockBorder.Visibility = Visibility.Visible;
                         break;
                     default:
-                        break;
+                        throw new NotImplementedException();
                 }
             }
             else
             {
-                this._InsertCursor.Visibility = Visibility.Hidden;
+
             }
         }
+
+        #region InsertionCursor
+        /// <summary>
+        /// 挿入位置カーソル
+        /// </summary>
+        private InsertionAdorner _InsertionAdorner;
+
+        /// <summary>
+        /// 挿入位置カーソルを表示します
+        /// </summary>
+        /// <param name="position"></param>
+        private void ShowAdorner(VerticalAlignment position)
+        {
+            this._InsertionAdorner = new InsertionAdorner(this, position);
+        }
+
+        /// <summary>
+        /// 挿入位置カーソルを消します
+        /// </summary>
+        private void HideAdorner()
+        {
+            if (this._InsertionAdorner != null)
+            {
+                this._InsertionAdorner.Detach();
+                this._InsertionAdorner = null;
+            }
+        }
+
+        #endregion InsertionCursor
     }
 }
