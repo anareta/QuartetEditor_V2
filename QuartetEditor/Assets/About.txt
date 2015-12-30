@@ -1,0 +1,19 @@
+﻿【使用条件】
+　本アプリケーションの再配布を禁じます。
+
+【注意事項】
+　・本アプリケーションの使用から生じる全ての損害や不利益に関して、著作権者は
+　　一切の責任を負いません。予めご了承の上ご使用頂き、重要なデータは必ずバッ
+　　クアップをおとり下さい。
+　・本アプリケーションは、日本国外での動作環境等に関してサポートは行っており
+　　ません。
+
+【使用しているライブラリについて】
+　本アプリケーションは以下のライブラリを使用しています。
+　・MahApps.Metro（http://mahapps.com/）
+　・Prism（https://compositewpf.codeplex.com/）
+　・Reactive Extensions（https://rx.codeplex.com/）
+　・ReactiveProperty（https://reactiveproperty.codeplex.com/）
+　・AvalonEdit（http://avalonedit.net/）
+　・Json.NET（https://json.codeplex.com/）
+　　

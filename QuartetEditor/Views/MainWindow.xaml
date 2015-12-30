@@ -96,6 +96,31 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
+    <metro:MetroWindow.Flyouts>
+        <metro:FlyoutsControl>
+            <metro:Flyout x:Name="About"
+                          Width="500"
+                          Header="このアプリケーションについて"
+                          IsOpen="{Binding IsAboutOpen,
+                                           Mode=TwoWay}"
+                          IsPinned="False"
+                          Position="Right">
+                <controls:AboutFlyout />
+            </metro:Flyout>
+
+            <!--<metro:Flyout x:Name="ConfigFlyout"
+                          Width="300"
+                          Header="設定"
+                          IsOpen="{Binding IsConfigOpen,
+                                           Mode=TwoWay}"
+                          IsPinned="False"
+                          Position="Right">
+                <controls:ConfigFlyout />
+            </metro:Flyout>-->
+            
+        </metro:FlyoutsControl>
+    </metro:MetroWindow.Flyouts>
+
     <DockPanel AllowDrop="True">
         <Rectangle Height="15" DockPanel.Dock="Bottom" />
         <Grid Margin="0,0,0,0" DockPanel.Dock="Top">

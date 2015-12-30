@@ -152,6 +152,30 @@ namespace QuartetEditor.ViewModels
 
         #endregion PanelOpen
 
+        #region AboutFlyout
+
+        /// <summary>
+        /// AboutFlyoutの開閉状態
+        /// </summary>
+        private bool _IsAboutOpen = false;
+
+        public bool IsAboutOpen
+        {
+            get { return this._IsAboutOpen; }
+            set
+            {
+                this.SetProperty(ref this._IsAboutOpen, value);
+                this.RisePanelState();
+            }
+        }
+
+        /// <summary>
+        /// AboutFlyout開閉コマンド
+        /// </summary>
+        public ReactiveCommand OpenAboutCommand { get; private set; }　= new ReactiveCommand();
+
+        #endregion AboutFlyout
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -217,6 +241,13 @@ namespace QuartetEditor.ViewModels
             };
 
             #endregion DragDrop
+
+            #region AboutFlyout
+
+            // AboutCommand
+            this.OpenAboutCommand.Subscribe( _ => this.IsAboutOpen = true );
+            
+            #endregion AboutFlyout
         }
 
         /// <summary>
