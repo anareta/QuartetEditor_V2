@@ -64,6 +64,11 @@ namespace QuartetEditor.Models
             this.TreeSource.Add(new Node("ノード２"));
             this.TreeSource.Add(new Node("ノード３"));
 #endif
+            // 空の場合は初期化
+            if (this.TreeSource.Count == 0)
+            {
+                this.AddNode().IsSelected = true;
+            }
 
             // ノードがゼロになったら新規ノードを追加する
             var collectionChange = Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
