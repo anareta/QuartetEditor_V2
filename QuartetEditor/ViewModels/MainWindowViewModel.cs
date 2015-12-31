@@ -36,6 +36,11 @@ namespace QuartetEditor.ViewModels
         public ReactiveProperty<NodeViewModel> SelectedNode { get; } = new ReactiveProperty<NodeViewModel>();
 
         /// <summary>
+        /// 設定情報
+        /// </summary>
+        private ConfigManager ConfigModel { get; } = ConfigManager.Current;
+
+        /// <summary>
         /// ノードのドラッグドロップ処理の媒介
         /// </summary>
         public DragAcceptDescription DragAcceptDescription { get; } = new DragAcceptDescription();
@@ -256,9 +261,9 @@ namespace QuartetEditor.ViewModels
         public void Initialize()
         {
             /* パネルの開閉初期状態などはここで設定する */
-            this.LeftPanelOpen = true;
-            this.TopPanelOpen = true;
-            this.BottomPanelOpen = true;
+            this.LeftPanelOpen = this.ConfigModel.Config.LeftPanelOpen;
+            this.TopPanelOpen = this.ConfigModel.Config.TopPanelOpen;
+            this.BottomPanelOpen = this.ConfigModel.Config.BottomPanelOpen;
 
             this.SelectedItem = this.Tree.First();
         }

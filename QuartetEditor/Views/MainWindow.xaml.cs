@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using QuartetEditor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +78,46 @@ namespace QuartetEditor.Views
         public MainWindow()
         {
             InitializeComponent();
+
+        }
+
+        /// <summary>
+        /// ウィンドウを閉じるときの処理
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            /* ウィンドウを閉じるかここでダイアログを出す */
+
+            this.SetPanelStateToConfig();
+            ConfigManager.Current.SaveConfig();
+        }
+
+        private void SetPanelStateToConfig()
+        {
+            var conf = ConfigManager.Current.Config;
+            conf.LeftPanelOpen = this.LeftPanelOpen;
+            conf.LeftPanelWidth = this.LeftPanelSize;
+            conf.TopPanelOpen = this.TopPanelOpen;
+            conf.TopPanelHeight = this.TopPanelSize;
+            conf.BottomPanelOpen = this.BottomPanelOpen;
+            conf.BottomPanelHeight = this.BottomPanelSize;
+            conf.TopBottomPanelWidth = this._EditorGrid.ColumnDefinitions[2].Width;
+            conf.CenterPanelHeight = this._EditorGrid.RowDefinitions[2].Height;
+        }
+
+        private void SetPanelSizeFromConfig()
+        {
+            var conf = ConfigManager.Current.Config;
+            this._EditorGrid.ColumnDefinitions[2].Width = conf.TopBottomPanelWidth;
+            this._EditorGrid.RowDefinitions[2].Height = conf.CenterPanelHeight;
+
+            this.LeftPanelSize = conf.LeftPanelWidth;
+            this.TopPanelSize = conf.TopPanelHeight;
+            this.BottomPanelSize = conf.BottomPanelHeight;
+
         }
     }
 }
