@@ -38,11 +38,6 @@ namespace QuartetEditor.Models
             this.LeftPanelOpen = true;
             this.TopPanelOpen = true;
             this.BottomPanelOpen = true;
-            this.LeftPanelWidth = new GridLength(1, GridUnitType.Star);
-            this.TopBottomPanelWidth = new GridLength(3, GridUnitType.Star);
-            this.TopPanelHeight = new GridLength(1, GridUnitType.Star);
-            this.CenterPanelHeight = new GridLength(5, GridUnitType.Star);
-            this.BottomPanelHeight = new GridLength(1, GridUnitType.Star);
         }
 
         #region CenterTextEditor
@@ -142,39 +137,14 @@ namespace QuartetEditor.Models
         public bool LeftPanelOpen { set; get; }
 
         /// <summary>
-        /// 左パネルのサイズ
-        /// </summary>
-        public GridLength LeftPanelWidth { set; get; }
-
-        /// <summary>
         /// 上パネルの開閉状態
         /// </summary>
         public bool TopPanelOpen { set; get; }
 
         /// <summary>
-        /// 上パネルのサイズ
-        /// </summary>
-        public GridLength TopPanelHeight { set; get; }
-
-        /// <summary>
         /// 下パネルの開閉状態
         /// </summary>
         public bool BottomPanelOpen { set; get; }
-
-        /// <summary>
-        /// 下パネルのサイズ
-        /// </summary>
-        public GridLength BottomPanelHeight { set; get; }
-
-        /// <summary>
-        /// 編集パネルのサイズ
-        /// </summary>
-        public GridLength CenterPanelHeight { set; get; }
-
-        /// <summary>
-        /// 上下参照パネルの幅
-        /// </summary>
-        public GridLength TopBottomPanelWidth { set; get; }
 
         #endregion PanelState
     }
