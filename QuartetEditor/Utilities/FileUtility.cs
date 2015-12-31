@@ -84,8 +84,15 @@ namespace QuartetEditor.Utilities
                 return false;
             }
 
-            target = JsonConvert.DeserializeObject<T>(json);
-            return true;
+            try
+            {
+                target = JsonConvert.DeserializeObject<T>(json);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
