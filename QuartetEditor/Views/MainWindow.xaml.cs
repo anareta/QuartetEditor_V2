@@ -94,6 +94,9 @@ namespace QuartetEditor.Views
             ConfigManager.Current.SaveConfig();
         }
 
+        /// <summary>
+        /// パネルの状態を設定情報クラスに設定
+        /// </summary>
         private void SetPanelStateToConfig()
         {
             var conf = ConfigManager.Current.Config;
