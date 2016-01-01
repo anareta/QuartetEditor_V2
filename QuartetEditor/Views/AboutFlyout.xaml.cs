@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace QuartetEditor.Views.Controls
+namespace QuartetEditor.Views
 {
     /// <summary>
     /// AboutFlyout.xaml の相互作用ロジック

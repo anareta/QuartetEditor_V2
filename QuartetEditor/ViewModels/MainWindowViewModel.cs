@@ -181,6 +181,30 @@ namespace QuartetEditor.ViewModels
 
         #endregion AboutFlyout
 
+        #region ConfigFlyout
+
+        /// <summary>
+        /// ConfigFlyoutの開閉状態
+        /// </summary>
+        private bool _IsConfigOpen = false;
+
+        public bool IsConfigOpen
+        {
+            get { return this._IsConfigOpen; }
+            set
+            {
+                this.SetProperty(ref this._IsConfigOpen, value);
+                this.RisePanelState();
+            }
+        }
+
+        /// <summary>
+        /// ConfigFlyout開閉コマンド
+        /// </summary>
+        public ReactiveCommand OpenConfigCommand { get; private set; } = new ReactiveCommand();
+
+        #endregion ConfigFlyout
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -251,8 +275,15 @@ namespace QuartetEditor.ViewModels
 
             // AboutCommand
             this.OpenAboutCommand.Subscribe( _ => this.IsAboutOpen = true );
-            
+
             #endregion AboutFlyout
+
+            #region ConfigFlyout
+
+            // ConfigCommand
+            this.OpenConfigCommand.Subscribe(_ => this.IsConfigOpen = true);
+
+            #endregion ConfigFlyout
         }
 
         /// <summary>

@@ -8,7 +8,7 @@
                    xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
                    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                   xmlns:local="clr-namespace:QuartetEditor"
+                   xmlns:local="clr-namespace:QuartetEditor.Views"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
@@ -105,18 +105,18 @@
                                            Mode=TwoWay}"
                           IsPinned="False"
                           Position="Right">
-                <controls:AboutFlyout />
+                <local:AboutFlyout />
             </metro:Flyout>
 
-            <!--<metro:Flyout x:Name="ConfigFlyout"
+            <metro:Flyout x:Name="ConfigFlyout"
                           Width="300"
                           Header="設定"
                           IsOpen="{Binding IsConfigOpen,
                                            Mode=TwoWay}"
                           IsPinned="False"
                           Position="Right">
-                <controls:ConfigFlyout />
-            </metro:Flyout>-->
+                <local:ConfigFlyout />
+            </metro:Flyout>
             
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>

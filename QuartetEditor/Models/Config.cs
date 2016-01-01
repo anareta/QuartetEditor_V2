@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace QuartetEditor.Models
     /// <summary>
     /// 設定情報
     /// </summary>
-    public class Config
+    public class Config : BindableBase
     {
         /// <summary>
         /// コンストラクタ
@@ -44,37 +45,80 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 編集パネルのフォントサイズ
         /// </summary>
-        public double CenterTextEditorFontSize { set; get; }
+        public double _CenterTextEditorFontSize;
+
+        public double CenterTextEditorFontSize
+        {
+            get { return this._CenterTextEditorFontSize; }
+            set { this.SetProperty(ref this._CenterTextEditorFontSize, value); }
+        }
 
         /// <summary>
         /// 編集パネルのフォント
         /// </summary>
-        public System.Windows.Media.FontFamily CenterTextEditorFontFamily { set; get; }
+        public System.Windows.Media.FontFamily _CenterTextEditorFontFamily;
+
+        public System.Windows.Media.FontFamily CenterTextEditorFontFamily
+        {
+            get { return this._CenterTextEditorFontFamily; }
+            set { this.SetProperty(ref this._CenterTextEditorFontFamily, value); }
+        }
+
 
         /// <summary>
         /// 編集パネルの行間
         /// </summary>
-        public double CenterTextEditorLineHeight { set; get; }
+        public double _CenterTextEditorLineHeight;
+
+        public double CenterTextEditorLineHeight
+        {
+            get { return this._CenterTextEditorLineHeight; }
+            set { this.SetProperty(ref this._CenterTextEditorLineHeight, value); }
+        }
 
         /// <summary>
         /// 編集パネルの折り返し
         /// </summary>
-        public bool CenterTextEditorTextWrapping { set; get; }
+        public bool _CenterTextEditorTextWrapping;
+
+        public bool CenterTextEditorTextWrapping
+        {
+            get { return this._CenterTextEditorTextWrapping; }
+            set { this.SetProperty(ref this._CenterTextEditorTextWrapping, value); }
+        }
 
         /// <summary>
         /// 編集パネルで現在行のハイライト表示
         /// </summary>
-        public bool HighlightCurrentLine { set; get; }
+        public bool _HighlightCurrentLine;
+
+        public bool HighlightCurrentLine
+        {
+            get { return this._HighlightCurrentLine; }
+            set { this.SetProperty(ref this._HighlightCurrentLine, value); }
+        }
 
         /// <summary>
         /// 編集パネルで行番号の表示
         /// </summary>
-        public bool ShowLineNumbers { set; get; }
+        public bool _ShowLineNumbers;
+
+        public bool ShowLineNumbers
+        {
+            get { return this._ShowLineNumbers; }
+            set { this.SetProperty(ref this._ShowLineNumbers, value); }
+        }
 
         /// <summary>
         /// 編集パネルでヘッダー文字列
         /// </summary>
-        public string HeaderCharactors { set; get; }
+        public string _HeaderCharactors;
+
+        public string HeaderCharactors
+        {
+            get { return this._HeaderCharactors; }
+            set { this.SetProperty(ref this._HeaderCharactors, value); }
+        }
 
         #endregion CenterTextEditor
 
@@ -84,22 +128,46 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 左参照パネルフォントサイズ
         /// </summary>
-        public double LeftTextEditorFontSize { set; get; }
+        public double _LeftTextEditorFontSize;
+
+        public double LeftTextEditorFontSize
+        {
+            get { return this._LeftTextEditorFontSize; }
+            set { this.SetProperty(ref this._LeftTextEditorFontSize, value); }
+        }
 
         /// <summary>
         /// 左参照パネルフォント
         /// </summary>
-        public System.Windows.Media.FontFamily LeftTextEditorFontFamily { set; get; }
+        public System.Windows.Media.FontFamily _LeftTextEditorFontFamily;
+
+        public System.Windows.Media.FontFamily LeftTextEditorFontFamily
+        {
+            get { return this._LeftTextEditorFontFamily; }
+            set { this.SetProperty(ref this._LeftTextEditorFontFamily, value); }
+        }
 
         /// <summary>
         /// 左参照パネルの行間
         /// </summary>
-        public double LeftTextEditorLineHeight { set; get; }
+        public double _LeftTextEditorLineHeight;
+
+        public double LeftTextEditorLineHeight
+        {
+            get { return this._LeftTextEditorLineHeight; }
+            set { this.SetProperty(ref this._LeftTextEditorLineHeight, value); }
+        }
 
         /// <summary>
         /// 左参照パネルの折り返し
         /// </summary>
-        public bool LeftTextEditorTextWrapping { set; get; }
+        public bool _LeftTextEditorTextWrapping;
+
+        public bool LeftTextEditorTextWrapping
+        {
+            get { return this._LeftTextEditorTextWrapping; }
+            set { this.SetProperty(ref this._LeftTextEditorTextWrapping, value); }
+        }
 
         #endregion LeftTextEditor
 
@@ -109,22 +177,46 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 上下参照パネルのフォントサイズ
         /// </summary>
-        public double TopBottomTextEditorFontSize { set; get; }
+        public double _TopBottomTextEditorFontSize;
+
+        public double TopBottomTextEditorFontSize
+        {
+            get { return this._TopBottomTextEditorFontSize; }
+            set { this.SetProperty(ref this._TopBottomTextEditorFontSize, value); }
+        }
 
         /// <summary>
         /// 上下参照パネルのフォント
         /// </summary>
-        public System.Windows.Media.FontFamily TopBottomTextEditorFontFamily { set; get; }
+        public System.Windows.Media.FontFamily _TopBottomTextEditorFontFamily;
+
+        public System.Windows.Media.FontFamily TopBottomTextEditorFontFamily
+        {
+            get { return this._TopBottomTextEditorFontFamily; }
+            set { this.SetProperty(ref this._TopBottomTextEditorFontFamily, value); }
+        }
 
         /// <summary>
         /// 上下参照パネルの行間
         /// </summary>
-        public double TopBottomTextEditorLineHeight { set; get; }
+        public double _TopBottomTextEditorLineHeight;
+
+        public double TopBottomTextEditorLineHeight
+        {
+            get { return this._TopBottomTextEditorLineHeight; }
+            set { this.SetProperty(ref this._TopBottomTextEditorLineHeight, value); }
+        }
 
         /// <summary>
         /// 上下参照パネルの折り返し
         /// </summary>
-        public bool TopBottomTextEditorTextWrapping { set; get; }
+        public bool _TopBottomTextEditorTextWrapping;
+
+        public bool TopBottomTextEditorTextWrapping
+        {
+            get { return this._TopBottomTextEditorTextWrapping; }
+            set { this.SetProperty(ref this._TopBottomTextEditorTextWrapping, value); }
+        }
 
         #endregion TopBottomTextEditor
 
@@ -134,18 +226,37 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 左パネルの開閉状態
         /// </summary>
-        public bool LeftPanelOpen { set; get; }
+        public bool _LeftPanelOpen;
+
+        public bool LeftPanelOpen
+        {
+            get { return this._LeftPanelOpen; }
+            set { this.SetProperty(ref this._LeftPanelOpen, value); }
+        }
 
         /// <summary>
         /// 上パネルの開閉状態
         /// </summary>
-        public bool TopPanelOpen { set; get; }
+        public bool _TopPanelOpen;
+
+        public bool TopPanelOpen
+        {
+            get { return this._TopPanelOpen; }
+            set { this.SetProperty(ref this._TopPanelOpen, value); }
+        }
 
         /// <summary>
         /// 下パネルの開閉状態
         /// </summary>
-        public bool BottomPanelOpen { set; get; }
+        public bool _BottomPanelOpen;
+
+        public bool BottomPanelOpen
+        {
+            get { return this._BottomPanelOpen; }
+            set { this.SetProperty(ref this._BottomPanelOpen, value); }
+        }
 
         #endregion PanelState
+
     }
 }

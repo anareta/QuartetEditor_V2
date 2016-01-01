@@ -116,20 +116,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Attributes\TransactionAttribute.cs" />
+    <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
     <Compile Include="Utilities\FileUtility.cs" />
+    <Compile Include="ViewModels\ConfigFlyoutViewModel.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
-    <Compile Include="Views\Controls\AboutFlyout.xaml.cs">
+    <Compile Include="Views\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ConfigFlyout.xaml.cs">
+      <DependentUpon>ConfigFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\InsertionAdorner.cs" />
+    <Compile Include="Views\Converters\FontFamilyToNameConverter.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\AboutFlyout.xaml">
+    <Page Include="Views\AboutFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ConfigFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
