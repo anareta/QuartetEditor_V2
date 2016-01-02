@@ -99,7 +99,7 @@ namespace QuartetEditor.Views.Controls
         }
 
         /// <summary>
-        /// 選択業のハイライト設定が変更された場合
+        /// 選択行のハイライト設定が変更された場合
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
