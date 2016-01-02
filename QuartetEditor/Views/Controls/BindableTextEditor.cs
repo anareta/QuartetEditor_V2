@@ -141,6 +141,7 @@ namespace QuartetEditor.Views.Controls
         {
             var control = (BindableTextEditor)sender;
             control.HeaderCharactors = (string)e.NewValue;
+            control.UpdateHightlightSetting();
         }
 
         /// <summary>
