@@ -45,7 +45,19 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 設定情報
         /// </summary>
-        private ConfigManager ConfigModel { get; } = ConfigManager.Current;
+        private Config _Config = ConfigManager.Current.Config;
+
+        public Config Config
+        {
+            get
+            {
+                return this._Config;
+            }
+            set
+            {
+                this.SetProperty(ref this._Config, value);
+            }
+        }
 
         /// <summary>
         /// 設定FlyoutViewModel
@@ -185,17 +197,17 @@ namespace QuartetEditor.ViewModels
 
             #region Panel
 
-            this.LeftPanelOpen = this.ConfigModel.Config
+            this.LeftPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.LeftPanelOpen)
             .AddTo(this.Disposable);
             this.LeftPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
 
-            this.TopPanelOpen = this.ConfigModel.Config
+            this.TopPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.TopPanelOpen)
             .AddTo(this.Disposable);
             this.TopPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
 
-            this.BottomPanelOpen = this.ConfigModel.Config
+            this.BottomPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.BottomPanelOpen)
             .AddTo(this.Disposable);
             this.BottomPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());

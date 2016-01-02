@@ -419,9 +419,23 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
+                                                 BindableText="{Binding Path=ParentTextContent,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.LeftTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.LeftTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto" />
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 />
                 </Border>
                 <GridSplitter x:Name="_LeftSplitter"
                               Grid.Row="0"
@@ -440,9 +454,23 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
+                                                 BindableText="{Binding Path=PrevTextContent,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto" />
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 />
                 </Border>
                 <GridSplitter x:Name="_TopSplitter"
                               Grid.Row="1"
@@ -460,13 +488,38 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
-                                                 HorizontalScrollBarVisibility="Auto"
                                                  Document="{Binding Path=TextContent,
                                                                     Mode=TwoWay,
                                                                     UpdateSourceTrigger=PropertyChanged}"
-                                                 LineHeight="5"
+                                                 FontFamily="{Binding Path=Config.CenterTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.CenterTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 HeaderCharactors="{Binding Path=Config.HeaderCharactors,
+                                                                            Mode=TwoWay,
+                                                                            UpdateSourceTrigger=PropertyChanged}"
+                                                 HighlightCurrentLine="{Binding Path=Config.HighlightCurrentLine,
+                                                                                Mode=TwoWay,
+                                                                                UpdateSourceTrigger=PropertyChanged}"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 LineHeight="{Binding Path=Config.CenterTextEditorLineHeight,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
+                                                 Padding="10,8,2,2"
+                                                 ShowLineNumbers="{Binding Path=Config.ShowLineNumbers,
+                                                                           Mode=TwoWay,
+                                                                           UpdateSourceTrigger=PropertyChanged}"
+                                                 SyntaxHighlighting="Custom HighlightingRules"
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 TextOptions.TextHintingMode="Fixed"
+                                                 TextOptions.TextRenderingMode="ClearType"
                                                  VerticalScrollBarVisibility="Auto"
-                                                 WordWrap="True" />
+                                                 WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
 
                 <GridSplitter x:Name="_BottomSplitter"
@@ -485,9 +538,23 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
+                                                 BindableText="{Binding Path=PrevTextContent,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
-                                                 VerticalScrollBarVisibility="Auto" />
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 />
                 </Border>
             </Grid>
         </Grid>
