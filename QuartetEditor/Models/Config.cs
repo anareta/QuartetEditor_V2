@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Newtonsoft.Json;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace QuartetEditor.Models
     /// <summary>
     /// 設定情報
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class Config : BindableBase
     {
         /// <summary>
@@ -47,6 +49,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _CenterTextEditorFontSize;
 
+        [JsonProperty]
         public double CenterTextEditorFontSize
         {
             get { return this._CenterTextEditorFontSize; }
@@ -58,6 +61,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public System.Windows.Media.FontFamily _CenterTextEditorFontFamily;
 
+        [JsonProperty]
         public System.Windows.Media.FontFamily CenterTextEditorFontFamily
         {
             get { return this._CenterTextEditorFontFamily; }
@@ -70,6 +74,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _CenterTextEditorLineHeight;
 
+        [JsonProperty]
         public double CenterTextEditorLineHeight
         {
             get { return this._CenterTextEditorLineHeight; }
@@ -81,6 +86,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _CenterTextEditorTextWrapping;
 
+        [JsonProperty]
         public bool CenterTextEditorTextWrapping
         {
             get { return this._CenterTextEditorTextWrapping; }
@@ -92,6 +98,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _HighlightCurrentLine;
 
+        [JsonProperty]
         public bool HighlightCurrentLine
         {
             get { return this._HighlightCurrentLine; }
@@ -103,6 +110,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _ShowLineNumbers;
 
+        [JsonProperty]
         public bool ShowLineNumbers
         {
             get { return this._ShowLineNumbers; }
@@ -114,6 +122,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public string _HeaderCharactors;
 
+        [JsonProperty]
         public string HeaderCharactors
         {
             get { return this._HeaderCharactors; }
@@ -130,6 +139,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _LeftTextEditorFontSize;
 
+        [JsonProperty]
         public double LeftTextEditorFontSize
         {
             get { return this._LeftTextEditorFontSize; }
@@ -141,6 +151,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public System.Windows.Media.FontFamily _LeftTextEditorFontFamily;
 
+        [JsonProperty]
         public System.Windows.Media.FontFamily LeftTextEditorFontFamily
         {
             get { return this._LeftTextEditorFontFamily; }
@@ -152,6 +163,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _LeftTextEditorLineHeight;
 
+        [JsonProperty]
         public double LeftTextEditorLineHeight
         {
             get { return this._LeftTextEditorLineHeight; }
@@ -163,6 +175,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _LeftTextEditorTextWrapping;
 
+        [JsonProperty]
         public bool LeftTextEditorTextWrapping
         {
             get { return this._LeftTextEditorTextWrapping; }
@@ -179,6 +192,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _TopBottomTextEditorFontSize;
 
+        [JsonProperty]
         public double TopBottomTextEditorFontSize
         {
             get { return this._TopBottomTextEditorFontSize; }
@@ -190,6 +204,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public System.Windows.Media.FontFamily _TopBottomTextEditorFontFamily;
 
+        [JsonProperty]
         public System.Windows.Media.FontFamily TopBottomTextEditorFontFamily
         {
             get { return this._TopBottomTextEditorFontFamily; }
@@ -201,6 +216,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public double _TopBottomTextEditorLineHeight;
 
+        [JsonProperty]
         public double TopBottomTextEditorLineHeight
         {
             get { return this._TopBottomTextEditorLineHeight; }
@@ -212,6 +228,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _TopBottomTextEditorTextWrapping;
 
+        [JsonProperty]
         public bool TopBottomTextEditorTextWrapping
         {
             get { return this._TopBottomTextEditorTextWrapping; }
@@ -228,6 +245,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _LeftPanelOpen;
 
+        [JsonProperty]
         public bool LeftPanelOpen
         {
             get { return this._LeftPanelOpen; }
@@ -239,6 +257,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _TopPanelOpen;
 
+        [JsonProperty]
         public bool TopPanelOpen
         {
             get { return this._TopPanelOpen; }
@@ -250,6 +269,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _BottomPanelOpen;
 
+        [JsonProperty]
         public bool BottomPanelOpen
         {
             get { return this._BottomPanelOpen; }

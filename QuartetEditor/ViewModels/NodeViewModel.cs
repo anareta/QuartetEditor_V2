@@ -89,48 +89,39 @@ namespace QuartetEditor.ViewModels
             this.Model = model;
 
             this.Name = this.Model
-                .ObserveProperty(x => x.Name)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.Name)
                 .AddTo(this.Disposable);
 
             this.ID = this.Model
-                .ObserveProperty(x => x.ID)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.ID)
                 .AddTo(this.Disposable);
 
             this.Content = this.Model
-                .ObserveProperty(x => x.Content)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.Content)
                 .AddTo(this.Disposable);
 
             this.IsExpanded = this.Model
-                .ObserveProperty(x => x.IsExpanded)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.IsExpanded)
                 .AddTo(this.Disposable);
 
             this.IsSelected = this.Model
-                .ObserveProperty(x => x.IsSelected)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.IsSelected)
                 .AddTo(this.Disposable);
 
             this.IsNameEditMode = this.Model
-                .ObserveProperty(x => x.IsNameEditMode)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.IsNameEditMode)
                 .AddTo(this.Disposable);
 
             this.IsReferred = this.Model
-                .ObserveProperty(x => x.IsReferred)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.IsReferred)
                 .AddTo(this.Disposable);
 
             this.IsDragOver = this.Model
-                .ObserveProperty(x => x.IsDragOver)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.IsDragOver)
                 .AddTo(this.Disposable);
 
             this.DropPosition = this.Model
-                .ObserveProperty(x => x.DropPosition)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.DropPosition)
                 .AddTo(this.Disposable);
 
             this.Children = this.Model

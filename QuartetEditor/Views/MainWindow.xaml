@@ -108,15 +108,13 @@
                 <local:AboutFlyout />
             </metro:Flyout>
 
-            <metro:Flyout x:Name="ConfigFlyout"
-                          Width="300"
-                          Header="設定"
-                          IsOpen="{Binding IsConfigOpen,
-                                           Mode=TwoWay}"
-                          IsPinned="False"
-                          Position="Right">
-                <local:ConfigFlyout />
-            </metro:Flyout>
+            <local:ConfigFlyout x:Name="ConfigFlyout"
+                                Width="300"
+                                Header="設定"
+                                IsPinned="False"
+                                Position="Right"
+                                DataContext="{Binding ConfigFlyoutViewModel}">
+            </local:ConfigFlyout>
             
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>
@@ -202,7 +200,7 @@
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
-                        Command="{Binding OpenConfigCommand}"
+                        Command="{Binding ConfigFlyoutViewModel.OpenCommand}"
                         Style="{DynamicResource MetroCircleButtonStyle}"
                         ToolTip="設定">
                     <Rectangle Width="17"
@@ -241,7 +239,7 @@
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding LeftPanelOpen,
+                              IsChecked="{Binding LeftPanelOpen.Value,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
@@ -259,7 +257,7 @@
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding TopPanelOpen,
+                              IsChecked="{Binding TopPanelOpen.Value,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
@@ -284,7 +282,7 @@
                               Height="35"
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
-                              IsChecked="{Binding BottomPanelOpen,
+                              IsChecked="{Binding BottomPanelOpen.Value,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"

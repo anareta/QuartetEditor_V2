@@ -90,19 +90,7 @@ namespace QuartetEditor.Views
 
             /* ウィンドウを閉じるかここでダイアログを出す */
 
-            this.SetPanelStateToConfig();
             ConfigManager.Current.SaveConfig();
-        }
-
-        /// <summary>
-        /// パネルの状態を設定情報クラスに設定
-        /// </summary>
-        private void SetPanelStateToConfig()
-        {
-            var conf = ConfigManager.Current.Config;
-            conf.LeftPanelOpen = this.LeftPanelOpen;
-            conf.TopPanelOpen = this.TopPanelOpen;
-            conf.BottomPanelOpen = this.BottomPanelOpen;
         }
     }
 }

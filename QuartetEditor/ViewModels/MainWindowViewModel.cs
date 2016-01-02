@@ -6,9 +6,11 @@ using QuartetEditor.Extensions;
 using QuartetEditor.Models;
 using QuartetEditor.Views.DraggableTreeView.Description;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,8 +20,13 @@ namespace QuartetEditor.ViewModels
     /// <summary>
     /// メインウィンドウViewModel
     /// </summary>
-    class MainWindowViewModel : BindableBase
+    class MainWindowViewModel : BindableBase, IDisposable
     {
+        /// <summary>
+        /// 破棄用
+        /// </summary>
+        private CompositeDisposable Disposable { get; } = new CompositeDisposable();
+
         /// <summary>
         /// モデルクラス
         /// </summary>
@@ -39,6 +46,23 @@ namespace QuartetEditor.ViewModels
         /// 設定情報
         /// </summary>
         private ConfigManager ConfigModel { get; } = ConfigManager.Current;
+
+        /// <summary>
+        /// 設定FlyoutViewModel
+        /// </summary>
+        public ConfigFlyoutViewModel _ConfigFlyoutViewModel = new ConfigFlyoutViewModel();
+
+        public ConfigFlyoutViewModel ConfigFlyoutViewModel
+        {
+            get
+            {
+                return this._ConfigFlyoutViewModel;
+            }
+            set
+            {
+                this.SetProperty(ref this._ConfigFlyoutViewModel, value);
+            }
+        }
 
         /// <summary>
         /// ノードのドラッグドロップ処理の媒介
@@ -98,47 +122,17 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 左参照パネルの開閉状態
         /// </summary>
-        private bool? _LeftPanelOpen = true;
-
-        public bool? LeftPanelOpen
-        {
-            get { return this._LeftPanelOpen; }
-            set
-            {
-                this.SetProperty(ref this._LeftPanelOpen, value);
-                this.RisePanelState();
-            }
-        }
+        public ReactiveProperty<bool> LeftPanelOpen { get; }
 
         /// <summary>
         /// 上参照パネルの開閉状態
         /// </summary>
-        private bool? _TopPanelOpen = true;
-
-        public bool? TopPanelOpen
-        {
-            get { return this._TopPanelOpen; }
-            set
-            {
-                this.SetProperty(ref this._TopPanelOpen, value);
-                this.RisePanelState();
-            }
-        }
+        public ReactiveProperty<bool> TopPanelOpen { get; }
 
         /// <summary>
         /// 下参照パネルの開閉状態
         /// </summary>
-        private bool? _BottomPanelOpen = true;
-
-        public bool? BottomPanelOpen
-        {
-            get { return this._BottomPanelOpen; }
-            set
-            {
-                this.SetProperty(ref this._BottomPanelOpen, value);
-                this.RisePanelState();
-            }
-        }
+        public ReactiveProperty<bool> BottomPanelOpen { get; }
 
         /// <summary>
         /// パネルの開閉リクエストをViewに投げる
@@ -170,7 +164,6 @@ namespace QuartetEditor.ViewModels
             set
             {
                 this.SetProperty(ref this._IsAboutOpen, value);
-                this.RisePanelState();
             }
         }
 
@@ -181,30 +174,6 @@ namespace QuartetEditor.ViewModels
 
         #endregion AboutFlyout
 
-        #region ConfigFlyout
-
-        /// <summary>
-        /// ConfigFlyoutの開閉状態
-        /// </summary>
-        private bool _IsConfigOpen = false;
-
-        public bool IsConfigOpen
-        {
-            get { return this._IsConfigOpen; }
-            set
-            {
-                this.SetProperty(ref this._IsConfigOpen, value);
-                this.RisePanelState();
-            }
-        }
-
-        /// <summary>
-        /// ConfigFlyout開閉コマンド
-        /// </summary>
-        public ReactiveCommand OpenConfigCommand { get; private set; } = new ReactiveCommand();
-
-        #endregion ConfigFlyout
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -213,6 +182,25 @@ namespace QuartetEditor.ViewModels
             this.Tree = this.Model
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
+
+            #region Panel
+
+            this.LeftPanelOpen = this.ConfigModel.Config
+            .ToReactivePropertyAsSynchronized(x => x.LeftPanelOpen)
+            .AddTo(this.Disposable);
+            this.LeftPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
+
+            this.TopPanelOpen = this.ConfigModel.Config
+            .ToReactivePropertyAsSynchronized(x => x.TopPanelOpen)
+            .AddTo(this.Disposable);
+            this.TopPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
+
+            this.BottomPanelOpen = this.ConfigModel.Config
+            .ToReactivePropertyAsSynchronized(x => x.BottomPanelOpen)
+            .AddTo(this.Disposable);
+            this.BottomPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
+
+            #endregion Panel
 
             #region DragDrop
 
@@ -278,12 +266,6 @@ namespace QuartetEditor.ViewModels
 
             #endregion AboutFlyout
 
-            #region ConfigFlyout
-
-            // ConfigCommand
-            this.OpenConfigCommand.Subscribe(_ => this.IsConfigOpen = true);
-
-            #endregion ConfigFlyout
         }
 
         /// <summary>
@@ -291,12 +273,14 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public void Initialize()
         {
-            /* パネルの開閉初期状態などはここで設定する */
-            this.LeftPanelOpen = this.ConfigModel.Config.LeftPanelOpen;
-            this.TopPanelOpen = this.ConfigModel.Config.TopPanelOpen;
-            this.BottomPanelOpen = this.ConfigModel.Config.BottomPanelOpen;
+        }
 
-            this.SelectedItem = this.Tree.First();
+        /// <summary>
+        /// 破棄処理
+        /// </summary>
+        public void Dispose()
+        {
+            this.Disposable.Dispose();
         }
 
     }

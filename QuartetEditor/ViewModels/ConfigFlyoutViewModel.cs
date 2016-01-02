@@ -15,13 +15,8 @@ using QuartetEditor.ItemSources;
 
 namespace QuartetEditor.ViewModels
 {
-    class ConfigFlyoutViewModel : IDisposable
+    class ConfigFlyoutViewModel : BindableBase, IDisposable
     {
-        /// <summary>
-        /// 設定画面を閉じるイベント
-        /// </summary>
-        public event Action CloseFlyout;
-
         /// <summary>
         /// 破棄用
         /// </summary>
@@ -148,38 +143,31 @@ namespace QuartetEditor.ViewModels
             #region CenterTextEditor
 
             this.CenterTextEditorFontSize = this.Model
-                .ObserveProperty(x => x.CenterTextEditorFontSize)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.CenterTextEditorFontSize)
                 .AddTo(this.Disposable);
 
             this.CenterTextEditorFontFamily = this.Model
-                .ObserveProperty(x => x.CenterTextEditorFontFamily)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.CenterTextEditorFontFamily)
                 .AddTo(this.Disposable);
 
             this.CenterTextEditorLineHeight = this.Model
-                .ObserveProperty(x => x.CenterTextEditorLineHeight)
-                .ToReactiveProperty()
+                .ToReactivePropertyAsSynchronized(x => x.CenterTextEditorLineHeight)
                 .AddTo(this.Disposable);
 
             this.CenterTextEditorTextWrapping = this.Model
-               .ObserveProperty(x => x.CenterTextEditorTextWrapping)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.CenterTextEditorTextWrapping)
                .AddTo(this.Disposable);
 
             this.HighlightCurrentLine = this.Model
-               .ObserveProperty(x => x.HighlightCurrentLine)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.HighlightCurrentLine)
                .AddTo(this.Disposable);
 
             this.ShowLineNumbers = this.Model
-               .ObserveProperty(x => x.ShowLineNumbers)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.ShowLineNumbers)
                .AddTo(this.Disposable);
 
             this.HeaderCharactors = this.Model
-               .ObserveProperty(x => x.HeaderCharactors)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.HeaderCharactors)
                .AddTo(this.Disposable);
 
             #endregion CenterTextEditor
@@ -187,23 +175,19 @@ namespace QuartetEditor.ViewModels
             #region LeftTextEditor
 
             this.LeftTextEditorFontSize = this.Model
-               .ObserveProperty(x => x.LeftTextEditorFontSize)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorFontSize)
                .AddTo(this.Disposable);
 
             this.LeftTextEditorFontFamily = this.Model
-               .ObserveProperty(x => x.LeftTextEditorFontFamily)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorFontFamily)
                .AddTo(this.Disposable);
 
             this.LeftTextEditorLineHeight = this.Model
-               .ObserveProperty(x => x.LeftTextEditorLineHeight)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorLineHeight)
                .AddTo(this.Disposable);
 
             this.LeftTextEditorTextWrapping = this.Model
-               .ObserveProperty(x => x.LeftTextEditorTextWrapping)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorTextWrapping)
                .AddTo(this.Disposable);
 
             #endregion LeftTextEditor
@@ -211,31 +195,77 @@ namespace QuartetEditor.ViewModels
             #region TopBottomTextEditor
 
             this.TopBottomTextEditorFontSize = this.Model
-               .ObserveProperty(x => x.TopBottomTextEditorFontSize)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorFontSize)
                .AddTo(this.Disposable);
 
             this.TopBottomTextEditorFontFamily = this.Model
-               .ObserveProperty(x => x.TopBottomTextEditorFontFamily)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorFontFamily)
                .AddTo(this.Disposable);
 
             this.TopBottomTextEditorLineHeight = this.Model
-               .ObserveProperty(x => x.TopBottomTextEditorLineHeight)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorLineHeight)
                .AddTo(this.Disposable);
 
             this.TopBottomTextEditorTextWrapping = this.Model
-               .ObserveProperty(x => x.TopBottomTextEditorTextWrapping)
-               .ToReactiveProperty()
+               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorTextWrapping)
                .AddTo(this.Disposable);
 
             #endregion TopBottomTextEditor
+
+
+            this.OpenCommand.Subscribe(_ => this.IsOpen = true);
+            this.CloseCommand.Subscribe(_ => this.IsOpen = false);
+            this.ApplyCommand.Subscribe(_ => this.Apply() );
+
+
+            this.EnlistTransaction();
         }
 
+        /// <summary>
+        /// 破棄処理
+        /// </summary>
         public void Dispose()
         {
             this.Disposable.Dispose();
+        }
+
+
+        /// <summary>
+        /// 開閉状態
+        /// </summary>
+        private bool _IsOpen = false;
+
+        public bool IsOpen
+        {
+            get { return this._IsOpen; }
+            set
+            {
+                this.SetProperty(ref this._IsOpen, value);
+            }
+        }
+
+        /// <summary>
+        /// 開く
+        /// </summary>
+        public ReactiveCommand OpenCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 閉じる
+        /// </summary>
+        public ReactiveCommand CloseCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 適用
+        /// </summary>
+        public ReactiveCommand ApplyCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 適用処理
+        /// </summary>
+        private void Apply()
+        {
+            this._backings = null;
+            this.CloseCommand.Execute();
         }
 
         /// <summary>
@@ -270,6 +300,18 @@ namespace QuartetEditor.ViewModels
                     this._backings.Add(property.Name, property.GetValue(this.Model, null));
                 }
             }
+        }
+
+        /// <summary>
+        /// Flyoutを閉じるときの処理
+        /// </summary>
+        public void OnOpenChanged()
+        {
+            if (this._backings?.Count > 0)
+            {
+                this.Rollback();
+            }
+            this.EnlistTransaction();
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using QuartetEditor.ViewModels;
+﻿using MahApps.Metro.Controls;
+using QuartetEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,11 @@ namespace QuartetEditor.Views
     /// <summary>
     /// ConfigFlyout.xaml の相互作用ロジック
     /// </summary>
-    public partial class ConfigFlyout : UserControl
+    public partial class ConfigFlyout : Flyout
     {
         public ConfigFlyout()
         {
-            this.Language = XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.Name);
+            base.Language = XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.Name);
             InitializeComponent();
         }
     }
