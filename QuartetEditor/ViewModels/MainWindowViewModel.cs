@@ -207,6 +207,15 @@ namespace QuartetEditor.ViewModels
 
         #endregion Focus
 
+        #region NodeManipulation
+        /// <summary>
+        /// 名前変更コマンド
+        /// </summary>
+        public ReactiveCommand<string> NameEditCommand { get; private set; } = new ReactiveCommand<string>();
+
+        #endregion NodeManipulation
+
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -325,6 +334,12 @@ namespace QuartetEditor.ViewModels
                 this.setFocusRequest.Raise(new Confirmation { Content = param });
             });
             #endregion Focus
+
+            #region NodeManipulation
+
+            this.NameEditCommand.Subscribe(_=> this.SelectedItem.IsNameEditMode.Value = true );
+
+            #endregion NodeManipulation
 
         }
 

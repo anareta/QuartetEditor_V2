@@ -13,6 +13,7 @@
                 BorderThickness="1.5"
                 Visibility="Hidden"
                 Height="{Binding ActualHeight, ElementName=_TextBlock}"
+                Width="{Binding ActualWidth, ElementName=_TextBlock}"
                 BorderBrush="{StaticResource ResourceKey=HighlightBrush}" />
 
         <TextBlock Name="_TextBlock" 
@@ -24,8 +25,14 @@
                  LostFocus="TextEditor_LostFocus"
                  LostKeyboardFocus="TextEditor_LostKeyboardFocus"
                  TextBlock.FontSize="{Binding FontSize,
-                                              ElementName=TextBlock}"
+                                              ElementName=_TextBlock}"
                  Visibility="Collapsed" />
-        <Ellipse Name="_Mark" Fill="#1BA1E2" Width="5" Height="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-8,0,0,0"/>
+        <Ellipse Name="_Mark" 
+                 Fill="#1BA1E2" 
+                 Width="5" 
+                 Height="5" 
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Center" 
+                 Margin="-8,0,0,0"/>
     </Grid>
 </UserControl>
