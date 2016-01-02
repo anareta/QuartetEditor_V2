@@ -117,6 +117,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Attributes\TransactionAttribute.cs" />
+    <Compile Include="Enums\PanelKindEnum.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Views\Controls\InsertionAdorner.cs" />
     <Compile Include="Views\Converters\FontFamilyToNameConverter.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
+    <Compile Include="Views\Messengers\SetFocusAction.cs" />
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

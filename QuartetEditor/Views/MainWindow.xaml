@@ -4,6 +4,7 @@
                    xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
                    xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
                    xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
+                   xmlns:enum="clr-namespace:QuartetEditor.Enums"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
                    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -86,9 +87,39 @@
         </ResourceDictionary>
     </metro:MetroWindow.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Key="F3"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}" />
+        <KeyBinding Key="F4"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_CenterTextEditor,
+                                               Path=Name}" />
+        <KeyBinding Key="S"
+                    Command="{Binding SaveCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="L"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Left}"
+                    Modifiers="Control" />
+        <KeyBinding Key="T"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Top}"
+                    Modifiers="Control" />
+        <KeyBinding Key="B"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Bottom}"
+                    Modifiers="Control" />
+    </Window.InputBindings>
+
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
             <messenger:PanelOpenAction />
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding SetFocusRequest}">
+            <messenger:SetFocusAction />
         </prism:InteractionRequestTrigger>
 
         <i:EventTrigger EventName="ContentRendered">

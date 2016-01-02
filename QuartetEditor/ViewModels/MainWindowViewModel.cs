@@ -2,6 +2,7 @@
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using QuartetEditor.Entities;
+using QuartetEditor.Enums;
 using QuartetEditor.Extensions;
 using QuartetEditor.Models;
 using QuartetEditor.Views.DraggableTreeView.Description;
@@ -161,6 +162,11 @@ namespace QuartetEditor.ViewModels
             panelOpenRequest.Raise(new Confirmation { Content = state});
         }
 
+        /// <summary>
+        /// Panel開閉コマンド
+        /// </summary>
+        public ReactiveCommand<PanelKindEnum> PanelChangeCommand { get; private set; } = new ReactiveCommand<PanelKindEnum>();
+
         #endregion PanelOpen
 
         #region AboutFlyout
@@ -185,6 +191,21 @@ namespace QuartetEditor.ViewModels
         public ReactiveCommand OpenAboutCommand { get; private set; }　= new ReactiveCommand();
 
         #endregion AboutFlyout
+
+        #region Focus
+        /// <summary>
+        /// フォーカスの設定要求
+        /// </summary>
+        private InteractionRequest<Confirmation> setFocusRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest SetFocusRequest { get { return this.setFocusRequest; } }
+
+        /// <summary>
+        /// フォーカス設定コマンド
+        /// </summary>
+        public ReactiveCommand<string> SetFocusCommand { get; private set; } = new ReactiveCommand<string>();
+
+        #endregion Focus
 
         /// <summary>
         /// コンストラクタ
@@ -211,6 +232,24 @@ namespace QuartetEditor.ViewModels
             .ToReactivePropertyAsSynchronized(x => x.BottomPanelOpen)
             .AddTo(this.Disposable);
             this.BottomPanelOpen.PropertyChangedAsObservable().Subscribe(_ => this.RisePanelState());
+
+            this.PanelChangeCommand.Subscribe(kind =>
+            {
+                switch (kind)
+                {
+                    case PanelKindEnum.Left:
+                        this.LeftPanelOpen.Value = !this.LeftPanelOpen.Value;
+                        return;
+                    case PanelKindEnum.Top:
+                        this.TopPanelOpen.Value = !this.TopPanelOpen.Value;
+                        return;
+                    case PanelKindEnum.Bottom:
+                        this.BottomPanelOpen.Value = !this.BottomPanelOpen.Value;
+                        return;
+                    default:
+                        return;
+                }
+            });
 
             #endregion Panel
 
@@ -277,6 +316,15 @@ namespace QuartetEditor.ViewModels
             this.OpenAboutCommand.Subscribe( _ => this.IsAboutOpen = true );
 
             #endregion AboutFlyout
+
+            #region Focus
+            // SetFocusCommand
+            this.SetFocusCommand.Subscribe(param =>
+            {
+                // Viewにリクエストを投げる
+                this.setFocusRequest.Raise(new Confirmation { Content = param });
+            });
+            #endregion Focus
 
         }
 
