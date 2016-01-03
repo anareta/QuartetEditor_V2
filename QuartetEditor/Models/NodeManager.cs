@@ -171,7 +171,7 @@ namespace QuartetEditor.Models
         /// すべてのノードに対しての操作を提供します
         /// </summary>
         /// <param name="act"></param>
-        public void WorkAllNode(Action<Node> act)
+        private void WorkAllNode(Action<Node> act)
         {
             this.Tree.ForEach(node => node.WorkAllNode(act));
         }
@@ -207,7 +207,8 @@ namespace QuartetEditor.Models
 
         /// <summary>
         /// 指定されたNodeの姉を取得します
-        /// 見つからない場合はnullを返します
+        /// 見つからない場合は親類を探します
+        /// それでも見つからない場合はnullを返します
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -233,27 +234,38 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
+        /// 指定されたNodeの姉を取得します
+        /// 見つからない場合はnullを返します
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private Node GetOlder(Node item)
+        {
+            var list = this.GetParent(item)?.Children;
+            if (list == null)
+            {
+                list = this.Tree;
+            }
+            int index = list.IndexOf(item);
+
+            return list.ElementAtOrDefault(index - 1);
+
+        }
+
+        /// <summary>
         /// 祖先をたどり、親類（上）のノードを取得します
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetCousinLast(Node item)
+        private Node GetCousinLast(Node item)
         {
             for (int i = 0; i < 3; i++)
             {
-                var ancestorChild = this.FollowParent(item, i);
-                var ancestor = this.FollowParent(item, i + 1);
-                var list = ancestor?.Children;
-                if (list == null)
-                {
-                    list = this.Tree;
-                }
-                int index = list.IndexOf(ancestorChild);
-                var ancestorLast = list.ElementAtOrDefault(index - 1);
+                var ancestor = this.GetYounger(this.FollowParent(item, i));
 
-                if (ancestorLast != null)
+                if (ancestor != null)
                 {
-                    return this.FollowLastChild(ancestorLast, i);
+                    return this.FollowLastChild(ancestor, i);
                 }
                 else
                 {
@@ -269,8 +281,13 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public Node FollowParent(Node item, int count)
+        private Node FollowParent(Node item, int count)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             var parent = this.GetParent(item);
             if (parent == null)
             {
@@ -293,8 +310,13 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public Node FollowLastChild(Node item, int count)
+        private Node FollowLastChild(Node item, int count)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             if (item.Children.Count == 0)
             {
                 return item;
@@ -316,8 +338,12 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public Node FollowFirstChild(Node item, int count)
+        private Node FollowFirstChild(Node item, int count)
         {
+            if (item == null)
+            {
+                return null;
+            }
             if (item.Children.Count == 0)
             {
                 return item;
@@ -335,7 +361,8 @@ namespace QuartetEditor.Models
 
         /// <summary>
         /// 指定されたNodeの妹を取得します
-        /// 見つからない場合はnullを返します
+        /// 見つからない場合は親類を探します
+        /// それでも見つからない場合はnullを返します
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -360,29 +387,37 @@ namespace QuartetEditor.Models
             }
         }
 
+        /// <summary>
+        /// 指定されたNodeの妹を取得します
+        /// 見つからない場合はnullを返します
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private Node GetYounger(Node item)
+        {
+            var list = this.GetParent(item)?.Children;
+            if (list == null)
+            {
+                list = this.Tree;
+            }
+            int index = list.IndexOf(item);
+            return list.ElementAtOrDefault(index + 1);
+        }
 
         /// <summary>
         /// 祖先をたどり、親類（下）のノードを取得します
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetCousinFirst(Node item)
+        private Node GetCousinFirst(Node item)
         {
             for (int i = 0; i < 3; i++)
             {
-                var ancestorChild = this.FollowParent(item, i);
-                var ancestor = this.FollowParent(item, i + 1);
-                var list = ancestor?.Children;
-                if (list == null)
-                {
-                    list = this.Tree;
-                }
-                int index = list.IndexOf(ancestorChild);
-                var ancestorLast = list.ElementAtOrDefault(index + 1);
+                var ancestor = this.GetYounger(this.FollowParent(item, i));
 
-                if (ancestorLast != null)
+                if (ancestor != null)
                 {
-                    return this.FollowFirstChild(ancestorLast, i);
+                    return this.FollowFirstChild(ancestor, i);
                 }
                 else
                 {
