@@ -1,5 +1,4 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
-using Prism.Mvvm;
 using QuartetEditor.Enums;
 using QuartetEditor.Models;
 using Reactive.Bindings;
@@ -18,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace QuartetEditor.ViewModels
 {
-    class NodeViewModel : BindableBase, IDisposable
+    class NodeViewModel : IDisposable
     {
         /// <summary>
         /// 破棄用
