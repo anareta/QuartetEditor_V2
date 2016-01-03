@@ -191,6 +191,9 @@ namespace QuartetEditor.Models
         public Node(string name) : this()
         {
             this._Name = name;
+#if DEBUG
+            this._Content.Text = name;
+#endif
         }
 
 
@@ -206,12 +209,13 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// IsDragOverフラグをすべてfalseにします
+        /// すべてのノードに対しての操作を提供します
         /// </summary>
-        public void ResetDragOverFlag()
+        /// <param name="act"></param>
+        public void WorkAllNode(Action<Node> act)
         {
-            this.IsDragOver = false;
-            this.Children.ForEach(node => node.ResetDragOverFlag());
+            act(this);
+            this.Children.ForEach(node => node.WorkAllNode(act));
         }
     }
 }

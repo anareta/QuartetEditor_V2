@@ -27,7 +27,7 @@ namespace QuartetEditor.Views.Controls
         public EditBox()
         {
             InitializeComponent();
-            this.SetMarkVisibility();
+            this.SetRefferdMark();
         }
 
         #region Text
@@ -113,7 +113,7 @@ namespace QuartetEditor.Views.Controls
                 thisInstance._TextEditor.Visibility = Visibility.Collapsed;
                 thisInstance._TextBlock.Visibility = Visibility.Visible;
             }
-            thisInstance.SetMarkVisibility();
+            thisInstance.SetRefferdMark();
         }
 
         #endregion CanEdit
@@ -129,7 +129,7 @@ namespace QuartetEditor.Views.Controls
             set
             {
                 SetValue(IsReferredProperty, value);
-                this.SetMarkVisibility();
+                this.SetRefferdMark();
             }
         }
 
@@ -322,15 +322,17 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// 参照マークを変更する
         /// </summary>
-        public void SetMarkVisibility()
+        public void SetRefferdMark()
         {
             if (this.IsReferred && this._TextBlock.Visibility == Visibility.Visible)
             {
-                this._Mark.Visibility = System.Windows.Visibility.Visible;
+                this._TextBlock.Visibility = Visibility.Collapsed;
+                this._TextBlockReferred.Visibility = Visibility.Visible;
             }
             else
             {
-                this._Mark.Visibility = System.Windows.Visibility.Hidden;
+                this._TextBlock.Visibility = Visibility.Visible;
+                this._TextBlockReferred.Visibility = Visibility.Collapsed;
             }
         }
 

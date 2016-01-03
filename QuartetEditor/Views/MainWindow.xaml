@@ -569,7 +569,7 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
-                                                 BindableText="{Binding Path=PrevTextContent,
+                                                 BindableText="{Binding Path=NextTextContent,
                                                                         Mode=OneWay,
                                                                         UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,

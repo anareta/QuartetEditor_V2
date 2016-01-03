@@ -18,6 +18,11 @@
 
         <TextBlock Name="_TextBlock" 
                    Margin="0,0,0,0"/>
+        <TextBlock Name="_TextBlockReferred"
+                   Foreground="{StaticResource ResourceKey=AccentColorBrush}" 
+                   Text="{Binding Text, ElementName=_TextBlock}"
+                   Visibility="Collapsed"
+                   Margin="0,0,0,0"/>
 
         <TextBox Name="_TextEditor"
                  BorderThickness="0"
@@ -28,11 +33,12 @@
                                               ElementName=_TextBlock}"
                  Visibility="Collapsed" />
         <Ellipse Name="_Mark" 
-                 Fill="#1BA1E2" 
+                 Fill="{StaticResource ResourceKey=AccentColorBrush}" 
                  Width="5" 
                  Height="5" 
                  HorizontalAlignment="Left" 
                  VerticalAlignment="Center" 
+                 Visibility="Collapsed"
                  Margin="-8,0,0,0"/>
     </Grid>
 </UserControl>
