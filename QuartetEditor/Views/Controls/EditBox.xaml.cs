@@ -289,7 +289,7 @@ namespace QuartetEditor.Views.Controls
         /// <param name="e"></param>
         private void UserControl_PreviewDragOver(object sender, DragEventArgs e)
         {
-            if (e.GetPosition(this).X < (this.ActualWidth*0.7))
+            if (e.GetPosition(this).X < (this.ActualWidth*0.6))
             {
                 if (e.GetPosition(this).Y < this.ActualHeight / 2)
                 {

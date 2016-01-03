@@ -13,14 +13,20 @@
                 BorderThickness="1.5"
                 Visibility="Hidden"
                 Height="{Binding ActualHeight, ElementName=_TextBlock}"
-                Width="{Binding ActualWidth, ElementName=_TextBlock}"
                 BorderBrush="{StaticResource ResourceKey=HighlightBrush}" />
 
         <TextBlock Name="_TextBlock" 
-                   Margin="0,0,0,0"/>
+                   Height="Auto"
+                   VerticalAlignment="Center"
+                   Width="Auto" 
+                   HorizontalAlignment="Left"
+                   Margin="0,0,0,0"
+                   MinWidth="40"/>
         <TextBlock Name="_TextBlockReferred"
                    Foreground="{StaticResource ResourceKey=AccentColorBrush}" 
                    Text="{Binding Text, ElementName=_TextBlock}"
+                   Width="Auto" 
+                   HorizontalAlignment="Left"
                    Visibility="Collapsed"
                    Margin="0,0,0,0"/>
 
