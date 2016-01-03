@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -487,7 +488,10 @@ namespace QuartetEditor.ViewModels
 
             #region DragDrop
 
-            this.DragAcceptDescription.DragOverAction += (System.Windows.DragEventArgs args) => 
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DragAcceptDescription.DragOverAction += h,
+            h => this.DragAcceptDescription.DragOverAction -= h).Subscribe(args =>
             {
                 if (args.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) &&
                 args.Data.GetDataPresent(typeof(string)))
@@ -501,10 +505,15 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                this.Model.DragOverAction(target?.Model);
-            };
+                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-            this.DragAcceptDescription.DragEnterAction += (System.Windows.DragEventArgs args) =>
+                this.Model.DragOverAction(target?.Model, data?.Model);
+            });
+
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DragAcceptDescription.DragEnterAction += h,
+            h => this.DragAcceptDescription.DragEnterAction -= h).Subscribe(args =>
             {
                 var fe = args.OriginalSource as FrameworkElement;
                 if (fe == null)
@@ -512,10 +521,15 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                this.Model.DragEnterAction(target?.Model);
-            };
+                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-            this.DragAcceptDescription.DragLeaveAction += (System.Windows.DragEventArgs args) =>
+                this.Model.DragEnterAction(target?.Model, data?.Model);
+            });
+
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DragAcceptDescription.DragLeaveAction += h,
+            h => this.DragAcceptDescription.DragLeaveAction -= h).Subscribe(args =>
             {
                 var fe = args.OriginalSource as FrameworkElement;
                 if (fe == null)
@@ -524,9 +538,12 @@ namespace QuartetEditor.ViewModels
                 }
                 var target = fe.DataContext as NodeViewModel;
                 this.Model.DragLeaveAction(target?.Model);
-            };
+            });
 
-            this.DragAcceptDescription.DragDropAction += (System.Windows.DragEventArgs args) =>
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DragAcceptDescription.DragDropAction += h,
+            h => this.DragAcceptDescription.DragDropAction -= h).Subscribe(args =>
             {
                 var fe = args.OriginalSource as FrameworkElement;
                 if (fe == null)
@@ -537,8 +554,7 @@ namespace QuartetEditor.ViewModels
                 var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragDropAction(target?.Model, data?.Model);
-
-            };
+            });
 
             #endregion DragDrop
 

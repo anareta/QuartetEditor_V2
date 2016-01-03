@@ -62,17 +62,17 @@ namespace QuartetEditor.Views.Behaviors
             }
             this.AssociatedObject.BorderBrush = this.NotFocusedBrush;
 
-            var gotFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
             h => (s, e) => h(e),
             h => this.AssociatedObject.GotFocus += h,
-            h => this.AssociatedObject.GotFocus -= h);
-            gotFocus.Subscribe(this.OnGotFocus);
+            h => this.AssociatedObject.GotFocus -= h)
+            .Subscribe(this.OnGotFocus);
 
-            var lostFocus = Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
             h => (s, e) => h(e),
             h => this.AssociatedObject.LostFocus += h,
-            h => this.AssociatedObject.LostFocus -= h);
-            lostFocus.Subscribe(this.OnLostFocus);
+            h => this.AssociatedObject.LostFocus -= h)
+            .Subscribe(this.OnLostFocus);
         }
 
         /// <summary>

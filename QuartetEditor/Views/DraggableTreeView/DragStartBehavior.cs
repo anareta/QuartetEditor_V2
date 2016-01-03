@@ -47,24 +47,23 @@ namespace QuartetEditor.Views.DraggableTreeView
 
         protected override void OnAttached()
         {
-            var previewMouseDown = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+            Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewMouseDown += h,
-                h => this.AssociatedObject.PreviewMouseDown -= h);
+                h => this.AssociatedObject.PreviewMouseDown -= h)
+                .Subscribe(e => this.AssociatedObject_PreviewMouseDown(null, e));
 
-            var previewMouseMove = Observable.FromEvent<MouseEventHandler, MouseEventArgs>(
+            Observable.FromEvent<MouseEventHandler, MouseEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewMouseMove += h,
-                h => this.AssociatedObject.PreviewMouseMove -= h);
+                h => this.AssociatedObject.PreviewMouseMove -= h)
+                .Subscribe(e => this.AssociatedObject_PreviewMouseMove(null, e));
 
-            var previewMouseUp = Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+            Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewMouseUp += h,
-                h => this.AssociatedObject.PreviewMouseUp -= h);
-
-            previewMouseDown.Subscribe(e => this.AssociatedObject_PreviewMouseDown(null, e));
-            previewMouseMove.Subscribe(e => this.AssociatedObject_PreviewMouseMove(null, e));
-            previewMouseUp.Subscribe(e => this.AssociatedObject_PreviewMouseUp(null, e));
+                h => this.AssociatedObject.PreviewMouseUp -= h)
+                .Subscribe(e => this.AssociatedObject_PreviewMouseUp(null, e));
 
             base.OnAttached();
         }

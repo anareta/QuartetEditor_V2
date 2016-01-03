@@ -27,31 +27,29 @@ namespace QuartetEditor.Views.DraggableTreeView
 
         protected override void OnAttached()
         {
-            var previewDragOver = Observable.FromEvent<DragEventHandler, DragEventArgs>(
+            Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewDragOver += h,
-                h => this.AssociatedObject.PreviewDragOver -= h);
+                h => this.AssociatedObject.PreviewDragOver -= h)
+                .Subscribe(arg => this.AssociatedObject_DragOver(null, arg));
 
-            var previewDrop = Observable.FromEvent<DragEventHandler, DragEventArgs>(
+            Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewDrop += h,
-                h => this.AssociatedObject.PreviewDrop -= h);
+                h => this.AssociatedObject.PreviewDrop -= h)
+                .Subscribe(arg => this.AssociatedObject_Drop(null, arg));
 
-            previewDragOver.Subscribe(arg => this.AssociatedObject_DragOver(null, arg));
-            previewDrop.Subscribe(arg => this.AssociatedObject_Drop(null, arg));
-
-            var previewDragEnter = Observable.FromEvent<DragEventHandler, DragEventArgs>(
+            Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewDragEnter += h,
-                h => this.AssociatedObject.PreviewDragEnter -= h);
+                h => this.AssociatedObject.PreviewDragEnter -= h)
+                .Subscribe(this.AssociatedObject_Enter);
 
-            var previewDragLeave = Observable.FromEvent<DragEventHandler, DragEventArgs>(
+            Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
                 h => this.AssociatedObject.PreviewDragLeave += h,
-                h => this.AssociatedObject.PreviewDragLeave -= h);
-
-            previewDragEnter.Subscribe(this.AssociatedObject_Enter);
-            previewDragLeave.Subscribe(this.AssociatedObject_Leave);
+                h => this.AssociatedObject.PreviewDragLeave -= h)
+                .Subscribe(this.AssociatedObject_Leave);
 
             base.OnAttached();
         }

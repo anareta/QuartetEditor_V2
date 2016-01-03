@@ -41,11 +41,11 @@ namespace QuartetEditor.Views.Behaviors
         {
             base.OnAttached();
 
-            var selectedItemChanged = Observable.FromEvent<RoutedPropertyChangedEventHandler<object>, RoutedPropertyChangedEventArgs<object>>(
+            Observable.FromEvent<RoutedPropertyChangedEventHandler<object>, RoutedPropertyChangedEventArgs<object>>(
             h => (s, e) => h(e),
             h => this.AssociatedObject.SelectedItemChanged += h,
-            h => this.AssociatedObject.SelectedItemChanged -= h);
-            selectedItemChanged.Subscribe(e => this.SelectedItem = e.NewValue);
+            h => this.AssociatedObject.SelectedItemChanged -= h)
+            .Subscribe(e => this.SelectedItem = e.NewValue);
         }
 
         protected override void OnDetaching()

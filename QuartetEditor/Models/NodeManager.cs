@@ -113,7 +113,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ノードのドラッグオーバー時の処理
         /// </summary>
-        public void DragOverAction(Node target)
+        public void DragOverAction(Node target, Node dropped)
         {
             if (target == null)
             {
@@ -126,14 +126,23 @@ namespace QuartetEditor.Models
         /// ノードのドラッグエンター時の処理
         /// </summary>
         /// <param name="target"></param>
-        public void DragEnterAction(Node target)
+        public void DragEnterAction(Node target, Node dropped)
         {
             this.WorkAllNode(c => c.IsDragOver = false);
+
             if (target != null)
             {
-                target.IsDragOver = true;
+                if (target.ID == dropped.ID)
+                {
+                    return;
+                }
+                else
+                {
+                    target.IsDragOver = true;
+                    return;
+                }
             }
-            if (target == null)
+            else
             {
                 this.Tree.Last().DropPosition = Enums.DropPositionEnum.Next;
                 this.Tree.Last().IsDragOver = true;
