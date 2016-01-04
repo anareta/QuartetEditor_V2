@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
+using System.Reactive.Subjects;
 
 namespace QuartetEditor.Models
 {
@@ -31,6 +32,11 @@ namespace QuartetEditor.Models
         /// 読み取り専用データツリー
         /// </summary>
         public ReadOnlyObservableCollection<Node> Tree { get; }
+
+        /// <summary>
+        /// ノードが変更されたことの通知
+        /// </summary>
+        public Subject<NotifyCollectionChangedAction> NodeChanged { get; } = new Subject<NotifyCollectionChangedAction>();
 
         /// <summary>
         /// 編集されたか
@@ -110,6 +116,7 @@ namespace QuartetEditor.Models
         }
 
         #region NodeTransaction
+
         /// <summary>
         /// ノードを末尾に追加する
         /// </summary>
@@ -163,6 +170,9 @@ namespace QuartetEditor.Models
                         throw new NotImplementedException();
                 }
             }
+
+            // 変更を通知
+            this.NodeChanged.OnNext(NotifyCollectionChangedAction.Move);
         }
 
         #endregion NodeTransaction

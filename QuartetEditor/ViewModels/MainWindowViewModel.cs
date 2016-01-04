@@ -445,6 +445,13 @@ namespace QuartetEditor.ViewModels
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
+            #region Content
+
+            this.Model.NodeChanged
+                .Subscribe(x => this.RisePanelChanged());
+
+            #endregion Content
+
             #region Panel
 
             this.LeftPanelOpen = this.Config
@@ -569,7 +576,6 @@ namespace QuartetEditor.ViewModels
                 var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragDropAction(target?.Model, data?.Model);
-                this.RisePanelChanged();
             });
 
             #endregion DragDrop
