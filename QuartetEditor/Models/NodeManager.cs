@@ -99,6 +99,17 @@ namespace QuartetEditor.Models
             });
         }
 
+
+        /// <summary>
+        /// すべてのノードに対しての操作を提供します
+        /// </summary>
+        /// <param name="act"></param>
+        private void WorkAllNode(Action<Node> act)
+        {
+            this.Tree.ForEach(node => node.WorkAllNode(act));
+        }
+
+        #region NodeTransaction
         /// <summary>
         /// ノードを末尾に追加する
         /// </summary>
@@ -109,6 +120,54 @@ namespace QuartetEditor.Models
             this.TreeSource.Add(item);
             return item;
         }
+
+        /// <summary>
+        /// ノードの移動処理
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="target"></param>
+        private void Move(Node item, Node target)
+        {
+            // 移動元から削除
+            {
+                IList<Node> parentTree = this.GetParent(item)?.ChildrenSource;
+                if (parentTree == null)
+                {
+                    parentTree = this.TreeSource;
+                }
+                parentTree.Remove(item);
+            }
+
+            // 移動先に追加
+            {
+                switch (target.DropPosition)
+                {
+                    case Enums.DropPositionEnum.Prev:
+                    case Enums.DropPositionEnum.Next:
+                        IList<Node> parentTree = this.GetParent(target)?.ChildrenSource;
+                        if (parentTree == null)
+                        {
+                            parentTree = this.TreeSource;
+                        }
+                        int targetIndex = parentTree.IndexOf(target);
+                        if (target.DropPosition == Enums.DropPositionEnum.Next)
+                        {
+                            ++targetIndex;
+                        }
+                        parentTree.Insert(targetIndex, item);
+                        break;
+                    case Enums.DropPositionEnum.Child:
+                        target.ChildrenSource.Add(item);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
+        #endregion NodeTransaction
+
+        #region DragDrop
 
         /// <summary>
         /// ノードのドラッグオーバー時の処理
@@ -130,7 +189,14 @@ namespace QuartetEditor.Models
         {
             this.WorkAllNode(c => c.IsDragOver = false);
 
-            if (dropped.IsNameEditMode)
+            // ノード名を編集中のときは移動しない
+            if (dropped == null || dropped.IsNameEditMode)
+            {
+                return;
+            }
+
+            // 移動先が自分自身の子の場合は移動しない
+            if (this.Find(dropped.Children, c => c.ID == target?.ID) != null)
             {
                 return;
             }
@@ -170,25 +236,22 @@ namespace QuartetEditor.Models
         /// <param name="dropped"></param>
         public void DragDropAction(Node target, Node dropped)
         {
+            target = this.Find(this.TreeSource, c => c.IsDragOver);
+
             this.WorkAllNode(c => c.IsDragOver = false);
 
-            if (dropped == null || dropped.IsNameEditMode)
+            if (dropped == null || dropped.IsNameEditMode || target == null)
             {
                 return;
             }
 
-            // TODO:ドロップ処理
-
+            this.Move(dropped, target);
+            dropped.IsSelected = true;
         }
 
-        /// <summary>
-        /// すべてのノードに対しての操作を提供します
-        /// </summary>
-        /// <param name="act"></param>
-        private void WorkAllNode(Action<Node> act)
-        {
-            this.Tree.ForEach(node => node.WorkAllNode(act));
-        }
+        #endregion DragDrop
+
+        #region Search
 
         /// <summary>
         /// ノードの検索
@@ -255,6 +318,11 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         private Node GetOlder(Node item)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             var list = this.GetParent(item)?.Children;
             if (list == null)
             {
@@ -409,6 +477,11 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         private Node GetYounger(Node item)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             var list = this.GetParent(item)?.Children;
             if (list == null)
             {
@@ -452,4 +525,6 @@ namespace QuartetEditor.Models
             return this.Find(this.Tree, c => c.Children.Any(child => child.ID == item.ID));
         }
     }
+    #endregion  Search
+
 }
