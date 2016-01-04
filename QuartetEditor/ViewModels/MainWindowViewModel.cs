@@ -10,7 +10,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -301,6 +300,17 @@ namespace QuartetEditor.ViewModels
             }
         }
 
+        /// <summary>
+        /// パネルの変更通知を投げる
+        /// </summary>
+        private void RisePanelChanged()
+        {
+            this.OnPropertyChanged(() => this.SelectedItem);
+            this.OnPropertyChanged(() => this.PrevItem);
+            this.OnPropertyChanged(() => this.NextItem);
+            this.OnPropertyChanged(() => this.ParentItem);
+        }
+
         #endregion Content
 
         #region PanelOpen
@@ -559,6 +569,7 @@ namespace QuartetEditor.ViewModels
                 var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragDropAction(target?.Model, data?.Model);
+                this.RisePanelChanged();
             });
 
             #endregion DragDrop
