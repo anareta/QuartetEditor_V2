@@ -493,12 +493,6 @@ namespace QuartetEditor.ViewModels
             h => this.DragAcceptDescription.DragOverAction += h,
             h => this.DragAcceptDescription.DragOverAction -= h).Subscribe(args =>
             {
-                if (args.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) &&
-                args.Data.GetDataPresent(typeof(string)))
-                {
-                    args.Effects = System.Windows.DragDropEffects.Move;
-                }
-
                 var fe = args.OriginalSource as FrameworkElement;
                 if (fe == null)
                 {
@@ -506,6 +500,16 @@ namespace QuartetEditor.ViewModels
                 }
                 var target = fe.DataContext as NodeViewModel;
                 var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
+
+                if (data == null || data.IsNameEditMode.Value)
+                {
+                    return;
+                }
+
+                if (args.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move))
+                {
+                    args.Effects = System.Windows.DragDropEffects.Move;
+                }
 
                 this.Model.DragOverAction(target?.Model, data?.Model);
             });

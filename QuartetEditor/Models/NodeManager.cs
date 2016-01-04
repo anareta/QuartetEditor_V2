@@ -130,6 +130,11 @@ namespace QuartetEditor.Models
         {
             this.WorkAllNode(c => c.IsDragOver = false);
 
+            if (dropped.IsNameEditMode)
+            {
+                return;
+            }
+
             if (target != null)
             {
                 if (target.ID == dropped.ID)
