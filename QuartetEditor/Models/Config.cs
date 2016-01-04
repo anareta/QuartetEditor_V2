@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Prism.Mvvm;
+using QuartetEditor.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -246,6 +247,7 @@ namespace QuartetEditor.Models
         public bool _LeftPanelOpen;
 
         [JsonProperty]
+        [Transaction(IsEnlist = false)]
         public bool LeftPanelOpen
         {
             get { return this._LeftPanelOpen; }
@@ -258,6 +260,7 @@ namespace QuartetEditor.Models
         public bool _TopPanelOpen;
 
         [JsonProperty]
+        [Transaction(IsEnlist = false)]
         public bool TopPanelOpen
         {
             get { return this._TopPanelOpen; }
@@ -270,6 +273,7 @@ namespace QuartetEditor.Models
         public bool _BottomPanelOpen;
 
         [JsonProperty]
+        [Transaction(IsEnlist = false)]
         public bool BottomPanelOpen
         {
             get { return this._BottomPanelOpen; }

@@ -216,6 +216,7 @@ namespace QuartetEditor.ViewModels
             this.OpenCommand.Subscribe(_ => this.IsOpen = true);
             this.CloseCommand.Subscribe(_ => this.IsOpen = false);
             this.ApplyCommand.Subscribe(_ => this.Apply() );
+            this.ResetCommand.Subscribe(_ => this.Reset() );
 
 
             this.EnlistTransaction();
@@ -260,11 +261,36 @@ namespace QuartetEditor.ViewModels
         public ReactiveCommand ApplyCommand { get; private set; } = new ReactiveCommand();
 
         /// <summary>
+        /// リセット
+        /// </summary>
+        public ReactiveCommand ResetCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
         /// 適用処理
         /// </summary>
         private void Apply()
         {
             this._backings = null;
+            this.CloseCommand.Execute();
+        }
+
+        /// <summary>
+        /// リセット
+        /// </summary>
+        /// <returns></returns>
+        private void Reset()
+        {
+            var resetModel = new Config();
+            this._backings = new Dictionary<string, object>();
+            foreach (PropertyInfo property in resetModel.GetType().GetProperties())
+            {
+                var attribute = property.GetCustomAttributes(typeof(TransactionAttribute), false);
+                if (!(attribute.Count() > 0 && ((TransactionAttribute)attribute[0]).IsEnlist == false))
+                {
+                    this._backings.Add(property.Name, property.GetValue(resetModel, null));
+                }
+            }
+            this.Rollback();
             this.CloseCommand.Execute();
         }
 

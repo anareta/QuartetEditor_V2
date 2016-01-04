@@ -322,16 +322,17 @@
             </Grid>
         </ScrollViewer>
 
-        <Grid Grid.Row="31"
-              Margin="10">
-
+        <UniformGrid Columns="2"
+                        Grid.Row="31"
+                        Margin="10">
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="10"
+                    Content="リセット" 
+                    Command="{Binding Path=ResetCommand}"/>
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="10"
                     Content="適用" 
-                    Width="100"
-                    HorizontalAlignment="Right"
                     Command="{Binding Path=ApplyCommand}"/>
-
-        </Grid>
+        </UniformGrid>
     </Grid>
 </metro:Flyout>
