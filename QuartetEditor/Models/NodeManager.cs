@@ -328,6 +328,7 @@ namespace QuartetEditor.Models
                         break;
                     case Enums.DropPositionEnum.Child:
                         target.ChildrenSource.Add(item);
+                        target.IsExpanded = true;
                         break;
                     default:
                         throw new NotImplementedException();
