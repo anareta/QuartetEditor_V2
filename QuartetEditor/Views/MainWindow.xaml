@@ -357,7 +357,7 @@
 
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
-                    <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                    <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
                 </i:Interaction.Behaviors>
 
                 <TreeView.InputBindings>
@@ -450,7 +450,7 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
-                                                 BindableText="{Binding Path=ParentTextContent,
+                                                 BindableText="{Binding Path=ParentTextContent.Value,
                                                                         Mode=OneWay,
                                                                         UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.LeftTextEditorFontFamily,
@@ -485,7 +485,7 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
-                                                 BindableText="{Binding Path=PrevTextContent,
+                                                 BindableText="{Binding Path=PrevTextContent.Value,
                                                                         Mode=OneWay,
                                                                         UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
@@ -519,8 +519,8 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
-                                                 Document="{Binding Path=TextContent,
-                                                                    Mode=TwoWay,
+                                                 Document="{Binding Path=TextContent.Value,
+                                                                    Mode=OneWay,
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.CenterTextEditorFontFamily,
                                                                       Mode=TwoWay,
@@ -569,7 +569,7 @@
                                                         NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
-                                                 BindableText="{Binding Path=NextTextContent,
+                                                 BindableText="{Binding Path=NextTextContent.Value,
                                                                         Mode=OneWay,
                                                                         UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,

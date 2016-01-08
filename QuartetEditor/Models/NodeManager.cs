@@ -10,14 +10,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 using System.Reactive.Subjects;
+using ICSharpCode.AvalonEdit.Document;
+using System.Reactive.Disposables;
 
 namespace QuartetEditor.Models
 {
     /// <summary>
     ///データモデルクラス
     /// </summary>
-    class NodeManager
+    class NodeManager : BindableBase, IDisposable
     {
+        /// <summary>
+        /// 破棄用
+        /// </summary>
+        private CompositeDisposable Disposable { get; } = new CompositeDisposable();
+
         /// <summary>
         /// システムのデータ
         /// </summary>
@@ -34,14 +41,140 @@ namespace QuartetEditor.Models
         public ReadOnlyObservableCollection<Node> Tree { get; }
 
         /// <summary>
-        /// ノードが変更されたことの通知
-        /// </summary>
-        public Subject<NotifyCollectionChangedAction> NodeChanged { get; } = new Subject<NotifyCollectionChangedAction>();
-
-        /// <summary>
         /// 編集されたか
         /// </summary>
         public bool IsEdited { get; private set; } = false;
+
+        /// <summary>
+        /// 選択されているノード
+        /// </summary>
+        public Node _SelectedNode;
+
+        public Node SelectedNode
+        {
+            get { return this._SelectedNode; }
+            set { this.SetProperty(ref this._SelectedNode, value); }
+        }
+
+        #region ViewState
+
+        /// <summary>
+        /// 編集パネルのコンテンツ
+        /// </summary>
+        public TextDocument TextContent
+        {
+            get
+            {
+                return this.SelectedNode?.Content;
+            }
+        }
+
+        /// <summary>
+        /// 左参照パネルのノード
+        /// </summary>
+        private Node _ParentNode;
+
+        private Node ParentNode
+        {
+            get { return this._ParentNode; }
+            set
+            {
+                this._ParentNode = value;
+                this.OnPropertyChanged(nameof(this.ParentTextContent));
+            }
+        }
+
+        /// <summary>
+        /// 左参照パネルのコンテンツ
+        /// </summary>
+        public string ParentTextContent
+        {
+            get
+            {
+                return this.ParentNode?.Content?.Text;
+            }
+        }
+
+        /// <summary>
+        /// 上参照パネルのノード
+        /// </summary>
+        private Node _PrevNode;
+
+        private Node PrevNode
+        {
+            get { return this._PrevNode; }
+            set
+            {
+                this._PrevNode = value;
+                this.OnPropertyChanged(nameof(this.PrevTextContent));
+            }
+        }
+
+        /// <summary>
+        /// 上参照パネルのコンテンツ
+        /// </summary>
+        public string PrevTextContent
+        {
+            get
+            {
+                return this.PrevNode?.Content?.Text;
+            }
+        }
+
+        /// <summary>
+        /// 下参照パネルのノード
+        /// </summary>
+        private Node _NextNode;
+
+        private Node NextNode
+        {
+            get { return this._NextNode; }
+            set
+            {
+                this._NextNode = value;
+                this.OnPropertyChanged(nameof(this.NextTextContent));
+            }
+        }
+
+        /// <summary>
+        /// 下参照パネルのコンテンツ
+        /// </summary>
+        public string NextTextContent
+        {
+            get
+            {
+                return this.NextNode?.Content?.Text;
+            }
+        }
+
+        /// <summary>
+        /// 参照されているノードの参照フラグを再設定
+        /// </summary>
+        private void UpdatePanelReffer()
+        {
+            if (this.ParentNode != null)
+            {
+                this.ParentNode.IsReferred = ConfigManager.Current.Config.LeftPanelOpen;
+            }
+            if (this.PrevNode != null)
+            {
+                this.PrevNode.IsReferred = ConfigManager.Current.Config.TopPanelOpen;
+            }
+            if (this.NextNode != null)
+            {
+                this.NextNode.IsReferred = ConfigManager.Current.Config.BottomPanelOpen;
+            }
+        }
+
+        /// <summary>
+        /// ノード名変更モードを呼び出す
+        /// </summary>
+        public void CallNameEditMode()
+        {
+            this.SelectedNode.IsNameEditMode = true;
+        }
+
+        #endregion ViewState
 
         /// <summary>
         /// コンストラクタ
@@ -59,10 +192,41 @@ namespace QuartetEditor.Models
                     {
                         this.IsEdited = true;
                     }
-                });
+                }).AddTo(this.Disposable);
 
             this.TreeSource.CollectionChangedAsObservable()
                 .Subscribe(x => this.IsEdited = true);
+
+            #region ViewState
+
+            this.ObserveProperty(c => c.SelectedNode).Subscribe(_ =>
+            {
+                this.WorkAllNode(n => n.IsReferred = false);
+                this.OnPropertyChanged(nameof(this.TextContent));
+                this.PrevNode = this.GetPrev(this.SelectedNode);
+                this.NextNode = this.GetNext(this.SelectedNode);
+                this.ParentNode = this.GetParent(this.SelectedNode);
+                this.UpdatePanelReffer();
+            }).AddTo(this.Disposable); ;
+
+            ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen).Subscribe(_AppDomain =>
+            {
+                this.UpdatePanelReffer();
+            }).AddTo(this.Disposable);
+
+            ConfigManager.Current.Config.ObserveProperty(c => c.TopPanelOpen).Subscribe(_AppDomain =>
+            {
+                this.UpdatePanelReffer();
+            }).AddTo(this.Disposable);
+
+            ConfigManager.Current.Config.ObserveProperty(c => c.BottomPanelOpen).Subscribe(_AppDomain =>
+            {
+                this.UpdatePanelReffer();
+            }).AddTo(this.Disposable);
+
+            #endregion ViewState
+
+
 #if DEBUG
             {
                 var item = new Node("ノード1") { IsSelected = true };
@@ -104,7 +268,6 @@ namespace QuartetEditor.Models
                 }
             });
         }
-
 
         /// <summary>
         /// すべてのノードに対しての操作を提供します
@@ -170,9 +333,6 @@ namespace QuartetEditor.Models
                         throw new NotImplementedException();
                 }
             }
-
-            // 変更を通知
-            this.NodeChanged.OnNext(NotifyCollectionChangedAction.Move);
         }
 
         #endregion NodeTransaction
@@ -299,8 +459,13 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetPrev(Node item)
+        private Node GetPrev(Node item)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             bool hasParent = true;
             var list = this.GetParent(item)?.Children;
             if (list == null)
@@ -458,8 +623,13 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetNext(Node item)
+        private Node GetNext(Node item)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             bool hasParent = true;
             var list = this.GetParent(item)?.Children;
             if (list == null)
@@ -530,11 +700,23 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetParent(Node item)
+        private Node GetParent(Node item)
         {
+            if (item == null)
+            {
+                return null;
+            }
             return this.Find(this.Tree, c => c.Children.Any(child => child.ID == item.ID));
         }
-    }
-    #endregion  Search
 
+        #endregion  Search
+
+        /// <summary>
+        /// 破棄処理
+        /// </summary>
+        public void Dispose()
+        {
+            this.Disposable.Dispose();
+        }
+    }
 }

@@ -34,10 +34,10 @@ namespace QuartetEditor.Views.Controls
         private static void OnBindableTextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var control = (BindableTextEditor)sender;
-            if (string.Compare(control.BindableText, e.NewValue.ToString()) != 0)
+            if (string.Compare(control.BindableText, e.NewValue?.ToString()) != 0)
             {
                 //avoid undo stack overflow
-                control.BindableText = e.NewValue.ToString();
+                control.BindableText = e.NewValue?.ToString();
             }
         }
 

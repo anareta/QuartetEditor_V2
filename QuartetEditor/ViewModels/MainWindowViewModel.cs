@@ -86,230 +86,25 @@ namespace QuartetEditor.ViewModels
         #region Content
 
         /// <summary>
-        /// 選択中のノード
-        /// </summary>
-        public NodeViewModel _SelectedItem;
-
-        public NodeViewModel SelectedItem
-        {
-            get
-            {
-                return this._SelectedItem;
-            }
-            set
-            {
-                this.SetProperty(ref this._SelectedItem, value);
-
-                this.OnPropertyChanged(() => this.TextContent);
-                this.SetReferredItem();
-            }
-        }
-
-        /// <summary>
-        /// 参照ノードを設定します
-        /// </summary>
-        private void SetReferredItem()
-        {
-            this.OffReferFlag();
-
-            this.ParentItem = this.GetParentItem(this.SelectedItem);
-
-            this.NextItem = this.GetNextItem(this.SelectedItem);
-
-            this.PrevItem = this.GetPrevItem(this.SelectedItem);
-
-            this.SetReferFlag();
-        }
-
-        /// <summary>
-        /// 参照フラグをすべてオフにします
-        /// </summary>
-        private void OffReferFlag()
-        {
-            if (this._ParentItem != null)
-            {
-                this._ParentItem.IsReferred.Value = false;
-            }
-
-            if (this._PrevItem != null)
-            {
-                this._PrevItem.IsReferred.Value = false;
-            }
-
-            if (this._NextItem != null)
-            {
-                this._NextItem.IsReferred.Value = false;
-            }
-        }
-
-        /// <summary>
-        /// 参照フラグを設定します
-        /// </summary>
-        private void SetReferFlag()
-        {
-            if (this.ParentItem != null && this.LeftPanelOpen.Value)
-            {
-                this.ParentItem.IsReferred.Value = true;
-            }
-            if (this.PrevItem != null && this.TopPanelOpen.Value)
-            {
-                this.PrevItem.IsReferred.Value = true;
-            }
-            if (this.NextItem != null && this.BottomPanelOpen.Value)
-            {
-                this.NextItem.IsReferred.Value = true;
-            }
-
-        }
-
-        /// <summary>
         /// 編集中のコンテンツ
         /// </summary>
-        public TextDocument TextContent
-        {
-            get
-            {
-                return this.SelectedItem == null ? new TextDocument() : this.SelectedItem.Content.Value;
-            }
-            set
-            {
-                if (this.SelectedItem != null)
-                {
-                    this.SelectedItem.Content.Value = value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 左参照パネルのノード
-        /// </summary>
-        private NodeViewModel _ParentItem;
-
-        public NodeViewModel ParentItem
-        {
-            get
-            {
-                return this._ParentItem;
-            }
-            set
-            {
-                this.SetProperty(ref this._ParentItem, value);
-                this.OnPropertyChanged(() => this.ParentTextContent);
-            }
-        }
-
-        /// <summary>
-        /// 親ノードを取得します
-        /// </summary>
-        /// <param name="selectedItem"></param>
-        /// <returns></returns>
-        private NodeViewModel GetParentItem(NodeViewModel selectedItem)
-        {
-            return this.Find(this.Tree, c => c.ID.Value == this.Model.GetParent(selectedItem.Model)?.ID);
-        }
+        public ReactiveProperty<TextDocument> TextContent { get; } = new ReactiveProperty<TextDocument>();
 
         /// <summary>
         /// 左参照パネルのコンテンツ
         /// </summary>
-        public string ParentTextContent
-        {
-            get
-            {
-                var item = this.ParentItem;
-                return item == null ? "" : item.Content.Value.Text;
-            }
-        }
+        public ReactiveProperty<string> ParentTextContent { get; } = new ReactiveProperty<string>();
 
-        /// <summary>
-        /// 上参照パネルのノード
-        /// </summary>
-        private NodeViewModel _PrevItem;
-
-        public NodeViewModel PrevItem
-        {
-            get
-            {
-                return this._PrevItem;
-            }
-            set
-            {
-                this.SetProperty(ref this._PrevItem, value);
-                this.OnPropertyChanged(() => this.PrevTextContent);
-            }
-        }
-
-        /// <summary>
-        /// 上ノードを取得します
-        /// </summary>
-        /// <param name="selectedItem"></param>
-        /// <returns></returns>
-        private NodeViewModel GetPrevItem(NodeViewModel selectedItem)
-        {
-            return this.Find(this.Tree, c => c.ID.Value == this.Model.GetPrev(selectedItem.Model)?.ID);
-        }
 
         /// <summary>
         /// 上参照パネルのコンテンツ
         /// </summary>
-        public string PrevTextContent
-        {
-            get
-            {
-                var item = this.PrevItem;
-                return item == null ? "" : item.Content.Value.Text;
-            }
-        }
-
-        /// <summary>
-        /// 下参照パネルのノード
-        /// </summary>
-        private NodeViewModel _NextItem;
-
-        public NodeViewModel NextItem
-        {
-            get
-            {
-                return this._NextItem;
-            }
-            set
-            {
-                this.SetProperty(ref this._NextItem, value);
-                this.OnPropertyChanged(() => this.NextTextContent);
-            }
-        }
-
-        /// <summary>
-        /// 下ノードを取得します
-        /// </summary>
-        /// <param name="selectedItem"></param>
-        /// <returns></returns>
-        private NodeViewModel GetNextItem(NodeViewModel selectedItem)
-        {
-            return this.Find(this.Tree, c => c.ID.Value == this.Model.GetNext(selectedItem.Model)?.ID);
-        }
+        public ReactiveProperty<string> PrevTextContent { get; } = new ReactiveProperty<string>();
 
         /// <summary>
         /// 下参照パネルのコンテンツ
         /// </summary>
-        public string NextTextContent
-        {
-            get
-            {
-                var item = this.NextItem;
-                return item == null ? "" : item.Content.Value.Text;
-            }
-        }
-
-        /// <summary>
-        /// パネルの変更通知を投げる
-        /// </summary>
-        private void RisePanelChanged()
-        {
-            this.OnPropertyChanged(() => this.SelectedItem);
-            this.OnPropertyChanged(() => this.PrevItem);
-            this.OnPropertyChanged(() => this.NextItem);
-            this.OnPropertyChanged(() => this.ParentItem);
-        }
+        public ReactiveProperty<string> NextTextContent { get; } = new ReactiveProperty<string>();
 
         #endregion Content
 
@@ -447,8 +242,33 @@ namespace QuartetEditor.ViewModels
 
             #region Content
 
-            this.Model.NodeChanged
-                .Subscribe(x => this.RisePanelChanged());
+            // VM -> M 一方向バインド
+            this.SelectedNode = ReactiveProperty.FromObject(
+                this.Model, 
+                x => x.SelectedNode, 
+                convert: x => (NodeViewModel)null, // M -> VMの変換処理
+                convertBack: x => x?.Model); // VM -> Mの変換処理
+
+            // M -> VM 一方向バインド
+            this.TextContent = this.Model
+                .ObserveProperty(x => x.TextContent)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.ParentTextContent = this.Model
+                .ObserveProperty(x => x.ParentTextContent)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.PrevTextContent = this.Model
+                .ObserveProperty(x => x.PrevTextContent)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.NextTextContent = this.Model
+                .ObserveProperty(x => x.NextTextContent)
+                .ToReactiveProperty()
+                .AddTo(this.Disposable);
 
             #endregion Content
 
@@ -460,8 +280,6 @@ namespace QuartetEditor.ViewModels
             this.LeftPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
             {
                 this.RisePanelState();
-                this.OffReferFlag();
-                this.SetReferFlag();
             });
 
             this.TopPanelOpen = this.Config
@@ -470,8 +288,6 @@ namespace QuartetEditor.ViewModels
             this.TopPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
             {
                 this.RisePanelState();
-                this.OffReferFlag();
-                this.SetReferFlag();
             });
 
             this.BottomPanelOpen = this.Config
@@ -480,8 +296,6 @@ namespace QuartetEditor.ViewModels
             this.BottomPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
             {
                 this.RisePanelState();
-                this.OffReferFlag();
-                this.SetReferFlag();
             });
 
             this.PanelChangeCommand.Subscribe(kind =>
@@ -598,7 +412,7 @@ namespace QuartetEditor.ViewModels
 
             #region NodeManipulation
 
-            this.NameEditCommand.Subscribe(_=> this.SelectedItem.IsNameEditMode.Value = true );
+            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode() );
 
             #endregion NodeManipulation
 
