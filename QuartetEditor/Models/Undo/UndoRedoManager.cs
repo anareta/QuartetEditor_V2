@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,8 +69,8 @@ namespace QuartetEditor.Models.Undo
         }
 
         /// <summary>
-            /// 行なった操作を取り消してひとつ前の状態に戻します。
-            /// </summary>
+        /// 行なった操作を取り消してひとつ前の状態に戻します。
+        /// </summary>
         public void Undo()
         {
             if (this._Undo.Count >= 1)
@@ -85,8 +86,8 @@ namespace QuartetEditor.Models.Undo
         }
 
         /// <summary>
-            /// 取り消した操作をやり直します。
-            /// </summary>
+        /// 取り消した操作をやり直します。
+        /// </summary>
         public void Redo()
         {
             if (this._Redo.Count >= 1)
@@ -102,8 +103,8 @@ namespace QuartetEditor.Models.Undo
         }
 
         /// <summary>
-            /// Undo出来るかどうかを返します。
-            /// </summary>
+        /// Undo出来るかどうかを返します。
+        /// </summary>
         public bool CanUndo
         {
             private set
@@ -114,7 +115,7 @@ namespace QuartetEditor.Models.Undo
 
                     if (this.CanUndoChange != null)
                     {
-                        this.CanUndoChange(this, EventArgs.Empty);
+                        this.CanUndoChange.OnNext(value);
                     }
                 }
             }
@@ -125,8 +126,8 @@ namespace QuartetEditor.Models.Undo
         }
 
         /// <summary>
-            /// Redo出来るかどうかを返します。
-            /// </summary>
+        /// Redo出来るかどうかを返します。
+        /// </summary>
         public bool CanRedo
         {
             private set
@@ -137,7 +138,7 @@ namespace QuartetEditor.Models.Undo
 
                     if (this.CanRedoChange != null)
                     {
-                        this.CanRedoChange(this, EventArgs.Empty);
+                        this.CanRedoChange.OnNext(value);
                     }
                 }
             }
@@ -150,12 +151,12 @@ namespace QuartetEditor.Models.Undo
         /// <summary>
         /// Undo出来るかどうかの状態が変化すると発生します。
         /// </summary>
-        public event EventHandler CanUndoChange;
+        public Subject<bool> CanUndoChange { get; } = new Subject<bool>();
 
         /// <summary>
         /// Redo出来るかどうかの状態が変化すると発生します。
         /// </summary>
-        public event EventHandler CanRedoChange;
+        public Subject<bool> CanRedoChange { get; } = new Subject<bool>();
 
         /// <summary>
         /// 操作

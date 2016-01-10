@@ -228,6 +228,11 @@ namespace QuartetEditor.Models
 
             #endregion ViewState
 
+            #region UndoRedo
+            this.UndoRedoModel.CanRedoChange.Subscribe(b => this.CanRedo.OnNext(b));
+            this.UndoRedoModel.CanUndoChange.Subscribe(b => this.CanUndo.OnNext(b));
+            #endregion UndoRedo
+
 
 #if DEBUG
             {
@@ -402,7 +407,7 @@ namespace QuartetEditor.Models
 
         #endregion NodeTransaction
 
-            #region DragDrop
+        #region DragDrop
 
             /// <summary>
             /// ノードのドラッグオーバー時の処理
@@ -787,19 +792,31 @@ namespace QuartetEditor.Models
         /// 元に戻す
         /// </summary>
         /// <returns></returns>
-        internal void Undo()
+        public void Undo()
         {
             this.UndoRedoModel.Undo();
         }
 
         /// <summary>
+        /// 「元に戻す」実行可否
+        /// </summary>
+        /// <returns></returns>
+        public Subject<bool> CanUndo { get; } = new Subject<bool>();
+
+        /// <summary>
         /// やり直す
         /// </summary>
         /// <returns></returns>
-        internal void Redo()
+        public void Redo()
         {
             this.UndoRedoModel.Redo();
         }
+
+        /// <summary>
+        /// 「やり直す」実行可否
+        /// </summary>
+        /// <returns></returns>
+        public Subject<bool> CanRedo { get; } = new Subject<bool>();
 
         #endregion UndoRedo
 
