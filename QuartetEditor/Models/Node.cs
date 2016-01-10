@@ -1,5 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
 using Prism.Mvvm;
+using QuartetEditor.Attributes;
 using QuartetEditor.Enums;
 using QuartetEditor.Extensions;
 using Reactive.Bindings.Extensions;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 識別番号
         /// </summary>
+        [Unique]
         public string ID
         {
             get { return this._ID; }
@@ -47,6 +50,7 @@ namespace QuartetEditor.Models
         /// </summary>
         private TextDocument _Content = new TextDocument();
 
+        [Unique]
         public TextDocument Content
         {
             get { return this._Content; }
@@ -58,6 +62,7 @@ namespace QuartetEditor.Models
         /// </summary>
         private ObservableCollection<Node> _ChildrenSource = new ObservableCollection<Node>();
 
+        [Unique]
         public ObservableCollection<Node> ChildrenSource
         {
             get { return this._ChildrenSource; }
@@ -69,6 +74,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public ReadOnlyObservableCollection<Node> _Children;
 
+        [Unique]
         public ReadOnlyObservableCollection<Node> Children
         {
             get { return this._Children; }
@@ -150,6 +156,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _IsEdited = false;
 
+        [Unique]
         public bool IsEdited
         {
             get { return this._IsEdited; }
@@ -194,6 +201,29 @@ namespace QuartetEditor.Models
 #if DEBUG
             this._Content.Text = name;
 #endif
+        }
+
+        /// <summary>
+        /// コピーコンストラクタ
+        /// </summary>
+        /// <param name="item"></param>
+        public Node(Node item) : this()
+        {
+            foreach (PropertyInfo property in item.GetType().GetProperties())
+            {
+                var attribute = property.GetCustomAttributes(typeof(UniqueAttribute), false);
+                if (!(attribute.Count() > 0))
+                {
+                    property.SetValue(this, property.GetValue(item, null));
+                }
+            }
+
+            foreach (var child in item.ChildrenSource)
+            {
+                this.ChildrenSource.Add(new Node(child));
+            }
+
+            this.Content.Text = item.Content.Text;
         }
 
 
