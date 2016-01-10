@@ -226,7 +226,17 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 名前変更コマンド
         /// </summary>
-        public ReactiveCommand<string> NameEditCommand { get; private set; } = new ReactiveCommand<string>();
+        public ReactiveCommand NameEditCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 元に戻すコマンド
+        /// </summary>
+        public ReactiveCommand UndoCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// やり直すコマンド
+        /// </summary>
+        public ReactiveCommand RedoCommand { get; private set; } = new ReactiveCommand();
 
         #endregion NodeManipulation
 
@@ -413,6 +423,10 @@ namespace QuartetEditor.ViewModels
             #region NodeManipulation
 
             this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode() );
+
+            this.UndoCommand.Subscribe(_ => this.Model.Undo());
+
+            this.RedoCommand.Subscribe(_ => this.Model.Redo());
 
             #endregion NodeManipulation
 

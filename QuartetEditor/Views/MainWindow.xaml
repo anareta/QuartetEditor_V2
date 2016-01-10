@@ -36,18 +36,18 @@
 
             <ContextMenu x:Key="TreeViewContextMenu" FontSize="12">
                 <MenuItem Command="{Binding NameEditCommand}" Header="名前を変更(F2)" />
-                <Separator />
                 <MenuItem Header="移動">
                     <MenuItem Command="{Binding MoveUpCommand}" Header="上に移動(Ctrl+U)" />
                     <MenuItem Command="{Binding MoveDownCommand}" Header="下に移動(Ctrl+D)" />
                 </MenuItem>
-                <Separator />
                 <MenuItem Header="追加">
                     <MenuItem Command="{Binding AddNodeSameCommand}" Header="同階層に追加(Ctrl+I)" />
                     <MenuItem Command="{Binding AddNodeLowerCommand}" Header="下階層に追加(Ctrl+E)" />
                 </MenuItem>
-                <Separator />
                 <MenuItem Command="{Binding DeleteNodeCommand}" Header="削除（Del）" />
+                <Separator />
+                <MenuItem Command="{Binding UndoCommand}" Header="元に戻す(Ctrl+Z)" />
+                <MenuItem Command="{Binding RedoCommand}" Header="やり直し(Ctrl+Y)" />
             </ContextMenu>
             <Style BasedOn="{StaticResource {x:Type TreeView}}" TargetType="{x:Type TreeView}">
                 <Setter Property="ContextMenu" Value="{StaticResource TreeViewContextMenu}" />
@@ -374,6 +374,12 @@
                                 Modifiers="Control" />
                     <KeyBinding Key="I"
                                 Command="{Binding AddNodeSameCommand}"
+                                Modifiers="Control" />
+                    <KeyBinding Key="Z"
+                                Command="{Binding UndoCommand}"
+                                Modifiers="Control" />
+                    <KeyBinding Key="Y"
+                                Command="{Binding RedoCommand}"
                                 Modifiers="Control" />
                 </TreeView.InputBindings>
 

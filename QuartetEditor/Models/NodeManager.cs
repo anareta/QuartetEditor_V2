@@ -12,6 +12,8 @@ using Prism.Mvvm;
 using System.Reactive.Subjects;
 using ICSharpCode.AvalonEdit.Document;
 using System.Reactive.Disposables;
+using QuartetEditor.Models.Undo;
+using QuartetEditor.Enums;
 
 namespace QuartetEditor.Models
 {
@@ -298,51 +300,113 @@ namespace QuartetEditor.Models
         /// <param name="target"></param>
         private void Move(Node item, Node target)
         {
-            // 移動元から削除
+            IList<Node> fromTree;
+            int fromIndex;
+            IList<Node> toTree;
+            int toIndex;
+
+            // 移動元
             {
-                IList<Node> parentTree = this.GetParent(item)?.ChildrenSource;
-                if (parentTree == null)
+                fromTree = this.GetParent(item)?.ChildrenSource;
+                if (fromTree == null)
                 {
-                    parentTree = this.TreeSource;
+                    fromTree = this.TreeSource;
                 }
-                parentTree.Remove(item);
+                fromIndex = fromTree.IndexOf(item);
             }
 
-            // 移動先に追加
+            // 移動先
             {
                 switch (target.DropPosition)
                 {
                     case Enums.DropPositionEnum.Prev:
                     case Enums.DropPositionEnum.Next:
-                        IList<Node> parentTree = this.GetParent(target)?.ChildrenSource;
-                        if (parentTree == null)
+                        toTree = this.GetParent(target)?.ChildrenSource;
+                        if (toTree == null)
                         {
-                            parentTree = this.TreeSource;
+                            toTree = this.TreeSource;
                         }
-                        int targetIndex = parentTree.IndexOf(target);
+                        toIndex = toTree.IndexOf(target);
                         if (target.DropPosition == Enums.DropPositionEnum.Next)
                         {
-                            ++targetIndex;
+                            ++toIndex;
                         }
-                        parentTree.Insert(targetIndex, item);
                         break;
                     case Enums.DropPositionEnum.Child:
-                        target.ChildrenSource.Add(item);
-                        target.IsExpanded = true;
+                        toTree = target.ChildrenSource;
+                        toIndex = target.ChildrenSource.Count();
                         break;
                     default:
                         throw new NotImplementedException();
                 }
             }
+
+            // 行う操作
+            object[] doParam = new object[] { fromTree, fromIndex, toTree, toIndex, item, target };
+            var doAction = new Action<IList<Node>, int, IList<Node>, int, Node, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item, _target) => {
+                if (_fromTree == _toTree)
+                {
+                    if (_fromIndex < _toIndex)
+                    {
+                        // 同じTreeで下へ移動する場合
+                        // 先に削除を行うため、移動先のインデックスを調整する
+                        --_toIndex;
+                    }
+                }
+
+                this.MoveTransaction(
+                    _fromTree, _fromIndex,
+                    _toTree, _toIndex,
+                    _item);
+
+                if (_target?.ChildrenSource == _toTree)
+                {
+                    _target.IsExpanded = true;
+                }
+            });
+
+            // 取り消す操作
+            object[] undoParam = new object[] { toTree, toIndex, fromTree, fromIndex, item };
+            var undoAction = new Action<IList<Node>, int, IList<Node>, int, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item) => {
+                if (_fromTree == _toTree)
+                {
+                    if (_fromIndex > _toIndex)
+                    {
+                        --_fromIndex;
+                    }
+                }
+                this.MoveTransaction(
+                    _fromTree, _fromIndex,
+                    _toTree, _toIndex,
+                    _item);
+            });
+
+            // 操作実行
+            this.UndoRedoModel.Do(doAction, doParam, undoAction, undoParam);
+        }
+
+        /// <summary>
+        /// 移動を実行
+        /// </summary>
+        private void MoveTransaction(IList<Node> fromTree, int fromIndex,
+                                     IList<Node> toTree, int toIndex, 
+                                     Node item)
+        {
+            // 移動元から削除
+            fromTree.RemoveAt(fromIndex);
+
+            // 移動先に挿入
+            toTree.Insert(toIndex, item);
+
         }
 
         #endregion NodeTransaction
 
-        #region DragDrop
+            #region DragDrop
 
-        /// <summary>
-        /// ノードのドラッグオーバー時の処理
-        /// </summary>
+            /// <summary>
+            /// ノードのドラッグオーバー時の処理
+            /// </summary>
         public void DragOverAction(Node target, Node dropped)
         {
             if (target == null)
@@ -711,6 +775,33 @@ namespace QuartetEditor.Models
         }
 
         #endregion  Search
+
+        #region UndoRedo
+
+        /// <summary>
+        /// UndoRedo管理
+        /// </summary>
+        private UndoRedoManager UndoRedoModel { get; } = new UndoRedoManager();
+
+        /// <summary>
+        /// 元に戻す
+        /// </summary>
+        /// <returns></returns>
+        internal void Undo()
+        {
+            this.UndoRedoModel.Undo();
+        }
+
+        /// <summary>
+        /// やり直す
+        /// </summary>
+        /// <returns></returns>
+        internal void Redo()
+        {
+            this.UndoRedoModel.Redo();
+        }
+
+        #endregion UndoRedo
 
         /// <summary>
         /// 破棄処理
