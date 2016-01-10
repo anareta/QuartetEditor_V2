@@ -8,14 +8,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace QuartetEditor.Models
 {
-    class Node : BindableBase
+    class Node : BindableBase, IDisposable
     {
+        /// <summary>
+        /// 破棄用
+        /// </summary>
+        private CompositeDisposable Disposable { get; } = new CompositeDisposable();
+
         /// <summary>
         /// 識別番号
         /// </summary>
@@ -173,10 +179,12 @@ namespace QuartetEditor.Models
 
             // プロパティの変更を監視する
             this.ObserveProperty(x => x.Name)
-                .Subscribe(x => this.IsEdited = true);
+                .Subscribe(x => this.IsEdited = true)
+                .AddTo(this.Disposable);
 
             this.ObserveProperty(x => x.Content)
-                .Subscribe(x => this.IsEdited = true);
+                .Subscribe(x => this.IsEdited = true)
+                .AddTo(this.Disposable);
 
             this.ChildrenSource.ObserveElementProperty(x => x.IsEdited)
                 .Subscribe(x =>
@@ -185,10 +193,12 @@ namespace QuartetEditor.Models
                     {
                         this.IsEdited = true;
                     }
-                });
+                })
+                .AddTo(this.Disposable);
 
             this.ChildrenSource.CollectionChangedAsObservable()
-                .Subscribe(x => this.IsEdited = true);
+                .Subscribe(x => this.IsEdited = true)
+                .AddTo(this.Disposable);
         }
 
         /// <summary>
@@ -246,6 +256,18 @@ namespace QuartetEditor.Models
         {
             act(this);
             this.Children.ForEach(node => node.WorkAllNode(act));
+        }
+
+        /// <summary>
+        /// 破棄処理
+        /// </summary>
+        public void Dispose()
+        {
+            this.Disposable.Dispose();
+            foreach (var item in this.ChildrenSource)
+            {
+                item.Dispose();
+            }
         }
     }
 }

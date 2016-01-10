@@ -209,6 +209,9 @@ namespace QuartetEditor.Models
                 this.NextNode = this.GetNext(this.SelectedNode);
                 this.ParentNode = this.GetParent(this.SelectedNode);
                 this.UpdatePanelReffer();
+
+                this.CanMoveUp.OnNext(this.PrevNode != null);
+                this.CanMoveDown.OnNext(this.NextNode != null);
             }).AddTo(this.Disposable); ;
 
             ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen).Subscribe(_AppDomain =>
@@ -259,21 +262,8 @@ namespace QuartetEditor.Models
             // 空の場合は初期化
             if (this.TreeSource.Count == 0)
             {
-                this.AddNode().IsSelected = true;
+                this.TreeSource.Add(new Node() { IsSelected = true });
             }
-
-            // ノードがゼロになったら新規ノードを追加する
-            var collectionChange = Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-            h => (s, e) => h(e),
-            h => this.TreeSource.CollectionChanged += h,
-            h => this.TreeSource.CollectionChanged -= h);
-            collectionChange.Subscribe((_)=>
-            {
-                if (this.TreeSource.Count == 0)
-                {
-                    this.AddNode().IsSelected = true;
-                }
-            });
         }
 
         /// <summary>
@@ -288,64 +278,172 @@ namespace QuartetEditor.Models
         #region NodeTransaction
 
         /// <summary>
-        /// ノードを末尾に追加する
+        /// ノードを削除する
         /// </summary>
-        /// <returns>追加したノードへの参照</returns>
-        public Node AddNode()
+        public void DeleteNode()
         {
-            var item = new Node();
-            this.TreeSource.Add(item);
-            return item;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (tree == null)
+            {
+                tree = this.TreeSource;
+            }
+            int index = tree.IndexOf(this.SelectedNode);
+
+            // 削除後にすべてのノードが空になるか
+            bool isLastItem = this.TreeSource == tree && this.TreeSource.Count() == 1;
+
+            // 行う操作
+            object[] doParam = new object[] { tree, index, isLastItem };
+            var doAction = new Action<IList<Node>, int, bool>((_tree, _index, _isLastItem) => 
+            {
+                this.DeleteTransaction(_tree, _index);
+                if (_isLastItem)
+                {
+                    // ノードが空になる場合は勝手に追加する
+                    tree.Add(new Node());
+                }
+                _tree.ElementAt(_index - 1 < 0 ? 0 : _index - 1).IsSelected = true;
+            });
+
+            // 取り消す操作
+            object[] undoParam = new object[] { tree, index, this.SelectedNode, isLastItem };
+            var undoAction = new Action<IList<Node>, int, Node, bool>((_tree, _index, _item, _isLastItem) => 
+            {
+                if (_isLastItem)
+                {
+                    tree.RemoveAt(0);
+                }
+                _tree.Insert(_index, _item);
+                _tree.ElementAt(_index).IsSelected = true;
+            });
+
+            // 操作実行
+            this.UndoRedoModel.Do(doAction, doParam, undoAction, undoParam);
         }
+
+        /// <summary>
+        /// ノードを同階層に追加する
+        /// </summary>
+        public void AddNodeSame()
+        {
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (tree == null)
+            {
+                tree = this.TreeSource;
+            }
+            int index = tree.IndexOf(this.SelectedNode) + 1;
+
+            this.AddNode(tree, index);
+        }
+
+        /// <summary>
+        /// ノードを下階層に追加する
+        /// </summary>
+        public void AddNodeLower()
+        {
+            IList<Node> tree = this.SelectedNode.ChildrenSource;
+            int index = tree.Count();
+
+            this.AddNode(tree, index);
+        }
+
+        /// <summary>
+        /// ノードを追加する
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="index"></param>
+        private void AddNode(IList<Node> tree, int index)
+        {
+            // 行う操作
+            object[] doParam = new object[] { tree, index };
+            var doAction = new Action<IList<Node>, int>((_tree, _index) =>
+            {
+                this.AddTransaction(_tree, _index);
+            });
+
+            // 取り消す操作
+            object[] undoParam = new object[] { tree, index };
+            var undoAction = new Action<IList<Node>, int>((_tree, _index) =>
+            {
+                this.DeleteTransaction(_tree, _index);
+            });
+
+            // 操作実行
+            this.UndoRedoModel.Do(doAction, doParam, undoAction, undoParam);
+        }
+
+        /// <summary>
+        /// ノードを追加する
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="index"></param>
+        private void AddTransaction(IList<Node> tree, int index)
+        {
+            var newItem = new Node();
+            tree.Insert(index, newItem);
+        }
+
+        /// <summary>
+        /// ノードを削除する
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="index"></param>
+        private void DeleteTransaction(IList<Node> tree, int index)
+        {
+            var deleteItem = tree.ElementAt(index);
+            tree.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// ノードを下に移動する
+        /// </summary>
+        public void MoveDown()
+        {
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (fromTree == null)
+            {
+                fromTree = this.TreeSource;
+            }
+
+            int fromIndex = fromTree.IndexOf(this.SelectedNode);
+
+            this.Move(fromTree, fromIndex, fromTree, fromIndex + 2, this.SelectedNode, null);
+
+        }
+
+        /// <summary>
+        /// 「ノードを下に移動する」実行可否
+        /// </summary>
+        public Subject<bool> CanMoveDown { get; } = new Subject<bool>();
+
+        /// <summary>
+        /// ノードを上に移動する
+        /// </summary>
+        public void MoveUp()
+        {
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (fromTree == null)
+            {
+                fromTree = this.TreeSource;
+            }
+
+            int fromIndex = fromTree.IndexOf(this.SelectedNode);
+
+            this.Move(fromTree, fromIndex, fromTree, fromIndex - 1, this.SelectedNode, null);
+        }
+
+        /// <summary>
+        /// 「ノードを上に移動する」実行可否
+        /// </summary>
+        public Subject<bool> CanMoveUp { get; } = new Subject<bool>();
 
         /// <summary>
         /// ノードの移動処理
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="target"></param>
-        private void Move(Node item, Node target)
+        private void Move(IList<Node> fromTree, int fromIndex,
+                                     IList<Node> toTree, int toIndex,
+                                     Node item, Node target)
         {
-            IList<Node> fromTree;
-            int fromIndex;
-            IList<Node> toTree;
-            int toIndex;
-
-            // 移動元
-            {
-                fromTree = this.GetParent(item)?.ChildrenSource;
-                if (fromTree == null)
-                {
-                    fromTree = this.TreeSource;
-                }
-                fromIndex = fromTree.IndexOf(item);
-            }
-
-            // 移動先
-            {
-                switch (target.DropPosition)
-                {
-                    case Enums.DropPositionEnum.Prev:
-                    case Enums.DropPositionEnum.Next:
-                        toTree = this.GetParent(target)?.ChildrenSource;
-                        if (toTree == null)
-                        {
-                            toTree = this.TreeSource;
-                        }
-                        toIndex = toTree.IndexOf(target);
-                        if (target.DropPosition == Enums.DropPositionEnum.Next)
-                        {
-                            ++toIndex;
-                        }
-                        break;
-                    case Enums.DropPositionEnum.Child:
-                        toTree = target.ChildrenSource;
-                        toIndex = target.ChildrenSource.Count();
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-
             // 行う操作
             object[] doParam = new object[] { fromTree, fromIndex, toTree, toIndex, item, target };
             var doAction = new Action<IList<Node>, int, IList<Node>, int, Node, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item, _target) => {
@@ -358,7 +456,6 @@ namespace QuartetEditor.Models
                         --_toIndex;
                     }
                 }
-
                 this.MoveTransaction(
                     _fromTree, _fromIndex,
                     _toTree, _toIndex,
@@ -394,7 +491,7 @@ namespace QuartetEditor.Models
         /// 移動を実行
         /// </summary>
         private void MoveTransaction(IList<Node> fromTree, int fromIndex,
-                                     IList<Node> toTree, int toIndex, 
+                                     IList<Node> toTree, int toIndex,
                                      Node item)
         {
             // 移動元から削除
@@ -409,9 +506,9 @@ namespace QuartetEditor.Models
 
         #region DragDrop
 
-            /// <summary>
-            /// ノードのドラッグオーバー時の処理
-            /// </summary>
+        /// <summary>
+        /// ノードのドラッグオーバー時の処理
+        /// </summary>
         public void DragOverAction(Node target, Node dropped)
         {
             if (target == null)
@@ -485,7 +582,48 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            this.Move(dropped, target);
+            IList<Node> fromTree;
+            int fromIndex;
+            IList<Node> toTree;
+            int toIndex;
+
+            // 移動元
+            {
+                fromTree = this.GetParent(dropped)?.ChildrenSource;
+                if (fromTree == null)
+                {
+                    fromTree = this.TreeSource;
+                }
+                fromIndex = fromTree.IndexOf(dropped);
+            }
+
+            // 移動先
+            {
+                switch (target.DropPosition)
+                {
+                    case Enums.DropPositionEnum.Prev:
+                    case Enums.DropPositionEnum.Next:
+                        toTree = this.GetParent(target)?.ChildrenSource;
+                        if (toTree == null)
+                        {
+                            toTree = this.TreeSource;
+                        }
+                        toIndex = toTree.IndexOf(target);
+                        if (target.DropPosition == Enums.DropPositionEnum.Next)
+                        {
+                            ++toIndex;
+                        }
+                        break;
+                    case Enums.DropPositionEnum.Child:
+                        toTree = target.ChildrenSource;
+                        toIndex = target.ChildrenSource.Count();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            this.Move(fromTree, fromIndex, toTree, toIndex, dropped, target);
             dropped.IsSelected = true;
         }
 
@@ -791,7 +929,6 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 元に戻す
         /// </summary>
-        /// <returns></returns>
         public void Undo()
         {
             this.UndoRedoModel.Undo();
@@ -800,13 +937,11 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「元に戻す」実行可否
         /// </summary>
-        /// <returns></returns>
         public Subject<bool> CanUndo { get; } = new Subject<bool>();
 
         /// <summary>
         /// やり直す
         /// </summary>
-        /// <returns></returns>
         public void Redo()
         {
             this.UndoRedoModel.Redo();
@@ -815,7 +950,6 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「やり直す」実行可否
         /// </summary>
-        /// <returns></returns>
         public Subject<bool> CanRedo { get; } = new Subject<bool>();
 
         #endregion UndoRedo
@@ -826,6 +960,10 @@ namespace QuartetEditor.Models
         public void Dispose()
         {
             this.Disposable.Dispose();
+            foreach (var item in this.TreeSource)
+            {
+                item.Dispose();
+            }
         }
     }
 }

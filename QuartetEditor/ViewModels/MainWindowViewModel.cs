@@ -238,6 +238,31 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveCommand RedoCommand { get; private set; }
 
+        /// <summary>
+        /// 削除コマンド
+        /// </summary>
+        public ReactiveCommand DeleteNodeCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 同じ階層に追加コマンド
+        /// </summary>
+        public ReactiveCommand AddNodeSameCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 下の階層に追加コマンド
+        /// </summary>
+        public ReactiveCommand AddNodeLowerCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// ノードを上に移動する
+        /// </summary>
+        public ReactiveCommand MoveUpCommand { get; private set; }
+
+        /// <summary>
+        /// ノードを下に移動する
+        /// </summary>
+        public ReactiveCommand MoveDownCommand { get; private set; }
+
         #endregion NodeManipulation
 
 
@@ -425,11 +450,25 @@ namespace QuartetEditor.ViewModels
             this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode() );
 
             this.UndoCommand = new ReactiveCommand(this.Model.CanUndo, false);
-            this.UndoCommand.Subscribe(_ => this.Model.Undo());
+            this.UndoCommand.Subscribe(_ =>
+            {
+                this.Model.Undo();
+            });
 
             this.RedoCommand = new ReactiveCommand(this.Model.CanRedo, false);
-            this.RedoCommand.Subscribe(_ => this.Model.Redo());
+            this.RedoCommand.Subscribe(_ => this.Model.Redo() );
 
+            this.DeleteNodeCommand.Subscribe(_ => this.Model.DeleteNode());
+
+            this.AddNodeSameCommand.Subscribe(_ => this.Model.AddNodeSame());
+
+            this.AddNodeLowerCommand.Subscribe(_ => this.Model.AddNodeLower());
+
+            this.MoveUpCommand = new ReactiveCommand(this.Model.CanMoveUp, false);
+            this.MoveUpCommand.Subscribe(_ => this.Model.MoveUp());
+
+            this.MoveDownCommand = new ReactiveCommand(this.Model.CanMoveDown, false);
+            this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown());
             #endregion NodeManipulation
 
         }
