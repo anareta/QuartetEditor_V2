@@ -55,7 +55,7 @@
             </Style>
 
             <Style TargetType="{x:Type GridSplitter}">
-                <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush5}" />
+                <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush10}" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="IsTabStop" Value="False" />
             </Style>
@@ -426,7 +426,7 @@
                 </TreeView.ItemContainerStyle>
             </TreeView>
             <GridSplitter Grid.Column="1"
-                          Width="3"
+                          Width="5"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Stretch"
                           BorderThickness="0" />
@@ -478,7 +478,7 @@
                               Grid.Row="0"
                               Grid.RowSpan="5"
                               Grid.Column="1"
-                              Width="3"
+                              Width="5"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Stretch"
                               BorderThickness="0" />
@@ -512,7 +512,7 @@
                 <GridSplitter x:Name="_TopSplitter"
                               Grid.Row="1"
                               Grid.Column="2"
-                              Height="3"
+                              Height="5"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Center"
                               BorderThickness="0" />
@@ -562,7 +562,7 @@
                 <GridSplitter x:Name="_BottomSplitter"
                               Grid.Row="3"
                               Grid.Column="2"
-                              Height="3"
+                              Height="5"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Center"
                               BorderThickness="0" />
