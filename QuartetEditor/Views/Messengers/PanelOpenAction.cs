@@ -80,6 +80,10 @@ namespace QuartetEditor.Views.Messengers
             }
         }
 
+        /// <summary>
+        /// 上パネルの開閉を更新
+        /// </summary>
+        /// <param name="state"></param>
         private void TopPanelUpdate(bool state)
         {
             if (this.AssociatedObject.TopPanelOpen != state)

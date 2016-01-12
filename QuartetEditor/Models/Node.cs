@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
 using Prism.Mvvm;
 using QuartetEditor.Attributes;
+using QuartetEditor.Entities;
 using QuartetEditor.Enums;
 using QuartetEditor.Extensions;
 using Reactive.Bindings.Extensions;
@@ -90,7 +91,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 展開状態
         /// </summary>
-        public bool _IsExpanded;
+        public bool _IsExpanded = true;
 
         public bool IsExpanded
         {
@@ -211,6 +212,19 @@ namespace QuartetEditor.Models
 #if DEBUG
             this._Content.Text = name;
 #endif
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Node(QuartetEditorDescriptionItem QEDItem) : this()
+        {
+            this.Name = QEDItem.Name;
+            this.Content.Text = QEDItem.Content;
+            foreach (var item in QEDItem.Children)
+            {
+                this.ChildrenSource.Add(new Node(item));
+            }
         }
 
         /// <summary>
