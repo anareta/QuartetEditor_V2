@@ -14,6 +14,9 @@ using ICSharpCode.AvalonEdit.Document;
 using System.Reactive.Disposables;
 using QuartetEditor.Models.Undo;
 using QuartetEditor.Enums;
+using System.IO;
+using QuartetEditor.Entities;
+using QuartetEditor.Utilities;
 
 namespace QuartetEditor.Models
 {
@@ -26,6 +29,11 @@ namespace QuartetEditor.Models
         /// 破棄用
         /// </summary>
         private CompositeDisposable Disposable { get; } = new CompositeDisposable();
+
+        /// <summary>
+        /// ユーザーへのエラー通知要求
+        /// </summary>
+        public Subject<string> ShowErrorMessageRequest { get; } = new Subject<string>();
 
         /// <summary>
         /// システムのデータ
@@ -42,23 +50,18 @@ namespace QuartetEditor.Models
         /// </summary>
         public ReadOnlyObservableCollection<Node> Tree { get; }
 
-        /// <summary>
-        /// 編集されたか
-        /// </summary>
-        public bool IsEdited { get; private set; } = false;
+        #region ViewState
 
         /// <summary>
         /// 選択されているノード
         /// </summary>
-        public Node _SelectedNode;
+        private Node _SelectedNode;
 
         public Node SelectedNode
         {
             get { return this._SelectedNode; }
             set { this.SetProperty(ref this._SelectedNode, value); }
         }
-
-        #region ViewState
 
         /// <summary>
         /// 編集パネルのコンテンツ
@@ -294,7 +297,7 @@ namespace QuartetEditor.Models
 
             // 行う操作
             object[] doParam = new object[] { tree, index, isLastItem };
-            var doAction = new Action<IList<Node>, int, bool>((_tree, _index, _isLastItem) => 
+            var doAction = new Action<IList<Node>, int, bool>((_tree, _index, _isLastItem) =>
             {
                 this.DeleteTransaction(_tree, _index);
                 if (_isLastItem)
@@ -307,7 +310,7 @@ namespace QuartetEditor.Models
 
             // 取り消す操作
             object[] undoParam = new object[] { tree, index, this.SelectedNode, isLastItem };
-            var undoAction = new Action<IList<Node>, int, Node, bool>((_tree, _index, _item, _isLastItem) => 
+            var undoAction = new Action<IList<Node>, int, Node, bool>((_tree, _index, _item, _isLastItem) =>
             {
                 if (_isLastItem)
                 {
@@ -953,6 +956,95 @@ namespace QuartetEditor.Models
         public Subject<bool> CanRedo { get; } = new Subject<bool>();
 
         #endregion UndoRedo
+
+        #region File
+
+        /// <summary>
+        /// ViewへのSavePath処理要求
+        /// </summary>
+        public Subject<Action<string>> SavePathRequest { get; } = new Subject<Action<string>>();
+
+        /// <summary>
+        /// ViewへのOpenPath処理要求
+        /// </summary>
+        public Subject<Action<string>> OpenPathRequest { get; } = new Subject<Action<string>>();
+
+        /// <summary>
+        /// 編集されたか
+        /// </summary>
+        public bool IsEdited { get; private set; } = false;
+
+        /// <summary>
+        /// ファイル名
+        /// </summary>
+        private string _FileName;
+
+        public string FileName
+        {
+            get { return this._FileName; }
+            set { this.SetProperty(ref this._FileName, value); }
+        }
+
+        /// <summary>
+        /// ファイルを保存する
+        /// </summary>
+        /// <returns></returns>
+        public void Save()
+        {
+            if (this.FileName == null || 
+                string.IsNullOrWhiteSpace(this.FileName) || 
+                !File.Exists(this.FileName))
+            {
+                // 有効なファイル名が存在しない場合は変名処理へ
+                this.RenameSave();
+                return;
+            }
+
+            try
+            {
+                if (File.Exists(this.FileName))
+                {
+                    File.Delete(this.FileName);
+                }
+                var data = new QuartetEditorDescription(this.TreeSource);
+                FileUtility.SaveJsonObject(this.FileName, data);
+            }
+            catch
+            {
+                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+            }
+
+        }
+
+        /// <summary>
+        /// ファイルを変名保存する
+        /// </summary>
+        /// <returns></returns>
+        public void RenameSave()
+        {
+            SavePathRequest.OnNext(path =>
+           {
+               if (path != null && !string.IsNullOrWhiteSpace(path))
+               {
+                   try
+                   {
+                       this.FileName = path;
+                       if (File.Exists(path))
+                       {
+                           File.Delete(path);
+                       }
+                       var data = new QuartetEditorDescription(this.TreeSource);
+                       FileUtility.SaveJsonObject(path, data);
+                   }
+                   catch
+                   {
+                       this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+                   }
+               }
+           });
+        }
+
+        #endregion File
 
         /// <summary>
         /// 破棄処理

@@ -118,6 +118,7 @@
     </ApplicationDefinition>
     <Compile Include="Attributes\TransactionAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="Entities\DialogArg.cs" />
     <Compile Include="Entities\QuartetEditorDescription.cs" />
     <Compile Include="Enums\PanelKindEnum.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />

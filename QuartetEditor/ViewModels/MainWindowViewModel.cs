@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
+using Microsoft.Win32;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using QuartetEditor.Entities;
@@ -16,6 +17,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace QuartetEditor.ViewModels
 {
@@ -24,6 +26,11 @@ namespace QuartetEditor.ViewModels
     /// </summary>
     class MainWindowViewModel : BindableBase, IDisposable
     {
+        /// <summary>
+        /// メッセージダイアログ表示要求
+        /// </summary>
+        public Func<DialogArg, Task<MessageDialogResult>> MessageDialogViewAction { get; set; }
+
         /// <summary>
         /// 破棄用
         /// </summary>
@@ -42,7 +49,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 現在選択中のノード
         /// </summary>
-        public ReactiveProperty<NodeViewModel> SelectedNode { get; } = new ReactiveProperty<NodeViewModel>();
+        public ReactiveProperty<NodeViewModel> SelectedNode { get; }
 
         /// <summary>
         /// 設定情報
@@ -88,23 +95,23 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 編集中のコンテンツ
         /// </summary>
-        public ReactiveProperty<TextDocument> TextContent { get; } = new ReactiveProperty<TextDocument>();
+        public ReactiveProperty<TextDocument> TextContent { get; }
 
         /// <summary>
         /// 左参照パネルのコンテンツ
         /// </summary>
-        public ReactiveProperty<string> ParentTextContent { get; } = new ReactiveProperty<string>();
+        public ReactiveProperty<string> ParentTextContent { get; }
 
 
         /// <summary>
         /// 上参照パネルのコンテンツ
         /// </summary>
-        public ReactiveProperty<string> PrevTextContent { get; } = new ReactiveProperty<string>();
+        public ReactiveProperty<string> PrevTextContent { get; }
 
         /// <summary>
         /// 下参照パネルのコンテンツ
         /// </summary>
-        public ReactiveProperty<string> NextTextContent { get; } = new ReactiveProperty<string>();
+        public ReactiveProperty<string> NextTextContent { get; }
 
         #endregion Content
 
@@ -265,6 +272,29 @@ namespace QuartetEditor.ViewModels
 
         #endregion NodeManipulation
 
+        #region File
+
+        /// <summary>
+        /// ViewへのSaveFileDialog処理要求
+        /// </summary>
+        public Func<SaveFileDialog, string> SaveDialogViewAction { get; set; }
+
+        /// <summary>
+        /// ViewへのOpenFileDialog処理要求
+        /// </summary>
+        public Func<OpenFileDialog, string> OpenDialogViewAction { get; set; }
+
+        /// <summary>
+        /// ファイル保存要求
+        /// </summary>
+        public ReactiveCommand SaveCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// ファイル変名保存要求
+        /// </summary>
+        public ReactiveCommand RenameSaveCommand { get; private set; } = new ReactiveCommand();
+
+        #endregion File
 
         /// <summary>
         /// コンストラクタ
@@ -274,6 +304,25 @@ namespace QuartetEditor.ViewModels
             this.Tree = this.Model
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
+
+            // エラーメッセージ表示要求の処理
+            this.Model.ShowErrorMessageRequest.Subscribe( message =>
+            {
+                if (this.MessageDialogViewAction == null)
+                {
+                    return;
+                }
+
+                var arg = new DialogArg
+                {
+                    Title = "エラー",
+                    Message = message,
+                    Style = MessageDialogStyle.Affirmative
+                };
+                var task = this.MessageDialogViewAction(arg);
+
+                return;
+            });
 
             #region Content
 
@@ -470,6 +519,29 @@ namespace QuartetEditor.ViewModels
             this.MoveDownCommand = new ReactiveCommand(this.Model.CanMoveDown, false);
             this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown());
             #endregion NodeManipulation
+
+            #region File
+
+            this.SaveCommand.Subscribe(_ => this.Model.Save());
+            this.RenameSaveCommand.Subscribe(_ => this.Model.RenameSave());
+            this.Model.SavePathRequest.Subscribe(act =>
+            {
+                if (this.SaveDialogViewAction == null)
+                {
+                    return;
+                }
+
+                var dialog = new SaveFileDialog();
+                dialog.Title = "QEDファイルを保存";
+                dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
+                dialog.AddExtension = true;
+                dialog.DefaultExt = "qed";
+                dialog.FileName = "新規";
+                string path = this.SaveDialogViewAction(dialog);
+                act(path);
+            });
+
+            #endregion File
 
         }
 
