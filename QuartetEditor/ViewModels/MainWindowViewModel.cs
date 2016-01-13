@@ -151,7 +151,7 @@ namespace QuartetEditor.ViewModels
                 BottomPanelOpen = this.BottomPanelOpen.Value,
             };
             // Viewにリクエストを投げる
-            panelOpenRequest.Raise(new Confirmation { Content = state});
+            panelOpenRequest.Raise(new Confirmation { Content = state });
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// AboutFlyout開閉コマンド
         /// </summary>
-        public ReactiveCommand OpenAboutCommand { get; private set; }　= new ReactiveCommand();
+        public ReactiveCommand OpenAboutCommand { get; private set; } = new ReactiveCommand();
 
         #endregion AboutFlyout
 
@@ -294,6 +294,11 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveCommand RenameSaveCommand { get; private set; } = new ReactiveCommand();
 
+        /// <summary>
+        /// ファイル読み込み要求
+        /// </summary>
+        public ReactiveCommand OpenCommand { get; private set; } = new ReactiveCommand();
+
         #endregion File
 
         /// <summary>
@@ -306,30 +311,30 @@ namespace QuartetEditor.ViewModels
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
             // エラーメッセージ表示要求の処理
-            this.Model.ShowErrorMessageRequest.Subscribe( message =>
-            {
-                if (this.MessageDialogViewAction == null)
-                {
-                    return;
-                }
+            this.Model.ShowErrorMessageRequest.Subscribe(message =>
+           {
+               if (this.MessageDialogViewAction == null)
+               {
+                   return;
+               }
 
-                var arg = new DialogArg
-                {
-                    Title = "エラー",
-                    Message = message,
-                    Style = MessageDialogStyle.Affirmative
-                };
-                var task = this.MessageDialogViewAction(arg);
+               var arg = new DialogArg
+               {
+                   Title = "エラー",
+                   Message = message,
+                   Style = MessageDialogStyle.Affirmative
+               };
+               var task = this.MessageDialogViewAction(arg);
 
-                return;
-            });
+               return;
+           });
 
             #region Content
 
             // VM -> M 一方向バインド
             this.SelectedNode = ReactiveProperty.FromObject(
-                this.Model, 
-                x => x.SelectedNode, 
+                this.Model,
+                x => x.SelectedNode,
                 convert: x => (NodeViewModel)null, // M -> VMの変換処理
                 convertBack: x => x?.Model); // VM -> Mの変換処理
 
@@ -481,7 +486,7 @@ namespace QuartetEditor.ViewModels
             #region AboutFlyout
 
             // AboutCommand
-            this.OpenAboutCommand.Subscribe( _ => this.IsAboutOpen = true );
+            this.OpenAboutCommand.Subscribe(_ => this.IsAboutOpen = true);
 
             #endregion AboutFlyout
 
@@ -496,7 +501,7 @@ namespace QuartetEditor.ViewModels
 
             #region NodeManipulation
 
-            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode() );
+            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode());
 
             this.UndoCommand = new ReactiveCommand(this.Model.CanUndo, false);
             this.UndoCommand.Subscribe(_ =>
@@ -505,7 +510,7 @@ namespace QuartetEditor.ViewModels
             });
 
             this.RedoCommand = new ReactiveCommand(this.Model.CanRedo, false);
-            this.RedoCommand.Subscribe(_ => this.Model.Redo() );
+            this.RedoCommand.Subscribe(_ => this.Model.Redo());
 
             this.DeleteNodeCommand.Subscribe(_ => this.Model.DeleteNode());
 
@@ -538,6 +543,20 @@ namespace QuartetEditor.ViewModels
                 dialog.DefaultExt = "qed";
                 dialog.FileName = "新規";
                 string path = this.SaveDialogViewAction(dialog);
+                act(path);
+            });
+            this.OpenCommand.Subscribe(_ => this.Model.OpenQED());
+            this.Model.OpenPathRequest.Subscribe(act =>
+            {
+                if (this.OpenDialogViewAction == null)
+                {
+                    return;
+                }
+
+                var dialog = new OpenFileDialog();
+                dialog.Title = "QEDファイルを読み込み";
+                dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
+                string path = this.OpenDialogViewAction(dialog);
                 act(path);
             });
 

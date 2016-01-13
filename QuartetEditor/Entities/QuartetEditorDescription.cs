@@ -23,6 +23,14 @@ namespace QuartetEditor.Entities
         public double Version { set; get; } = 1.0;
 
         /// <summary>
+        /// デフォルトコンストラクタ
+        /// </summary>
+        public QuartetEditorDescription()
+        {
+
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="node"></param>
@@ -54,6 +62,15 @@ namespace QuartetEditor.Entities
         /// 子
         /// </summary>
         public List<QuartetEditorDescriptionItem> Children { set; get; } = new List<QuartetEditorDescriptionItem>();
+
+        /// <summary>
+        /// デフォルトコンストラクタ
+        /// </summary>
+        /// <param name="node"></param>
+        public QuartetEditorDescriptionItem()
+        {
+
+        }
 
         /// <summary>
         /// コンストラクタ

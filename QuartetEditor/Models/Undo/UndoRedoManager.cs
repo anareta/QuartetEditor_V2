@@ -102,6 +102,17 @@ namespace QuartetEditor.Models.Undo
             }
         }
 
+        /// <summary>
+        /// Undoのキャッシュをクリアします
+        /// </summary>
+        public void Clear()
+        {
+            this._Redo.Clear();
+            this.CanRedo = false;
+            this._Undo.Clear();
+            this.CanUndo = false;
+        }
+
         /// <summary>
         /// Undo出来るかどうかを返します。
         /// </summary>

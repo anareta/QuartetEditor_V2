@@ -339,9 +339,9 @@
               Margin="0,5,0,0"
               DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
             <TreeView x:Name="_NodeView"
                       Grid.Column="0"

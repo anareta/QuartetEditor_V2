@@ -303,9 +303,14 @@ namespace QuartetEditor.Models
                 if (_isLastItem)
                 {
                     // ノードが空になる場合は勝手に追加する
-                    tree.Add(new Node());
+                    _tree.Add(new Node());
                 }
-                _tree.ElementAt(_index - 1 < 0 ? 0 : _index - 1).IsSelected = true;
+
+                var nextSelected = _tree.ElementAtOrDefault(_index - 1 < 0 ? 0 : _index - 1);
+                if (nextSelected != null)
+                {
+                    nextSelected.IsSelected = true;
+                }
             });
 
             // 取り消す操作
@@ -449,7 +454,8 @@ namespace QuartetEditor.Models
         {
             // 行う操作
             object[] doParam = new object[] { fromTree, fromIndex, toTree, toIndex, item, target };
-            var doAction = new Action<IList<Node>, int, IList<Node>, int, Node, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item, _target) => {
+            var doAction = new Action<IList<Node>, int, IList<Node>, int, Node, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item, _target) =>
+            {
                 if (_fromTree == _toTree)
                 {
                     if (_fromIndex < _toIndex)
@@ -472,7 +478,8 @@ namespace QuartetEditor.Models
 
             // 取り消す操作
             object[] undoParam = new object[] { toTree, toIndex, fromTree, fromIndex, item };
-            var undoAction = new Action<IList<Node>, int, IList<Node>, int, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item) => {
+            var undoAction = new Action<IList<Node>, int, IList<Node>, int, Node>((_fromTree, _fromIndex, _toTree, _toIndex, _item) =>
+            {
                 if (_fromTree == _toTree)
                 {
                     if (_fromIndex > _toIndex)
@@ -991,8 +998,8 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         public void Save()
         {
-            if (this.FileName == null || 
-                string.IsNullOrWhiteSpace(this.FileName) || 
+            if (this.FileName == null ||
+                string.IsNullOrWhiteSpace(this.FileName) ||
                 !File.Exists(this.FileName))
             {
                 // 有効なファイル名が存在しない場合は変名処理へ
@@ -1022,26 +1029,81 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         public void RenameSave()
         {
-            SavePathRequest.OnNext(path =>
-           {
-               if (path != null && !string.IsNullOrWhiteSpace(path))
-               {
-                   try
-                   {
-                       this.FileName = path;
-                       if (File.Exists(path))
-                       {
-                           File.Delete(path);
-                       }
-                       var data = new QuartetEditorDescription(this.TreeSource);
-                       FileUtility.SaveJsonObject(path, data);
-                   }
-                   catch
-                   {
-                       this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
-                   }
-               }
-           });
+            this.SavePathRequest.OnNext(path =>
+            {
+                if (path != null && !string.IsNullOrWhiteSpace(path))
+                {
+                    bool fail = false;
+                    try
+                    {
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        var data = new QuartetEditorDescription(this.TreeSource);
+                        if (FileUtility.SaveJsonObject(path, data) == false)
+                        {
+                            fail = false;
+                        }
+                        else
+                        {
+                            this.FileName = path;
+                        }
+                    }
+                    catch
+                    {
+                        fail = true;
+                    }
+
+                    if (fail)
+                    {
+                        this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+                    }
+                }
+            });
+        }
+
+        /// <summary>
+        /// ファイルを開いて読み込む
+        /// </summary>
+        /// <returns></returns>
+        public void OpenQED()
+        {
+            this.OpenPathRequest.OnNext(path =>
+            {
+                if (File.Exists(path))
+                {
+                    bool fail = false;
+                    try
+                    {
+                        QuartetEditorDescription model;
+                        if (FileUtility.LoadJsonObject(path, out model) == false)
+                        {
+                            fail = true;
+                        }
+                        else
+                        {
+                            this.TreeSource.Clear();
+                            this.UndoRedoModel.Clear();
+                            foreach (var item in model.Node)
+                            {
+                                this.TreeSource.Add(new Node(item));
+                            }
+                            this.FileName = path;
+                            this.Tree.First().IsSelected = true;
+                        }
+                    }
+                    catch
+                    {
+                        fail = true;
+                    }
+
+                    if (fail)
+                    {
+                        this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
+                    }
+                }
+            });
         }
 
         #endregion File
