@@ -21,7 +21,7 @@ namespace QuartetEditor
             // コマンドライン引数の取得
             if (e.Args.Count() > 0)
             {
-                //AppStatus.SaveFileName = e.Args[0];
+                NodeManager.Current.Load(e.Args[0]);
             }
 
             // 設定ファイルの読み込み

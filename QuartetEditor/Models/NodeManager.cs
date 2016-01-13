@@ -213,8 +213,8 @@ namespace QuartetEditor.Models
                 this.ParentNode = this.GetParent(this.SelectedNode);
                 this.UpdatePanelReffer();
 
-                this.CanMoveUp.OnNext(this.PrevNode != null);
-                this.CanMoveDown.OnNext(this.NextNode != null);
+                this.CanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
+                this.CanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);
             }).AddTo(this.Disposable); ;
 
             ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen).Subscribe(_AppDomain =>
@@ -1071,39 +1071,48 @@ namespace QuartetEditor.Models
         {
             this.OpenPathRequest.OnNext(path =>
             {
-                if (File.Exists(path))
+                this.Load(path);
+            });
+        }
+
+        /// <summary>
+        /// ファイルの読み込みを行います
+        /// </summary>
+        /// <param name="path"></param>
+        public void Load(string path)
+        {
+            if (File.Exists(path))
+            {
+                bool fail = false;
+                try
                 {
-                    bool fail = false;
-                    try
-                    {
-                        QuartetEditorDescription model;
-                        if (FileUtility.LoadJsonObject(path, out model) == false)
-                        {
-                            fail = true;
-                        }
-                        else
-                        {
-                            this.TreeSource.Clear();
-                            this.UndoRedoModel.Clear();
-                            foreach (var item in model.Node)
-                            {
-                                this.TreeSource.Add(new Node(item));
-                            }
-                            this.FileName = path;
-                            this.Tree.First().IsSelected = true;
-                        }
-                    }
-                    catch
+                    QuartetEditorDescription model;
+                    if (FileUtility.LoadJsonObject(path, out model) == false)
                     {
                         fail = true;
                     }
-
-                    if (fail)
+                    else
                     {
-                        this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
+                        this.TreeSource.Clear();
+                        this.UndoRedoModel.Clear();
+                        foreach (var item in model.Node)
+                        {
+                            this.TreeSource.Add(new Node(item));
+                        }
+                        this.FileName = path;
+                        this.Tree.First().IsSelected = true;
                     }
                 }
-            });
+                catch
+                {
+                    fail = true;
+                }
+
+                if (fail)
+                {
+                    this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
+                }
+            }
         }
 
         #endregion File
