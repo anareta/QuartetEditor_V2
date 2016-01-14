@@ -50,8 +50,24 @@ namespace QuartetEditor.Models.Undo
 
             command.Do();
 
-            this._Redo.Clear();
+            ClearRedoStack();
             this.CanRedo = this._Redo.Count > 0;
+        }
+
+        /// <summary>
+        /// Redoのスタックをすべて削除します
+        /// </summary>
+        private void ClearRedoStack()
+        {
+            this._Redo.Clear();
+        }
+
+        /// <summary>
+        /// Undoのスタックをすべて削除します
+        /// </summary>
+        private void ClearUndoStack()
+        {
+            this._Undo.Clear();
         }
 
         /// <summary>
@@ -107,9 +123,9 @@ namespace QuartetEditor.Models.Undo
         /// </summary>
         public void Clear()
         {
-            this._Redo.Clear();
+            this.ClearRedoStack();
             this.CanRedo = false;
-            this._Undo.Clear();
+            this.ClearUndoStack();
             this.CanUndo = false;
         }
 
