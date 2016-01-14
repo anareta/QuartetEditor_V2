@@ -50,7 +50,7 @@ namespace QuartetEditor.Models.Undo
 
             command.Do();
 
-            ClearRedoStack();
+            this.ClearRedoStack();
             this.CanRedo = this._Redo.Count > 0;
         }
 
