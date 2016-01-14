@@ -87,7 +87,7 @@
         </ResourceDictionary>
     </metro:MetroWindow.Resources>
 
-    <Window.InputBindings>
+    <metro:MetroWindow.InputBindings>
         <KeyBinding Key="F3"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_NodeView,
@@ -111,7 +111,7 @@
                     Command="{Binding PanelChangeCommand}"
                     CommandParameter="{x:Static enum:PanelKindEnum.Bottom}"
                     Modifiers="Control" />
-    </Window.InputBindings>
+    </metro:MetroWindow.InputBindings>
 
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
@@ -149,8 +149,12 @@
             
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>
-
+    
     <DockPanel AllowDrop="True">
+        <i:Interaction.Behaviors>
+            <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
+        </i:Interaction.Behaviors>
+        
         <Rectangle Height="15" DockPanel.Dock="Bottom" />
         <Grid Margin="0,0,0,0" DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>

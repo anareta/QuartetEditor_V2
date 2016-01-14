@@ -85,10 +85,14 @@ namespace QuartetEditor.ViewModels
             }
         }
 
+        #region DragDrop
+
         /// <summary>
         /// ノードのドラッグドロップ処理の媒介
         /// </summary>
         public DragAcceptDescription DragAcceptDescription { get; } = new DragAcceptDescription();
+
+        #endregion DragDrop
 
         #region Content
 
@@ -275,6 +279,11 @@ namespace QuartetEditor.ViewModels
         #region File
 
         /// <summary>
+        /// ファイルのドロップ処理の媒介
+        /// </summary>
+        public DragAcceptDescription DraggedFileAcceptDescription { get; } = new DragAcceptDescription();
+
+        /// <summary>
         /// ViewへのSaveFileDialog処理要求
         /// </summary>
         public Func<SaveFileDialog, string> SaveDialogViewAction { get; set; }
@@ -412,24 +421,24 @@ namespace QuartetEditor.ViewModels
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
             h => this.DragAcceptDescription.DragOverAction += h,
-            h => this.DragAcceptDescription.DragOverAction -= h).Subscribe(args =>
+            h => this.DragAcceptDescription.DragOverAction -= h).Subscribe(arg =>
             {
-                var fe = args.OriginalSource as FrameworkElement;
+                var fe = arg.OriginalSource as FrameworkElement;
                 if (fe == null)
                 {
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
+                var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 if (data == null || data.IsNameEditMode.Value)
                 {
                     return;
                 }
 
-                if (args.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move))
+                if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move))
                 {
-                    args.Effects = System.Windows.DragDropEffects.Move;
+                    arg.Effects = System.Windows.DragDropEffects.Move;
                 }
 
                 this.Model.DragOverAction(target?.Model, data?.Model);
@@ -438,15 +447,15 @@ namespace QuartetEditor.ViewModels
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
             h => this.DragAcceptDescription.DragEnterAction += h,
-            h => this.DragAcceptDescription.DragEnterAction -= h).Subscribe(args =>
+            h => this.DragAcceptDescription.DragEnterAction -= h).Subscribe(arg =>
             {
-                var fe = args.OriginalSource as FrameworkElement;
+                var fe = arg.OriginalSource as FrameworkElement;
                 if (fe == null)
                 {
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
+                var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragEnterAction(target?.Model, data?.Model);
             });
@@ -454,9 +463,9 @@ namespace QuartetEditor.ViewModels
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
             h => this.DragAcceptDescription.DragLeaveAction += h,
-            h => this.DragAcceptDescription.DragLeaveAction -= h).Subscribe(args =>
+            h => this.DragAcceptDescription.DragLeaveAction -= h).Subscribe(arg =>
             {
-                var fe = args.OriginalSource as FrameworkElement;
+                var fe = arg.OriginalSource as FrameworkElement;
                 if (fe == null)
                 {
                     return;
@@ -468,15 +477,15 @@ namespace QuartetEditor.ViewModels
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
             h => this.DragAcceptDescription.DragDropAction += h,
-            h => this.DragAcceptDescription.DragDropAction -= h).Subscribe(args =>
+            h => this.DragAcceptDescription.DragDropAction -= h).Subscribe(arg =>
             {
-                var fe = args.OriginalSource as FrameworkElement;
+                var fe = arg.OriginalSource as FrameworkElement;
                 if (fe == null)
                 {
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                var data = args.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
+                var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragDropAction(target?.Model, data?.Model);
             });
@@ -526,6 +535,32 @@ namespace QuartetEditor.ViewModels
             #endregion NodeManipulation
 
             #region File
+
+            // ファイルのドロップイベント処理
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DraggedFileAcceptDescription.DragOverAction += h,
+            h => this.DraggedFileAcceptDescription.DragOverAction -= h).Subscribe(arg =>
+            {
+                if (arg.Data.GetDataPresent(DataFormats.FileDrop, true))
+                {
+                    arg.Effects = DragDropEffects.Copy;
+                    arg.Handled = true;
+                }
+            });
+
+            Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
+            h => (e) => h(e),
+            h => this.DraggedFileAcceptDescription.DragDropAction += h,
+            h => this.DraggedFileAcceptDescription.DragDropAction -= h).Subscribe(arg =>
+            {
+                string[] files = arg.Data.GetData(DataFormats.FileDrop) as string[];
+
+                if (files != null && files.Count() == 1)
+                {
+                    this.Model.Load(files[0]);
+                }
+            });
 
             this.SaveCommand.Subscribe(_ => this.Model.Save());
             this.RenameSaveCommand.Subscribe(_ => this.Model.RenameSave());
