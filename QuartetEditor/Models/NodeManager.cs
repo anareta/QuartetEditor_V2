@@ -366,10 +366,11 @@ namespace QuartetEditor.Models
         private void AddNode(IList<Node> tree, int index)
         {
             // 行う操作
-            object[] doParam = new object[] { tree, index };
-            var doAction = new Action<IList<Node>, int>((_tree, _index) =>
+            var newItem = new Node();
+            object[] doParam = new object[] { tree, index, newItem };
+            var doAction = new Action<IList<Node>, int, Node>((_tree, _index, _newItem) =>
             {
-                this.AddTransaction(_tree, _index);
+                this.AddTransaction(_tree, _index, _newItem);
             });
 
             // 取り消す操作
@@ -388,10 +389,10 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="index"></param>
-        private void AddTransaction(IList<Node> tree, int index)
+        /// <param name="item"></param>
+        private void AddTransaction(IList<Node> tree, int index, Node item)
         {
-            var newItem = new Node();
-            tree.Insert(index, newItem);
+            tree.Insert(index, item);
         }
 
         /// <summary>
