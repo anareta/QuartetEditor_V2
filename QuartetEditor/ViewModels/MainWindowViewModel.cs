@@ -47,6 +47,11 @@ namespace QuartetEditor.ViewModels
         public ReadOnlyReactiveCollection<NodeViewModel> Tree { get; }
 
         /// <summary>
+        /// ウィンドウタイトル
+        /// </summary>
+        public ReactiveProperty<string> WindowTitle { get; }
+
+        /// <summary>
         /// 現在選択中のノード
         /// </summary>
         public ReactiveProperty<NodeViewModel> SelectedNode { get; }
@@ -319,24 +324,31 @@ namespace QuartetEditor.ViewModels
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
+            this.WindowTitle = this.Model.ObserveProperty(x => x.FileName)
+                                   .Select(x => string.IsNullOrWhiteSpace(x) ? "" : System.IO.Path.GetFileName(x))
+                                   .Select(x => "Quartet Editor" + (string.IsNullOrWhiteSpace(x) ? "" : $" - {x}"))
+                                   .CombineLatest(this.Model.ObserveProperty(x => x.IsEdited), (title, flg) => title + (flg ? "（変更あり）" : ""))
+                                   .ToReactiveProperty()
+                                   .AddTo(this.Disposable);
+
             // エラーメッセージ表示要求の処理
             this.Model.ShowErrorMessageRequest.Subscribe(message =>
-           {
-               if (this.MessageDialogViewAction == null)
-               {
-                   return;
-               }
+            {
+                if (this.MessageDialogViewAction == null)
+                {
+                    return;
+                }
 
-               var arg = new DialogArg
-               {
-                   Title = "エラー",
-                   Message = message,
-                   Style = MessageDialogStyle.Affirmative
-               };
-               var task = this.MessageDialogViewAction(arg);
+                var arg = new DialogArg
+                {
+                    Title = "エラー",
+                    Message = message,
+                    Style = MessageDialogStyle.Affirmative
+                };
+                var task = this.MessageDialogViewAction(arg);
 
-               return;
-           });
+                return;
+            });
 
             #region Content
 
@@ -375,26 +387,21 @@ namespace QuartetEditor.ViewModels
             this.LeftPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.LeftPanelOpen)
             .AddTo(this.Disposable);
-            this.LeftPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
-            {
-                this.RisePanelState();
-            });
 
             this.TopPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.TopPanelOpen)
             .AddTo(this.Disposable);
-            this.TopPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
-            {
-                this.RisePanelState();
-            });
 
             this.BottomPanelOpen = this.Config
             .ToReactivePropertyAsSynchronized(x => x.BottomPanelOpen)
             .AddTo(this.Disposable);
-            this.BottomPanelOpen.PropertyChangedAsObservable().Subscribe(_ =>
-            {
-                this.RisePanelState();
-            });
+
+            // パネルの開閉状態が変わったときはRisePanelStateを呼び出す
+            new[] { this.LeftPanelOpen, this.TopPanelOpen, this.BottomPanelOpen }
+            .Select(x => INotifyPropertyChangedExtensions.PropertyChangedAsObservable(x))
+            .Merge()
+            .Subscribe(_ => this.RisePanelState())
+            .AddTo(this.Disposable);
 
             this.PanelChangeCommand.Subscribe(kind =>
             {
@@ -442,7 +449,7 @@ namespace QuartetEditor.ViewModels
                 }
 
                 this.Model.DragOverAction(target?.Model, data?.Model);
-            });
+            }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
@@ -458,7 +465,7 @@ namespace QuartetEditor.ViewModels
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragEnterAction(target?.Model, data?.Model);
-            });
+            }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
@@ -472,7 +479,7 @@ namespace QuartetEditor.ViewModels
                 }
                 var target = fe.DataContext as NodeViewModel;
                 this.Model.DragLeaveAction(target?.Model);
-            });
+            }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
@@ -488,14 +495,14 @@ namespace QuartetEditor.ViewModels
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
                 this.Model.DragDropAction(target?.Model, data?.Model);
-            });
+            }).AddTo(this.Disposable);
 
             #endregion DragDrop
 
             #region AboutFlyout
 
             // AboutCommand
-            this.OpenAboutCommand.Subscribe(_ => this.IsAboutOpen = true);
+            this.OpenAboutCommand.Subscribe(_ => this.IsAboutOpen = true).AddTo(this.Disposable);
 
             #endregion AboutFlyout
 
@@ -505,33 +512,33 @@ namespace QuartetEditor.ViewModels
             {
                 // Viewにリクエストを投げる
                 this.setFocusRequest.Raise(new Confirmation { Content = param });
-            });
+            }).AddTo(this.Disposable);
             #endregion Focus
 
             #region NodeManipulation
 
-            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode());
+            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode()).AddTo(this.Disposable);
 
             this.UndoCommand = new ReactiveCommand(this.Model.CanUndo, false);
             this.UndoCommand.Subscribe(_ =>
             {
                 this.Model.Undo();
-            });
+            }).AddTo(this.Disposable);
 
             this.RedoCommand = new ReactiveCommand(this.Model.CanRedo, false);
-            this.RedoCommand.Subscribe(_ => this.Model.Redo());
+            this.RedoCommand.Subscribe(_ => this.Model.Redo()).AddTo(this.Disposable);
 
-            this.DeleteNodeCommand.Subscribe(_ => this.Model.DeleteNode());
+            this.DeleteNodeCommand.Subscribe(_ => this.Model.DeleteNode()).AddTo(this.Disposable);
 
-            this.AddNodeSameCommand.Subscribe(_ => this.Model.AddNodeSame());
+            this.AddNodeSameCommand.Subscribe(_ => this.Model.AddNodeSame()).AddTo(this.Disposable);
 
-            this.AddNodeLowerCommand.Subscribe(_ => this.Model.AddNodeLower());
+            this.AddNodeLowerCommand.Subscribe(_ => this.Model.AddNodeLower()).AddTo(this.Disposable);
 
             this.MoveUpCommand = new ReactiveCommand(this.Model.CanMoveUp, false);
-            this.MoveUpCommand.Subscribe(_ => this.Model.MoveUp());
+            this.MoveUpCommand.Subscribe(_ => this.Model.MoveUp()).AddTo(this.Disposable);
 
             this.MoveDownCommand = new ReactiveCommand(this.Model.CanMoveDown, false);
-            this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown());
+            this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown()).AddTo(this.Disposable);
             #endregion NodeManipulation
 
             #region File
@@ -547,7 +554,7 @@ namespace QuartetEditor.ViewModels
                     arg.Effects = DragDropEffects.Copy;
                     arg.Handled = true;
                 }
-            });
+            }).AddTo(this.Disposable); ;
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
             h => (e) => h(e),
@@ -560,10 +567,10 @@ namespace QuartetEditor.ViewModels
                 {
                     this.Model.Load(files[0]);
                 }
-            });
+            }).AddTo(this.Disposable);
 
-            this.SaveCommand.Subscribe(_ => this.Model.Save());
-            this.RenameSaveCommand.Subscribe(_ => this.Model.RenameSave());
+            this.SaveCommand.Subscribe(_ => this.Model.SaveOverwrite()).AddTo(this.Disposable);
+            this.RenameSaveCommand.Subscribe(_ => this.Model.RenameSave()).AddTo(this.Disposable);
             this.Model.SavePathRequest.Subscribe(act =>
             {
                 if (this.SaveDialogViewAction == null)
@@ -579,8 +586,8 @@ namespace QuartetEditor.ViewModels
                 dialog.FileName = "新規";
                 string path = this.SaveDialogViewAction(dialog);
                 act(path);
-            });
-            this.OpenCommand.Subscribe(_ => this.Model.OpenQED());
+            }).AddTo(this.Disposable);
+            this.OpenCommand.Subscribe(_ => this.Model.OpenQED()).AddTo(this.Disposable);
             this.Model.OpenPathRequest.Subscribe(act =>
             {
                 if (this.OpenDialogViewAction == null)
@@ -593,7 +600,7 @@ namespace QuartetEditor.ViewModels
                 dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
                 string path = this.OpenDialogViewAction(dialog);
                 act(path);
-            });
+            }).AddTo(this.Disposable);
 
             #endregion File
 

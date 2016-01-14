@@ -95,9 +95,7 @@ namespace QuartetEditor.ViewModels
                 .ToReactivePropertyAsSynchronized(x => x.ID)
                 .AddTo(this.Disposable);
 
-            this.Content = this.Model
-                .ToReactivePropertyAsSynchronized(x => x.Content)
-                .AddTo(this.Disposable);
+            this.Content = new ReactiveProperty<TextDocument>(this.Model.Content);
 
             this.IsExpanded = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsExpanded)

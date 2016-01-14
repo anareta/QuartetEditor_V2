@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,14 +57,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ノードのコンテンツ
         /// </summary>
-        private TextDocument _Content = new TextDocument();
 
         [Unique]
-        public TextDocument Content
-        {
-            get { return this._Content; }
-            set { this.SetProperty(ref this._Content, value); }
-        }
+        public TextDocument Content { get; } = new TextDocument();
 
         /// <summary>
         /// 内部データクラス
@@ -104,6 +101,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _IsSelected;
 
+        [Unique]
         public bool IsSelected
         {
             get { return this._IsSelected; }
@@ -115,6 +113,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _IsNameEditMode;
 
+        [Unique]
         public bool IsNameEditMode
         {
             get { return this._IsNameEditMode; }
@@ -126,6 +125,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _IsReferred;
 
+        [Unique]
         public bool IsReferred
         {
             get { return this._IsReferred; }
@@ -137,6 +137,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool _IsDragOver;
 
+        [Unique]
         public bool IsDragOver
         {
             get { return this._IsDragOver; }
@@ -148,6 +149,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public DropPositionEnum _DropPosition;
 
+        [Unique]
         public DropPositionEnum DropPosition
         {
             get { return this._DropPosition; }
@@ -167,7 +169,19 @@ namespace QuartetEditor.Models
         public bool IsEdited
         {
             get { return this._IsEdited; }
-            private set { this.SetProperty(ref this._IsEdited, value); }
+            set { this.SetProperty(ref this._IsEdited, value); }
+        }
+
+        /// <summary>
+        /// 子ノードが編集された
+        /// </summary>
+        public bool _ChildrenEdited = false;
+
+        [Unique]
+        public bool ChildrenEdited
+        {
+            get { return this._ChildrenEdited; }
+            set { this.SetProperty(ref this._ChildrenEdited, value); }
         }
 
         /// <summary>
@@ -183,22 +197,21 @@ namespace QuartetEditor.Models
                 .Subscribe(x => this.IsEdited = true)
                 .AddTo(this.Disposable);
 
-            this.ObserveProperty(x => x.Content)
-                .Subscribe(x => this.IsEdited = true)
-                .AddTo(this.Disposable);
+            Observable.FromEventPattern(h => this.Content.TextChanged += h,
+                                        h => this.Content.TextChanged -= h)
+                      .Subscribe(_ => this.IsEdited = true).AddTo(this.Disposable);
 
-            this.ChildrenSource.ObserveElementProperty(x => x.IsEdited)
+            // 子ノードの変更検出
+            this.ChildrenSource.ObserveElementProperty(x => x.IsEdited).Where(x => x.Value)
+                .Merge(this.ChildrenSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
                 .Subscribe(x =>
                 {
-                    if (x.Instance.IsEdited)
-                    {
-                        this.IsEdited = true;
-                    }
+                    this.ChildrenEdited = true;
                 })
                 .AddTo(this.Disposable);
 
             this.ChildrenSource.CollectionChangedAsObservable()
-                .Subscribe(x => this.IsEdited = true)
+                .Subscribe(x => this.ChildrenEdited = true)
                 .AddTo(this.Disposable);
         }
 
@@ -210,7 +223,7 @@ namespace QuartetEditor.Models
         {
             this._Name = name;
 #if DEBUG
-            this._Content.Text = name;
+            this.Content.Text = name;
 #endif
         }
 

@@ -190,17 +190,16 @@ namespace QuartetEditor.Models
             this.Tree = new ReadOnlyObservableCollection<Node>(this.TreeSource);
 
             // プロパティの変更を監視する
-            this.TreeSource.ObserveElementProperty(x => x.IsEdited)
+            this.TreeSource.ObserveElementProperty(x => x.IsEdited).Where(x => x.Value)
+                .Merge(this.TreeSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
                 .Subscribe(x =>
                 {
-                    if (x.Instance.IsEdited)
-                    {
-                        this.IsEdited = true;
-                    }
+                    this.IsEdited = true;
                 }).AddTo(this.Disposable);
 
             this.TreeSource.CollectionChangedAsObservable()
-                .Subscribe(x => this.IsEdited = true);
+                .Subscribe(x => this.IsEdited = true)
+                .AddTo(this.Disposable);
 
             #region ViewState
 
@@ -215,22 +214,14 @@ namespace QuartetEditor.Models
 
                 this.CanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
                 this.CanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);
-            }).AddTo(this.Disposable); ;
-
-            ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen).Subscribe(_AppDomain =>
-            {
-                this.UpdatePanelReffer();
             }).AddTo(this.Disposable);
 
-            ConfigManager.Current.Config.ObserveProperty(c => c.TopPanelOpen).Subscribe(_AppDomain =>
-            {
-                this.UpdatePanelReffer();
-            }).AddTo(this.Disposable);
-
-            ConfigManager.Current.Config.ObserveProperty(c => c.BottomPanelOpen).Subscribe(_AppDomain =>
-            {
-                this.UpdatePanelReffer();
-            }).AddTo(this.Disposable);
+            new[] { ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen),
+                    ConfigManager.Current.Config.ObserveProperty(c => c.TopPanelOpen),
+                    ConfigManager.Current.Config.ObserveProperty(c => c.BottomPanelOpen)}
+            .Merge()
+            .Subscribe(_ => this.UpdatePanelReffer())
+            .AddTo(this.Disposable);
 
             #endregion ViewState
 
@@ -267,6 +258,18 @@ namespace QuartetEditor.Models
             {
                 this.TreeSource.Add(new Node() { IsSelected = true });
             }
+
+            this.OffEditFlag();
+        }
+
+        /// <summary>
+        /// すべての編集フラグをオフにします
+        /// </summary>
+        private void OffEditFlag()
+        {
+            this.WorkAllNode(n => n.IsEdited = false);
+            this.WorkAllNode(n => n.ChildrenEdited = false);
+            this.IsEdited = false;
         }
 
         /// <summary>
@@ -979,7 +982,13 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 編集されたか
         /// </summary>
-        public bool IsEdited { get; private set; } = false;
+        private bool _IsEdited = false;
+
+        public bool IsEdited
+        {
+            get { return this._IsEdited; }
+            set { this.SetProperty(ref this._IsEdited, value); }
+        }
 
         /// <summary>
         /// ファイル名
@@ -993,10 +1002,10 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// ファイルを保存する
+        /// ファイルを上書き保存する
         /// </summary>
         /// <returns></returns>
-        public void Save()
+        public void SaveOverwrite()
         {
             if (this.FileName == null ||
                 string.IsNullOrWhiteSpace(this.FileName) ||
@@ -1007,20 +1016,11 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            try
+            if (this.Save(this.FileName))
             {
-                if (File.Exists(this.FileName))
-                {
-                    File.Delete(this.FileName);
-                }
-                var data = new QuartetEditorDescription(this.TreeSource);
-                FileUtility.SaveJsonObject(this.FileName, data);
+                this.OffEditFlag();
             }
-            catch
-            {
-                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
-            }
-
+            
         }
 
         /// <summary>
@@ -1033,34 +1033,36 @@ namespace QuartetEditor.Models
             {
                 if (path != null && !string.IsNullOrWhiteSpace(path))
                 {
-                    bool fail = false;
-                    try
+                    if (this.Save(path))
                     {
-                        if (File.Exists(path))
-                        {
-                            File.Delete(path);
-                        }
-                        var data = new QuartetEditorDescription(this.TreeSource);
-                        if (FileUtility.SaveJsonObject(path, data) == false)
-                        {
-                            fail = false;
-                        }
-                        else
-                        {
-                            this.FileName = path;
-                        }
-                    }
-                    catch
-                    {
-                        fail = true;
-                    }
-
-                    if (fail)
-                    {
-                        this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+                        this.FileName = path;
+                        this.OffEditFlag();
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// ファイルを保存する
+        /// </summary>
+        /// <param name="path"></param>
+        private bool Save(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                var data = new QuartetEditorDescription(this.TreeSource);
+                FileUtility.SaveJsonObject(path, data);
+                return true;
+            }
+            catch
+            {
+                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+            }
+            return false;
         }
 
         /// <summary>
@@ -1083,6 +1085,12 @@ namespace QuartetEditor.Models
         {
             if (File.Exists(path))
             {
+                if (this.IsEdited)
+                {
+                    this.OpenNewProcess(path);
+                    return;
+                }
+
                 bool fail = false;
                 try
                 {
@@ -1101,6 +1109,7 @@ namespace QuartetEditor.Models
                         }
                         this.FileName = path;
                         this.Tree.First().IsSelected = true;
+                        this.OffEditFlag();
                     }
                 }
                 catch
@@ -1113,6 +1122,15 @@ namespace QuartetEditor.Models
                     this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
                 }
             }
+        }
+
+        /// <summary>
+        /// 新しいプロセスでファイルを開く
+        /// </summary>
+        /// <param name="path"></param>
+        private void OpenNewProcess(string path)
+        {
+            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location, "\"" + path + "\"");
         }
 
         #endregion File
