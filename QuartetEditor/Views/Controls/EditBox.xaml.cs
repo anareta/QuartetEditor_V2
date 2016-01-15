@@ -239,6 +239,60 @@ namespace QuartetEditor.Views.Controls
         }
         #endregion DragOverPosition
 
+        #region IsMarked
+
+        /// <summary>
+        /// 参照状態にあるか否か
+        /// </summary>
+        public bool IsMarked
+        {
+            get { return (bool)GetValue(IsMarkedProperty); }
+            set
+            {
+                SetValue(IsMarkedProperty, value);
+                this.SetMarkerVisibility();
+            }
+        }
+
+        /// <summary>
+        /// IsMarkedプロパティ
+        /// </summary>
+        public static readonly DependencyProperty IsMarkedProperty =
+            DependencyProperty.RegisterAttached("IsMarked", typeof(bool), typeof(EditBox),
+            new PropertyMetadata(false, IsMarkedPropertyChanged));
+
+        /// <summary>
+        /// IsMarkedプロパティ変更処理
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="e"></param>
+        private static void IsMarkedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as EditBox;
+            var flg = e.NewValue as bool?;
+            if (flg.HasValue)
+            {
+                thisInstance.IsMarked = flg.Value;
+            }
+        }
+
+        /// <summary>
+        /// マーカーの表示状態を切り替えます
+        /// </summary>
+        public void SetMarkerVisibility()
+        {
+            if (this.IsMarked && this._TextBlock.Visibility == Visibility.Visible)
+            {
+                this._Mark.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                this._Mark.Visibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
+        #endregion IsMarked
+
         #region Event
 
         /// <summary>

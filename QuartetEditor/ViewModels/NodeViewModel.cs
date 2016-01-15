@@ -75,6 +75,11 @@ namespace QuartetEditor.ViewModels
         public ReactiveProperty<bool> IsDragOver { get; }
 
         /// <summary>
+        /// 編集されたか
+        /// </summary>
+        public ReactiveProperty<bool> IsEdited { get; }
+
+        /// <summary>
         /// ドロップする位置
         /// </summary>
         public ReactiveProperty<DropPositionEnum> DropPosition { get; }
@@ -115,6 +120,10 @@ namespace QuartetEditor.ViewModels
 
             this.IsDragOver = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.IsDragOver)
+                .AddTo(this.Disposable);
+
+            this.IsEdited = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.IsEdited)
                 .AddTo(this.Disposable);
 
             this.DropPosition = this.Model

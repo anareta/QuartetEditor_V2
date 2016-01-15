@@ -633,7 +633,7 @@ namespace QuartetEditor.Models
                         toIndex = target.ChildrenSource.Count();
                         break;
                     default:
-                        throw new NotImplementedException();
+                        return;
                 }
             }
 

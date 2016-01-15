@@ -409,6 +409,9 @@
                                               IsReferred="{Binding IsReferred.Value,
                                                                    Mode=TwoWay,
                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                              IsMarked="{Binding IsEdited.Value,
+                                                                 Mode=TwoWay,
+                                                                 UpdateSourceTrigger=PropertyChanged}"
                                               Text="{Binding Name.Value,
                                                              Mode=TwoWay,
                                                              UpdateSourceTrigger=PropertyChanged}" />
