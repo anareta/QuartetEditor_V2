@@ -1006,30 +1006,32 @@ namespace QuartetEditor.Models
         /// ファイルを上書き保存する
         /// </summary>
         /// <returns></returns>
-        public void SaveOverwrite()
+        public bool SaveOverwrite()
         {
             if (this.FileName == null ||
                 string.IsNullOrWhiteSpace(this.FileName) ||
                 !File.Exists(this.FileName))
             {
                 // 有効なファイル名が存在しない場合は変名処理へ
-                this.RenameSave();
-                return;
+                return this.RenameSave();
             }
 
             if (this.Save(this.FileName))
             {
                 this.OffEditFlag();
+                return true;
             }
-            
+
+            return false;
         }
 
         /// <summary>
         /// ファイルを変名保存する
         /// </summary>
         /// <returns></returns>
-        public void RenameSave()
+        public bool RenameSave()
         {
+            bool result = false;
             this.SavePathRequest.OnNext(path =>
             {
                 if (path != null && !string.IsNullOrWhiteSpace(path))
@@ -1038,9 +1040,11 @@ namespace QuartetEditor.Models
                     {
                         this.FileName = path;
                         this.OffEditFlag();
+                        result = true;
                     }
                 }
             });
+            return result;
         }
 
         /// <summary>

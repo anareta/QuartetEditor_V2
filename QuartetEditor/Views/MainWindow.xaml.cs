@@ -169,19 +169,69 @@ namespace QuartetEditor.Views
             }
         }
 
-
+        /// <summary>
+        /// ウィンドウを閉じていいか
+        /// </summary>
+        private bool canShutdown = false;
 
         /// <summary>
         /// ウィンドウを閉じるときの処理
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        protected override async void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            base.OnClosing(e);
+            e.Cancel = true;
 
-            /* ウィンドウを閉じるかここでダイアログを出す */
+            if (!NodeManager.Current.IsEdited || this.canShutdown)
+            {
+                ConfigManager.Current.SaveConfig();
 
-            ConfigManager.Current.SaveConfig();
+                // ウィンドウ閉じる
+                e.Cancel = false;
+                base.OnClosing(e);
+                return;
+            }
+
+            var mySettings = new MetroDialogSettings()
+            {
+                AffirmativeButtonText = "保存して閉じる(_S)",
+                NegativeButtonText = "保存せずに閉じる(_E)",
+                FirstAuxiliaryButtonText = "閉じるのをキャンセル(_C)",
+                AnimateShow = true,
+                AnimateHide = false
+            };
+
+            var result = await this.ShowMessageAsync("終了します",
+                                                     "ファイルが保存されていません。保存しますか？",
+                                                     MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
+                                                     mySettings);
+            canShutdown = (result != MessageDialogResult.FirstAuxiliary);
+
+            if (this.canShutdown)
+            {
+                // 閉じる
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    // 保存する
+                    try
+                    {
+                        if (!NodeManager.Current.SaveOverwrite())
+                        {
+                            this.canShutdown = false;
+                        }
+                    }
+                    catch
+                    {
+                        this.canShutdown = false;
+                    }
+                }
+            }
+
+            if (this.canShutdown)
+            {
+                // Closingイベント中にCloseすると例外が出るので一旦Closingイベントを確実に抜けて続きをやる
+                await this.Dispatcher.InvokeAsync( () => this.Close() );
+            }
         }
     }
 }
