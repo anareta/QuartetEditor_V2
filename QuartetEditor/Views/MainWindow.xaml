@@ -372,16 +372,19 @@
                     <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
                     <KeyBinding Key="E"
                                 Command="{Binding AddNodeLowerCommand}"
-                                Modifiers="Control" />
+                                Modifiers="Ctrl" />
                     <KeyBinding Key="I"
                                 Command="{Binding AddNodeSameCommand}"
-                                Modifiers="Control" />
+                                Modifiers="Ctrl" />
+                    <KeyBinding Key="D"
+                                Command="{Binding ReproduceCommand}"
+                                Modifiers="Ctrl" />
                     <KeyBinding Key="Z"
                                 Command="{Binding UndoCommand}"
-                                Modifiers="Control" />
+                                Modifiers="Ctrl" />
                     <KeyBinding Key="Y"
                                 Command="{Binding RedoCommand}"
-                                Modifiers="Control" />
+                                Modifiers="Ctrl" />
                 </TreeView.InputBindings>
 
                 <TreeView.ItemTemplate>

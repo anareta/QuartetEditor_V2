@@ -367,10 +367,22 @@ namespace QuartetEditor.Models
         {
             // 行う操作
             var newItem = new Node();
-            object[] doParam = new object[] { tree, index, newItem };
-            var doAction = new Action<IList<Node>, int, Node>((_tree, _index, _newItem) =>
+            this.AddNode(tree, index, newItem);
+        }
+
+        /// <summary>
+        /// ノードを追加する
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="index"></param>
+        private void AddNode(IList<Node> tree, int index, Node addItem)
+        {
+            // 行う操作
+            object[] doParam = new object[] { tree, index, addItem };
+            var doAction = new Action<IList<Node>, int, Node>((_tree, _index, _addItem) =>
             {
-                this.AddTransaction(_tree, _index, _newItem);
+                this.AddTransaction(_tree, _index, _addItem);
+                _addItem.IsSelected = true;
             });
 
             // 取り消す操作
@@ -393,6 +405,29 @@ namespace QuartetEditor.Models
         private void AddTransaction(IList<Node> tree, int index, Node item)
         {
             tree.Insert(index, item);
+        }
+
+        /// <summary>
+        /// ノードの複製
+        /// </summary>
+        /// <returns></returns>
+        public void Reproduce()
+        {
+            if (this.SelectedNode == null)
+            {
+                return;
+            }
+
+            var newItem = new Node(this.SelectedNode);
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (tree == null)
+            {
+                tree = this.TreeSource;
+            }
+
+            int index = tree.IndexOf(this.SelectedNode) + 1;
+
+            this.AddNode(tree, index, newItem);
         }
 
         /// <summary>

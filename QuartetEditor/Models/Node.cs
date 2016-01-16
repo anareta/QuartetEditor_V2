@@ -255,12 +255,12 @@ namespace QuartetEditor.Models
                 }
             }
 
+            this.Content.Text = item.Content.Text;
+
             foreach (var child in item.ChildrenSource)
             {
                 this.ChildrenSource.Add(new Node(child));
             }
-
-            this.Content.Text = item.Content.Text;
         }
 
 
