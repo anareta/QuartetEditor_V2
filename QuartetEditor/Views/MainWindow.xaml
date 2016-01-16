@@ -38,12 +38,13 @@
             <ContextMenu x:Key="TreeViewContextMenu" FontSize="12">
                 <MenuItem Command="{Binding NameEditCommand}" Header="名前を変更(F2)" />
                 <MenuItem Header="移動">
-                    <MenuItem Command="{Binding MoveUpCommand}" Header="上に移動(Ctrl+U)" />
-                    <MenuItem Command="{Binding MoveDownCommand}" Header="下に移動(Ctrl+D)" />
+                    <MenuItem Command="{Binding MoveUpCommand}" Header="上に移動(Ctrl+↑)" />
+                    <MenuItem Command="{Binding MoveDownCommand}" Header="下に移動(Ctrl+↓)" />
                 </MenuItem>
                 <MenuItem Header="追加">
                     <MenuItem Command="{Binding AddNodeSameCommand}" Header="同階層に追加(Ctrl+I)" />
                     <MenuItem Command="{Binding AddNodeLowerCommand}" Header="下階層に追加(Ctrl+E)" />
+                    <MenuItem Command="{Binding ReproduceCommand}" Header="ノードを複製(Ctrl+D)" />
                 </MenuItem>
                 <MenuItem Command="{Binding DeleteNodeCommand}" Header="削除（Del）" />
                 <Separator />
@@ -363,17 +364,12 @@
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
                     <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
+                    <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" DownCtrlCommand="{Binding MoveDownCommand}"/>
                 </i:Interaction.Behaviors>
 
                 <TreeView.InputBindings>
                     <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
                     <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
-                    <KeyBinding Key="D"
-                                Command="{Binding MoveDownCommand}"
-                                Modifiers="Control" />
-                    <KeyBinding Key="U"
-                                Command="{Binding MoveUpCommand}"
-                                Modifiers="Control" />
                     <KeyBinding Key="E"
                                 Command="{Binding AddNodeLowerCommand}"
                                 Modifiers="Control" />
