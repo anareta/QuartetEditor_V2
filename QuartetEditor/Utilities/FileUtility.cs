@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace QuartetEditor.Utilities
 {
+    /// <summary>
+    /// ファイル操作ユーティリティ
+    /// </summary>
     public static class FileUtility
     {
         /// <summary>

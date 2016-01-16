@@ -97,9 +97,12 @@ namespace QuartetEditor.Views
             this.DataContextChanged += (s, e) =>
             {
                 var model = e.NewValue as MainWindowViewModel;
-                model.SaveDialogViewAction = this.SaveDialog;
-                model.OpenDialogViewAction = this.OpenDialog;
-                model.MessageDialogViewAction = this.ShowDialogEventListener;
+                if (model != null)
+                {
+                    model.SaveDialogViewAction = this.SaveDialog;
+                    model.OpenDialogViewAction = this.OpenDialog;
+                    model.MessageDialogViewAction = this.ShowDialogEventListener;
+                }
             };
 
             InitializeComponent();

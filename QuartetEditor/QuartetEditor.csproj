@@ -120,12 +120,14 @@
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="Entities\DialogArg.cs" />
     <Compile Include="Entities\QuartetEditorDescription.cs" />
+    <Compile Include="Enums\ExportKindEnum.cs" />
     <Compile Include="Enums\PanelKindEnum.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
     <Compile Include="Models\Undo\UndoRedoManager.cs" />
     <Compile Include="Utilities\FileUtility.cs" />
+    <Compile Include="Utilities\NodeConverterUtility.cs" />
     <Compile Include="ViewModels\ConfigFlyoutViewModel.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\AboutFlyout.xaml.cs">

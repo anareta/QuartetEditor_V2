@@ -1140,6 +1140,54 @@ namespace QuartetEditor.Models
 
         #endregion File
 
+        #region Export
+
+        /// <summary>
+        /// Viewへのエクスポート先SavePath処理要求
+        /// </summary>
+        public Subject<Action<string, ExportKindEnum>> ExportSavePathRequest { get; } = new Subject<Action<string, ExportKindEnum>>();
+
+        /// <summary>
+        /// エクスポート
+        /// </summary>
+        public void Export()
+        {
+            bool fail = false;
+            this.ExportSavePathRequest.OnNext((path, kind) =>
+            {
+                if (path != null && !string.IsNullOrWhiteSpace(path))
+                {
+                    try
+                    {
+                        switch (kind)
+                        {
+                            case ExportKindEnum.Text:
+                                string exportstr = NodeConverterUtility.ToText(new QuartetEditorDescription(this.TreeSource));
+                                fail = !FileUtility.SaveText(path, exportstr, Encoding.UTF8);
+                                return;
+                            case ExportKindEnum.HTML:
+                                return;
+                            case ExportKindEnum.Directory:
+                                return;
+                            default:
+                                return;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        fail = true;
+                    }
+                }
+            });
+
+            if (fail)
+            {
+                this.ShowErrorMessageRequest.OnNext("エクスポートに失敗しました…");
+            }
+        }
+
+        #endregion Export
+
         /// <summary>
         /// 破棄処理
         /// </summary>

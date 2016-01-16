@@ -315,6 +315,15 @@ namespace QuartetEditor.ViewModels
 
         #endregion File
 
+        #region Export
+
+        /// <summary>
+        /// エクスポート要求
+        /// </summary>
+        public ReactiveCommand ExportCommand { get; private set; } = new ReactiveCommand();
+
+        #endregion Export
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -603,6 +612,27 @@ namespace QuartetEditor.ViewModels
             }).AddTo(this.Disposable);
 
             #endregion File
+
+            #region Export
+
+            this.ExportCommand.Subscribe(_ => this.Model.Export()).AddTo(this.Disposable);
+            this.Model.ExportSavePathRequest.Subscribe(act =>
+            {
+                if (this.SaveDialogViewAction == null)
+                {
+                    return;
+                }
+
+                var dialog = new SaveFileDialog();
+                dialog.Title = "エクスポート";
+                dialog.Filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                dialog.AddExtension = true;
+                dialog.DefaultExt = "txt";
+                dialog.FileName = string.IsNullOrWhiteSpace(this.Model.FileName) ? "新規" : System.IO.Path.GetFileNameWithoutExtension(this.Model.FileName);
+                string path = this.SaveDialogViewAction(dialog);
+                act(path, ExportKindEnum.Text);
+            }).AddTo(this.Disposable);
+            #endregion Export
 
         }
 
