@@ -391,7 +391,7 @@
                     <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
                         <Border>
                             <i:Interaction.Behaviors>
-                                <dragdrop:DragStartBehavior AllowedEffects="Move" DragDropData="{Binding}" />
+                                <dragdrop:DragStartBehavior AllowedEffects="All" DragDropData="{Binding}" />
                             </i:Interaction.Behaviors>
                             <controls:EditBox Margin="3"
                                               CanEdit="{Binding IsNameEditMode.Value,

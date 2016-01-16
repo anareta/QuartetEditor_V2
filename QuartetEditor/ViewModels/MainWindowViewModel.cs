@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
+using QuartetEditor.Utilities;
 
 namespace QuartetEditor.ViewModels
 {
@@ -457,9 +458,13 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
 
-                if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move))
+                if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) && !KeyboardUtility.IsCtrlKeyPressed)
                 {
                     arg.Effects = System.Windows.DragDropEffects.Move;
+                }
+                else if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Copy) && KeyboardUtility.IsCtrlKeyPressed)
+                {
+                    arg.Effects = System.Windows.DragDropEffects.Copy;
                 }
 
                 this.Model.DragOverAction(target?.Model, data?.Model);
@@ -508,7 +513,17 @@ namespace QuartetEditor.ViewModels
                 var target = fe.DataContext as NodeViewModel;
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-                this.Model.DragDropAction(target?.Model, data?.Model);
+                if (KeyboardUtility.IsCtrlKeyPressed)
+                {
+                    this.Model.DragDropCopyAction(target?.Model, data?.Model);
+                    return;
+                }
+                else
+                {
+                    this.Model.DragDropAction(target?.Model, data?.Model);
+                    return;
+                }
+
             }).AddTo(this.Disposable);
 
             #endregion DragDrop

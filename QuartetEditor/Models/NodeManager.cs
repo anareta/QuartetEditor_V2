@@ -513,6 +513,7 @@ namespace QuartetEditor.Models
                 {
                     _target.IsExpanded = true;
                 }
+                _item.IsSelected = true;
             });
 
             // 取り消す操作
@@ -636,6 +637,61 @@ namespace QuartetEditor.Models
             IList<Node> toTree;
             int toIndex;
 
+            if (!this.GetDragDropInfo(target, dropped, out fromTree, out fromIndex, out toTree, out toIndex))
+            {
+                return;
+            }
+
+            this.Move(fromTree, fromIndex, toTree, toIndex, dropped, target);
+        }
+
+        /// <summary>
+        /// ノードのドロップコピー時の処理
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="dropped"></param>
+        public void DragDropCopyAction(Node target, Node dropped)
+        {
+            target = this.Find(this.TreeSource, c => c.IsDragOver);
+
+            this.WorkAllNode(c => c.IsDragOver = false);
+
+            if (dropped == null || dropped.IsNameEditMode || target == null)
+            {
+                return;
+            }
+
+            IList<Node> fromTree;
+            int fromIndex;
+            IList<Node> toTree;
+            int toIndex;
+
+            if (!this.GetDragDropInfo(target, dropped, out fromTree, out fromIndex, out toTree, out toIndex))
+            {
+                return;
+            }
+
+            this.AddNode(toTree, toIndex, new Node(dropped));
+        }
+
+        /// <summary>
+        /// ドラッグドロップの情報を取得します
+        /// </summary>
+        /// <param name="target">ドロップ先</param>
+        /// <param name="dropped">ドロップしたNode</param>
+        /// <param name="fromTree"></param>
+        /// <param name="fromIndex"></param>
+        /// <param name="toTree"></param>
+        /// <param name="toIndex"></param>
+        /// <returns>移動に必要な情報の取得に成功したらtrue</returns>
+        private bool GetDragDropInfo(Node target, Node dropped, 
+                                     out IList<Node> fromTree, out int fromIndex, out IList<Node> toTree, out int toIndex)
+        {
+            fromTree = default(IList<Node>);
+            fromIndex = default(int);
+            toTree = default(IList<Node>);
+            toIndex = default(int);
+
             // 移動元
             {
                 fromTree = this.GetParent(dropped)?.ChildrenSource;
@@ -668,12 +724,10 @@ namespace QuartetEditor.Models
                         toIndex = target.ChildrenSource.Count();
                         break;
                     default:
-                        return;
+                        return false;
                 }
             }
-
-            this.Move(fromTree, fromIndex, toTree, toIndex, dropped, target);
-            dropped.IsSelected = true;
+            return true;
         }
 
         #endregion DragDrop
