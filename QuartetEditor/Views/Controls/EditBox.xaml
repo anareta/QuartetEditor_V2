@@ -13,22 +13,37 @@
                 BorderThickness="1.5"
                 Visibility="Hidden"
                 Height="{Binding ActualHeight, ElementName=_TextBlock}"
+                Width="{Binding ActualWidth, ElementName=_TextBlock}"
+                HorizontalAlignment="Left"
                 BorderBrush="{StaticResource ResourceKey=HighlightBrush}" />
 
-        <TextBlock Name="_TextBlock" 
-                   Height="Auto"
-                   VerticalAlignment="Center"
-                   Width="Auto" 
-                   HorizontalAlignment="Left"
-                   Margin="0,0,0,0"
-                   MinWidth="40"/>
-        <TextBlock Name="_TextBlockReferred"
-                   Foreground="{StaticResource ResourceKey=AccentColorBrush}" 
-                   Text="{Binding Text, ElementName=_TextBlock}"
-                   Width="Auto" 
-                   HorizontalAlignment="Left"
-                   Visibility="Collapsed"
-                   Margin="0,0,0,0"/>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Name="_TextBlockReferred"
+                       Foreground="{StaticResource ResourceKey=AccentColorBrush}" 
+                       Text="{Binding Text, ElementName=_TextBlock}"
+                       Width="Auto" 
+                       HorizontalAlignment="Left"
+                       Visibility="Collapsed"
+                       Margin="0,0,0,0"
+                       MinWidth="{Binding MinWidth, ElementName=_TextBlock}"/>
+            <TextBlock Name="_TextBlock" 
+                       Height="Auto"
+                       VerticalAlignment="Center"
+                       Width="Auto" 
+                       HorizontalAlignment="Left"
+                       Margin="0,0,0,0"
+                       MinWidth="40"/>
+            <Ellipse Name="_Mark" 
+                     Fill="{StaticResource ResourceKey=AccentColorBrush}" 
+                     Width="5" 
+                     Height="5" 
+                     HorizontalAlignment="Right" 
+                     VerticalAlignment="Center" 
+                     Visibility="Collapsed"
+                     Margin="0,0,-10,0"/>
+        </StackPanel>
+
+
 
         <TextBox Name="_TextEditor"
                  BorderThickness="0"
@@ -38,13 +53,6 @@
                  TextBlock.FontSize="{Binding FontSize,
                                               ElementName=_TextBlock}"
                  Visibility="Collapsed" />
-        <Ellipse Name="_Mark" 
-                 Fill="{StaticResource ResourceKey=AccentColorBrush}" 
-                 Width="5" 
-                 Height="5" 
-                 HorizontalAlignment="Right" 
-                 VerticalAlignment="Center" 
-                 Visibility="Collapsed"
-                 Margin="0,0,-10,0"/>
+
     </Grid>
 </UserControl>

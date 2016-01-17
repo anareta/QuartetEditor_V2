@@ -343,9 +343,14 @@ namespace QuartetEditor.Views.Controls
         /// <param name="e"></param>
         private void UserControl_PreviewDragOver(object sender, DragEventArgs e)
         {
-            if (e.GetPosition(this).X < (this.ActualWidth*0.6))
+            if (!this.IsDragOver)
             {
-                if (e.GetPosition(this).Y < this.ActualHeight / 2)
+                return;
+            }
+
+            if (this.IsPositionLeft(e))
+            {
+                if (this.IsPositionTop(e))
                 {
                     this.DropPosition = DropPositionEnum.Prev;
                 }
@@ -357,6 +362,40 @@ namespace QuartetEditor.Views.Controls
             else
             {
                 this.DropPosition = DropPositionEnum.Child;
+            }
+        }
+
+        /// <summary>
+        /// ドラッグオーバー位置がコントロールの上側にあるか判定します
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private bool IsPositionTop(DragEventArgs e)
+        {
+            if (this.IsReferred)
+            {
+                return e.GetPosition(this._TextBlockReferred).Y < this._TextBlockReferred.ActualHeight / 2;
+            }
+            else
+            {
+                return e.GetPosition(this._TextBlock).Y < this._TextBlock.ActualHeight / 2;
+            }
+        }
+
+        /// <summary>
+        /// ドラッグオーバー位置がコントロールの左側にあるか判定します
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private bool IsPositionLeft(DragEventArgs e)
+        {
+            if (this.IsReferred)
+            {
+                return e.GetPosition(this._TextBlockReferred).X < (this._TextBlockReferred.ActualWidth * 0.6);
+            }
+            else
+            {
+                return e.GetPosition(this._TextBlock).X < (this._TextBlock.ActualWidth * 0.6);
             }
         }
 
@@ -435,7 +474,14 @@ namespace QuartetEditor.Views.Controls
         /// <param name="position"></param>
         private void ShowAdorner(VerticalAlignment position)
         {
-            this._InsertionAdorner = new InsertionAdorner(this, position);
+            if (this.IsReferred)
+            {
+                this._InsertionAdorner = new InsertionAdorner(this._TextBlockReferred, position);
+            }
+            else
+            {
+                this._InsertionAdorner = new InsertionAdorner(this._TextBlock, position);
+            }
         }
 
         /// <summary>
