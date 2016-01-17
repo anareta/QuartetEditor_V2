@@ -234,6 +234,7 @@ namespace QuartetEditor.Models
         {
             this.Name = QEDItem.Name;
             this.Content.Text = QEDItem.Content;
+            this.Content.UndoStack.ClearAll();
             foreach (var item in QEDItem.Children)
             {
                 this.ChildrenSource.Add(new Node(item));
@@ -256,6 +257,7 @@ namespace QuartetEditor.Models
             }
 
             this.Content.Text = item.Content.Text;
+            this.Content.UndoStack.ClearAll();
 
             foreach (var child in item.ChildrenSource)
             {
