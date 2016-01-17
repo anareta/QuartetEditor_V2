@@ -429,7 +429,7 @@
                             <Setter.Value>
                                 <ItemsPanelTemplate>
                                     <!--  ※マージンを変える場合はここ  -->
-                                    <StackPanel Margin="-5,0,0,0" IsItemsHost="True" />
+                                    <StackPanel Margin="0,0,0,0" IsItemsHost="True" />
                                 </ItemsPanelTemplate>
                             </Setter.Value>
                         </Setter>
