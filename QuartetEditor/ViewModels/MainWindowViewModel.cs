@@ -285,6 +285,16 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveCommand MoveDownCommand { get; private set; }
 
+        /// <summary>
+        /// ノードを右に移動する
+        /// </summary>
+        public ReactiveCommand MoveChildCommand { get; private set; }
+
+        /// <summary>
+        /// ノードを左に移動する
+        /// </summary>
+        public ReactiveCommand MoveParentCommand { get; private set; }
+
         #endregion NodeManipulation
 
         #region File
@@ -570,6 +580,12 @@ namespace QuartetEditor.ViewModels
 
             this.MoveDownCommand = new ReactiveCommand(this.Model.CanMoveDown, false);
             this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown()).AddTo(this.Disposable);
+
+            this.MoveChildCommand = new ReactiveCommand(this.Model.CanMoveChild, false);
+            this.MoveChildCommand.Subscribe(_ => this.Model.MoveChild()).AddTo(this.Disposable);
+
+            this.MoveParentCommand = new ReactiveCommand(this.Model.CanMoveParent, false);
+            this.MoveParentCommand.Subscribe(_ => this.Model.MoveParent()).AddTo(this.Disposable);
 
             #endregion NodeManipulation
 

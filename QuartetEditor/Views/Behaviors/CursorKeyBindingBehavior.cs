@@ -43,6 +43,32 @@ namespace QuartetEditor.Views.Behaviors
             , new PropertyMetadata(null));
 
         /// <summary>
+        /// →とCtrlキーの組み合わせで実行する操作
+        /// </summary>
+        public ICommand RightCtrlCommand
+        {
+            get { return (ICommand)GetValue(RightCtrlCommandProperty); }
+            set { SetValue(RightCtrlCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty RightCtrlCommandProperty =
+            DependencyProperty.Register("RightCtrlCommand", typeof(ICommand), typeof(CursorKeyBindingBehavior)
+            , new PropertyMetadata(null));
+
+        /// <summary>
+        /// ←とCtrlキーの組み合わせで実行する操作
+        /// </summary>
+        public ICommand LeftCtrlCommand
+        {
+            get { return (ICommand)GetValue(LeftCtrlCommandProperty); }
+            set { SetValue(LeftCtrlCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty LeftCtrlCommandProperty =
+            DependencyProperty.Register("LeftCtrlCommand", typeof(ICommand), typeof(CursorKeyBindingBehavior)
+            , new PropertyMetadata(null));
+
+        /// <summary>
         /// アタッチ
         /// </summary>
         protected override void OnAttached()
@@ -72,6 +98,22 @@ namespace QuartetEditor.Views.Behaviors
                     if (this.DownCtrlCommand != null && this.DownCtrlCommand.CanExecute(null))
                     {
                         this.DownCtrlCommand.Execute(null);
+                    }
+                }
+
+                if (arg.Key == Key.Right && (Keyboard.Modifiers & ModifierKeys.Control) == (ModifierKeys.Control))
+                {
+                    if (this.RightCtrlCommand != null && this.RightCtrlCommand.CanExecute(null))
+                    {
+                        this.RightCtrlCommand.Execute(null);
+                    }
+                }
+
+                if (arg.Key == Key.Left && (Keyboard.Modifiers & ModifierKeys.Control) == (ModifierKeys.Control))
+                {
+                    if (this.LeftCtrlCommand != null && this.LeftCtrlCommand.CanExecute(null))
+                    {
+                        this.LeftCtrlCommand.Execute(null);
                     }
                 }
             });

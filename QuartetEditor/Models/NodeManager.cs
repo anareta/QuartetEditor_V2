@@ -214,6 +214,8 @@ namespace QuartetEditor.Models
 
                 this.CanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
                 this.CanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);
+                this.CanMoveChild.OnNext(this.GetOlder(this.SelectedNode) != null);
+                this.CanMoveParent.OnNext(this.GetParent(this.SelectedNode) != null);
             }).AddTo(this.Disposable);
 
             new[] { ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen),
@@ -483,6 +485,66 @@ namespace QuartetEditor.Models
         /// 「ノードを上に移動する」実行可否
         /// </summary>
         public Subject<bool> CanMoveUp { get; } = new Subject<bool>();
+
+        /// <summary>
+        /// ノードを右に移動する
+        /// </summary>
+        public void MoveChild()
+        {
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (fromTree == null)
+            {
+                fromTree = this.TreeSource;
+            }
+
+            int fromIndex = fromTree.IndexOf(this.SelectedNode);
+
+            IList<Node> toTree = this.GetOlder(this.SelectedNode)?.ChildrenSource;
+            if (toTree == null)
+            {
+                return;
+            }
+
+            this.Move(fromTree, fromIndex, toTree, toTree.Count, this.SelectedNode, null);
+        }
+
+        /// <summary>
+        /// 「ノードを右に移動する」実行可否
+        /// </summary>
+        public Subject<bool> CanMoveChild { get; } = new Subject<bool>();
+
+        /// <summary>
+        /// ノードを左に移動する
+        /// </summary>
+        public void MoveParent()
+        {
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            if (fromTree == null)
+            {
+                fromTree = this.TreeSource;
+            }
+
+            int fromIndex = fromTree.IndexOf(this.SelectedNode);
+
+            var parent = this.GetParent(this.SelectedNode);
+            if (parent == null)
+            {
+                return;
+            }
+
+            IList<Node> toTree = this.GetParent(parent)?.ChildrenSource;
+            if (toTree == null)
+            {
+                toTree = this.TreeSource;
+            }
+
+            this.Move(fromTree, fromIndex, toTree, toTree.IndexOf(parent) + 1, this.SelectedNode, null);
+        }
+
+        /// <summary>
+        /// 「ノードを左に移動する」実行可否
+        /// </summary>
+        public Subject<bool> CanMoveParent { get; } = new Subject<bool>();
 
         /// <summary>
         /// ノードの移動処理
@@ -797,7 +859,7 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// 指定されたNodeの姉を取得します
+        /// 指定されたNodeの姉（上の方にある）を取得します
         /// 見つからない場合はnullを返します
         /// </summary>
         /// <param name="item"></param>
@@ -961,7 +1023,7 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// 指定されたNodeの妹を取得します
+        /// 指定されたNodeの妹（下の方にある）を取得します
         /// 見つからない場合はnullを返します
         /// </summary>
         /// <param name="item"></param>

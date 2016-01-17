@@ -364,7 +364,10 @@
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
                     <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
-                    <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" DownCtrlCommand="{Binding MoveDownCommand}"/>
+                    <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" 
+                                                       DownCtrlCommand="{Binding MoveDownCommand}"
+                                                       RightCtrlCommand="{Binding MoveChildCommand}"
+                                                       LeftCtrlCommand="{Binding MoveParentCommand}"/>
                 </i:Interaction.Behaviors>
 
                 <TreeView.InputBindings>
