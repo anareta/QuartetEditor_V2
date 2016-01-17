@@ -383,6 +383,11 @@ namespace QuartetEditor.ViewModels
                 x => x.SelectedNode,
                 convert: x => (NodeViewModel)null, // M -> VMの変換処理
                 convertBack: x => x?.Model); // VM -> Mの変換処理
+            this.SelectedNode.Subscribe(_ =>
+            {
+                // 選択状態が変わったときにTreeViewからフォーカスが外れるのを避ける
+                this.setFocusRequest.Raise(new Confirmation { Content = "_NodeView" });
+            });
 
             // M -> VM 一方向バインド
             this.TextContent = this.Model
