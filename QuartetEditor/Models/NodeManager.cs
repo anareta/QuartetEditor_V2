@@ -320,7 +320,6 @@ namespace QuartetEditor.Models
                     tree.RemoveAt(0);
                 }
                 _tree.Insert(_index, _item);
-                _tree.ElementAt(_index).IsSelected = true;
             });
 
             // 操作実行
@@ -377,7 +376,6 @@ namespace QuartetEditor.Models
             var doAction = new Action<IList<Node>, int, Node>((_tree, _index, _addItem) =>
             {
                 this.AddTransaction(_tree, _index, _addItem);
-                _addItem.IsSelected = true;
             });
 
             // 取り消す操作
@@ -568,7 +566,6 @@ namespace QuartetEditor.Models
                 {
                     _target.IsExpanded = true;
                 }
-                _item.IsSelected = true;
             });
 
             // 取り消す操作
