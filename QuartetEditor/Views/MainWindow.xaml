@@ -45,6 +45,7 @@
                     <MenuItem Command="{Binding AddNodeSameCommand}" Header="同階層に追加(Ctrl+I)" />
                     <MenuItem Command="{Binding AddNodeLowerCommand}" Header="下階層に追加(Ctrl+E)" />
                     <MenuItem Command="{Binding ReproduceCommand}" Header="ノードを複製(Ctrl+D)" />
+                    <MenuItem Command="{Binding AddNodeFromHeaderCommand}" Header="見出しから自動生成" />
                 </MenuItem>
                 <MenuItem Command="{Binding DeleteNodeCommand}" Header="削除（Del）" />
                 <Separator />
@@ -277,8 +278,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding LeftPanelOpen.Value,
-                              Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}"
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="左パネル（Ctrl＋L）">
                     <Rectangle Width="15"
@@ -295,8 +296,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding TopPanelOpen.Value,
-                              Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}"
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="上パネル（Ctrl＋T）">
                     <Rectangle Width="15"
@@ -320,8 +321,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding BottomPanelOpen.Value,
-                              Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}"
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="下参照パネル（Ctrl+B）">
                     <Rectangle Width="15"
@@ -359,7 +360,7 @@
                 <TreeView x:Name="_NodeView"
                           Grid.Column="0"
                           Margin="0"
-                          Padding="-5,0,0,0"
+                          Padding="0"
                           AllowDrop="True"
                           ItemsSource="{Binding Tree}"
                           KeyboardNavigation.IsTabStop="True"
@@ -401,25 +402,25 @@
                                 </i:Interaction.Behaviors>
                                 <controls:EditBox Margin="3"
                                                   CanEdit="{Binding IsNameEditMode.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                   DropPosition="{Binding DropPosition.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                                         Mode=TwoWay,
+                                                                         UpdateSourceTrigger=PropertyChanged}"
                                                   FontFamily="Meiryo UI"
                                                   FontSize="13"
                                                   IsDragOver="{Binding IsDragOver.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                                       Mode=TwoWay,
+                                                                       UpdateSourceTrigger=PropertyChanged}"
                                                   IsReferred="{Binding IsReferred.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                                       Mode=TwoWay,
+                                                                       UpdateSourceTrigger=PropertyChanged}"
                                                   IsMarked="{Binding IsEdited.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                                     Mode=TwoWay,
+                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                   Text="{Binding Name.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+                                                                 Mode=TwoWay,
+                                                                 UpdateSourceTrigger=PropertyChanged}" />
                             </Border>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
@@ -427,7 +428,7 @@
                         <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MetroTreeViewItem}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
-                            <Setter Property="Background" Value="{Binding Background, ElementName=__NodeView}" />
+                            <Setter Property="Background" Value="{Binding Background, ElementName=_NodeView}" />
                             <Setter Property="ItemsPanel">
                                 <Setter.Value>
                                     <ItemsPanelTemplate>
@@ -472,21 +473,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
                                                  BindableText="{Binding Path=ParentTextContent.Value,
-                                                 Mode=OneWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.LeftTextEditorFontFamily,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.LeftTextEditorFontSize,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
                 <GridSplitter x:Name="_LeftSplitter"
@@ -507,21 +508,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
                                                  BindableText="{Binding Path=PrevTextContent.Value,
-                                                 Mode=OneWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
                 <GridSplitter x:Name="_TopSplitter"
@@ -541,37 +542,37 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
                                                  Document="{Binding Path=TextContent.Value,
-                                                 Mode=OneWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=OneWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.CenterTextEditorFontFamily,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.CenterTextEditorFontSize,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HeaderCharactors="{Binding Path=Config.HeaderCharactors,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                            Mode=TwoWay,
+                                                                            UpdateSourceTrigger=PropertyChanged}"
                                                  HighlightCurrentLine="{Binding Path=Config.HighlightCurrentLine,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                                Mode=TwoWay,
+                                                                                UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  LineHeight="{Binding Path=Config.CenterTextEditorLineHeight,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
                                                  LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
                                                  Padding="10,8,2,2"
                                                  ShowLineNumbers="{Binding Path=Config.ShowLineNumbers,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                           Mode=TwoWay,
+                                                                           UpdateSourceTrigger=PropertyChanged}"
                                                  SyntaxHighlighting="Custom HighlightingRules"
                                                  TextOptions.TextFormattingMode="Display"
                                                  TextOptions.TextHintingMode="Fixed"
                                                  TextOptions.TextRenderingMode="ClearType"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"/>
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
 
                 <GridSplitter x:Name="_BottomSplitter"
@@ -591,21 +592,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
                                                  BindableText="{Binding Path=NextTextContent.Value,
-                                                 Mode=OneWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
-                                                 Mode=TwoWay,
-                                                 UpdateSourceTrigger=PropertyChanged}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
             </Grid>
