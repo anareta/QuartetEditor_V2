@@ -93,11 +93,11 @@
         <KeyBinding Key="F3"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_NodeView,
-                                               Path=Name}" />
+                    Path=Name}" />
         <KeyBinding Key="F4"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_CenterTextEditor,
-                                               Path=Name}" />
+                    Path=Name}" />
         <KeyBinding Key="S"
                     Command="{Binding SaveCommand}"
                     Modifiers="Control" />
@@ -135,7 +135,7 @@
                           Width="500"
                           Header="このアプリケーションについて"
                           IsOpen="{Binding IsAboutOpen,
-                                           Mode=TwoWay}"
+                          Mode=TwoWay}"
                           IsPinned="False"
                           Position="Right">
                 <local:AboutFlyout />
@@ -277,8 +277,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding LeftPanelOpen.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Mode=TwoWay,
+                              UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="左パネル（Ctrl＋L）">
                     <Rectangle Width="15"
@@ -295,8 +295,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding TopPanelOpen.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Mode=TwoWay,
+                              UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="上パネル（Ctrl＋T）">
                     <Rectangle Width="15"
@@ -320,8 +320,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding BottomPanelOpen.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Mode=TwoWay,
+                              UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="下参照パネル（Ctrl+B）">
                     <Rectangle Width="15"
@@ -349,93 +349,97 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
-            <TreeView x:Name="_NodeView"
-                      Grid.Column="0"
-                      Margin="0"
-                      AllowDrop="True"
-                      BorderBrush="{Binding Background,
-                                            RelativeSource={RelativeSource Self}}"
-                      BorderThickness="1"
-                      FontSize="15"
-                      ItemsSource="{Binding Tree}"
-                      KeyboardNavigation.IsTabStop="True"
-                      KeyboardNavigation.TabNavigation="Once">
-
+            <Border Grid.Column="0"
+                    BorderThickness="2"
+                    Focusable="False">
                 <i:Interaction.Behaviors>
-                    <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
-                    <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
-                    <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" 
-                                                       DownCtrlCommand="{Binding MoveDownCommand}"
-                                                       RightCtrlCommand="{Binding MoveChildCommand}"
-                                                       LeftCtrlCommand="{Binding MoveParentCommand}"/>
+                    <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
+                                                    NotFocusedBrush="{StaticResource ResourceKey=GrayBrush10}" />
                 </i:Interaction.Behaviors>
+                <TreeView x:Name="_NodeView"
+                          Grid.Column="0"
+                          Margin="0"
+                          Padding="-5,0,0,0"
+                          AllowDrop="True"
+                          ItemsSource="{Binding Tree}"
+                          KeyboardNavigation.IsTabStop="True"
+                          KeyboardNavigation.TabNavigation="Once">
+                    <i:Interaction.Behaviors>
+                        <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
+                        <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
+                        <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" 
+                                                           DownCtrlCommand="{Binding MoveDownCommand}"
+                                                           RightCtrlCommand="{Binding MoveChildCommand}"
+                                                           LeftCtrlCommand="{Binding MoveParentCommand}"/>
+                    </i:Interaction.Behaviors>
 
-                <TreeView.InputBindings>
-                    <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
-                    <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
-                    <KeyBinding Key="E"
-                                Command="{Binding AddNodeLowerCommand}"
-                                Modifiers="Ctrl" />
-                    <KeyBinding Key="I"
-                                Command="{Binding AddNodeSameCommand}"
-                                Modifiers="Ctrl" />
-                    <KeyBinding Key="D"
-                                Command="{Binding ReproduceCommand}"
-                                Modifiers="Ctrl" />
-                    <KeyBinding Key="Z"
-                                Command="{Binding UndoCommand}"
-                                Modifiers="Ctrl" />
-                    <KeyBinding Key="Y"
-                                Command="{Binding RedoCommand}"
-                                Modifiers="Ctrl" />
-                </TreeView.InputBindings>
+                    <TreeView.InputBindings>
+                        <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
+                        <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
+                        <KeyBinding Key="E"
+                                    Command="{Binding AddNodeLowerCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="I"
+                                    Command="{Binding AddNodeSameCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="D"
+                                    Command="{Binding ReproduceCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="Z"
+                                    Command="{Binding UndoCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="Y"
+                                    Command="{Binding RedoCommand}"
+                                    Modifiers="Ctrl" />
+                    </TreeView.InputBindings>
 
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
-                        <Border>
-                            <i:Interaction.Behaviors>
-                                <dragdrop:DragStartBehavior AllowedEffects="All" DragDropData="{Binding}" />
-                            </i:Interaction.Behaviors>
-                            <controls:EditBox Margin="3"
-                                              CanEdit="{Binding IsNameEditMode.Value,
-                                                                Mode=TwoWay,
-                                                                UpdateSourceTrigger=PropertyChanged}"
-                                              DropPosition="{Binding DropPosition.Value,
-                                                                     Mode=TwoWay,
-                                                                     UpdateSourceTrigger=PropertyChanged}"
-                                              FontFamily="Meiryo UI"
-                                              FontSize="13"
-                                              IsDragOver="{Binding IsDragOver.Value,
-                                                                   Mode=TwoWay,
-                                                                   UpdateSourceTrigger=PropertyChanged}"
-                                              IsReferred="{Binding IsReferred.Value,
-                                                                   Mode=TwoWay,
-                                                                   UpdateSourceTrigger=PropertyChanged}"
-                                              IsMarked="{Binding IsEdited.Value,
-                                                                 Mode=TwoWay,
-                                                                 UpdateSourceTrigger=PropertyChanged}"
-                                              Text="{Binding Name.Value,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}" />
-                        </Border>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MetroTreeViewItem}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
-                        <Setter Property="Background" Value="{Binding Background, ElementName=__NodeView}" />
-                        <Setter Property="ItemsPanel">
-                            <Setter.Value>
-                                <ItemsPanelTemplate>
-                                    <!--  ※マージンを変える場合はここ  -->
-                                    <StackPanel Margin="0,0,0,0" IsItemsHost="True" />
-                                </ItemsPanelTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TreeView.ItemContainerStyle>
-            </TreeView>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
+                            <Border>
+                                <i:Interaction.Behaviors>
+                                    <dragdrop:DragStartBehavior AllowedEffects="All" DragDropData="{Binding}" />
+                                </i:Interaction.Behaviors>
+                                <controls:EditBox Margin="3"
+                                                  CanEdit="{Binding IsNameEditMode.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                  DropPosition="{Binding DropPosition.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                  FontFamily="Meiryo UI"
+                                                  FontSize="13"
+                                                  IsDragOver="{Binding IsDragOver.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                  IsReferred="{Binding IsReferred.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                  IsMarked="{Binding IsEdited.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                                                  Text="{Binding Name.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
+                            </Border>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MetroTreeViewItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
+                            <Setter Property="Background" Value="{Binding Background, ElementName=__NodeView}" />
+                            <Setter Property="ItemsPanel">
+                                <Setter.Value>
+                                    <ItemsPanelTemplate>
+                                        <!--  ※マージンを変える場合はここ  -->
+                                        <StackPanel Margin="0,0,0,0" IsItemsHost="True" />
+                                    </ItemsPanelTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </Border>
             <GridSplitter Grid.Column="1"
                           Width="5"
                           HorizontalAlignment="Center"
@@ -468,21 +472,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
                                                  BindableText="{Binding Path=ParentTextContent.Value,
-                                                                        Mode=OneWay,
-                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=OneWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.LeftTextEditorFontFamily,
-                                                                      Mode=TwoWay,
-                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.LeftTextEditorFontSize,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
                 <GridSplitter x:Name="_LeftSplitter"
@@ -503,21 +507,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
                                                  BindableText="{Binding Path=PrevTextContent.Value,
-                                                                        Mode=OneWay,
-                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=OneWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
-                                                                      Mode=TwoWay,
-                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
                 <GridSplitter x:Name="_TopSplitter"
@@ -537,37 +541,37 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
                                                  Document="{Binding Path=TextContent.Value,
-                                                                    Mode=OneWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=OneWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.CenterTextEditorFontFamily,
-                                                                      Mode=TwoWay,
-                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.CenterTextEditorFontSize,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HeaderCharactors="{Binding Path=Config.HeaderCharactors,
-                                                                            Mode=TwoWay,
-                                                                            UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HighlightCurrentLine="{Binding Path=Config.HighlightCurrentLine,
-                                                                                Mode=TwoWay,
-                                                                                UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  LineHeight="{Binding Path=Config.CenterTextEditorLineHeight,
-                                                                      Mode=TwoWay,
-                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
                                                  Padding="10,8,2,2"
                                                  ShowLineNumbers="{Binding Path=Config.ShowLineNumbers,
-                                                                           Mode=TwoWay,
-                                                                           UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  SyntaxHighlighting="Custom HighlightingRules"
                                                  TextOptions.TextFormattingMode="Display"
                                                  TextOptions.TextHintingMode="Fixed"
                                                  TextOptions.TextRenderingMode="ClearType"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"/>
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
 
                 <GridSplitter x:Name="_BottomSplitter"
@@ -587,21 +591,21 @@
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
                                                  BindableText="{Binding Path=NextTextContent.Value,
-                                                                        Mode=OneWay,
-                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=OneWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
-                                                                      Mode=TwoWay,
-                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
-                                                                    Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}"
                                                  />
                 </Border>
             </Grid>
