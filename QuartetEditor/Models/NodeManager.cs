@@ -435,6 +435,16 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
+        /// ノードを削除する
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="item"></param>
+        private void DeleteTransaction(IList<Node> tree, Node item)
+        {
+            tree.Remove(item);
+        }
+
+        /// <summary>
         /// ノードを下に移動する
         /// </summary>
         public void MoveDown()
@@ -602,6 +612,106 @@ namespace QuartetEditor.Models
             // 移動先に挿入
             toTree.Insert(toIndex, item);
 
+        }
+
+        /// <summary>
+        /// 見出しからノードを自動生成
+        /// </summary>
+        public void AddNodeFromHeader()
+        {
+            if (this.SelectedNode == null)
+            {
+                return;
+            }
+
+            string text = this.SelectedNode.Content.Text;
+            char[] headerChars = ConfigManager.Current.Config.HeaderCharactors.ToCharArray();
+            if (text.IndexOfAny(headerChars) == -1)
+            {
+                // そもそも見出し文字がない場合は何もせず復帰
+                return;
+            }
+
+            // 改行コードが２文字だと都合が悪いので一時的に置き換え
+            text = text.Replace(Environment.NewLine, "\r");
+            var addItems = new Stack<Node>();
+
+            int index = 0;
+            while (text.IndexOfAny(headerChars, index) != -1)
+            {
+                bool empty = false;
+
+                int headerStart = text.IndexOfAny(headerChars, index);
+                int headerEnd = text.IndexOf('\r', headerStart + 1);
+                if (headerEnd == -1)
+                {
+                    empty = true;
+                    headerEnd = text.Length;
+                }
+                string name = text.Substring(headerStart + 1, headerEnd - headerStart - 1);
+                index = headerEnd + 1;
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                var addItem = new Node();
+                addItem.Name = name;
+
+                if (!empty)
+                {
+                    int contentEnd = text.IndexOfAny(headerChars, index);
+                    if (contentEnd == -1)
+                    {
+                        contentEnd = text.Length;
+                        empty = true;
+                    }
+                    string content = text.Substring(index, contentEnd - index);
+                    content.Replace("\r", Environment.NewLine);
+                    addItem.Content.Text = content;
+                    addItem.Content.UndoStack.ClearAll();
+                    index = contentEnd;
+                }
+
+                addItems.Push(addItem);
+
+                if (empty)
+                {
+                    break;
+                }
+            }
+
+            this.AddNodes(this.SelectedNode.ChildrenSource, this.SelectedNode.Children.Count, addItems);
+        }
+
+        /// <summary>
+        /// ノードを複数追加する
+        /// </summary>
+        private void AddNodes(IList<Node> tree, int index, IEnumerable<Node> addItems)
+        {
+            // 行う操作
+            object[] doParam = new object[] { tree, index, addItems };
+            var doAction = new Action<IList<Node>, int, IEnumerable<Node>>((_tree, _index, _addItems) =>
+            {
+                foreach (var item in _addItems)
+                {
+                    this.AddTransaction(_tree, _index, item);
+                }
+            });
+
+            // 取り消す操作
+            object[] undoParam = new object[] { tree, index, addItems };
+            var undoAction = new Action<IList<Node>, int, IEnumerable<Node>>((_tree, _index, _addItems) =>
+            {
+                foreach (var item in _addItems)
+                {
+                    this.DeleteTransaction(_tree, item);
+                }
+
+            });
+
+            // 操作実行
+            this.UndoRedoModel.Do(doAction, doParam, undoAction, undoParam);
         }
 
         #endregion NodeTransaction

@@ -276,6 +276,11 @@ namespace QuartetEditor.ViewModels
         public ReactiveCommand ReproduceCommand { get; private set; } = new ReactiveCommand();
 
         /// <summary>
+        /// 見出しからノードを自動生成コマンド
+        /// </summary>
+        public ReactiveCommand AddNodeFromHeaderCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
         /// ノードを上に移動する
         /// </summary>
         public ReactiveCommand MoveUpCommand { get; private set; }
@@ -583,6 +588,8 @@ namespace QuartetEditor.ViewModels
             this.AddNodeLowerCommand.Subscribe(_ => this.Model.AddNodeLower()).AddTo(this.Disposable);
 
             this.ReproduceCommand.Subscribe(_ => this.Model.Reproduce()).AddTo(this.Disposable);
+
+            this.AddNodeFromHeaderCommand.Subscribe(_ => this.Model.AddNodeFromHeader()).AddTo(this.Disposable);
 
             this.MoveUpCommand = new ReactiveCommand(this.Model.CanMoveUp, false);
             this.MoveUpCommand.Subscribe(_ => this.Model.MoveUp()).AddTo(this.Disposable);
