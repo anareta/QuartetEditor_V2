@@ -227,26 +227,26 @@ namespace QuartetEditor.Models
 
 
 #if DEBUG
-            //{
-            //    var item = new Node("ノード1") { IsSelected = true };
-            //    item.ChildrenSource.Add(new Node("ノード1-1"));
-            //    item.ChildrenSource.Add(new Node("ノード1-2"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
-            //    this.TreeSource.Add(item);
-            //}
-            //{
-            //    var item = new Node("ノード2");
-            //    item.ChildrenSource.Add(new Node("ノード2-1"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-1"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-2"));
-            //    item.ChildrenSource.Add(new Node("ノード2-2"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
-            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
-            //    this.TreeSource.Add(item);
-            //}
+            {
+                var item = new Node("ノード1") { IsSelected = true };
+                item.ChildrenSource.Add(new Node("ノード1-1"));
+                item.ChildrenSource.Add(new Node("ノード1-2"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
+                this.TreeSource.Add(item);
+            }
+            {
+                var item = new Node("ノード2");
+                item.ChildrenSource.Add(new Node("ノード2-1"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-1"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-2"));
+                item.ChildrenSource.Add(new Node("ノード2-2"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
+                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
+                this.TreeSource.Add(item);
+            }
 
-            //this.TreeSource.Add(new Node("ノード3"));
+            this.TreeSource.Add(new Node("ノード3"));
 #endif
             // 空の場合は初期化
             if (this.TreeSource.Count == 0)
