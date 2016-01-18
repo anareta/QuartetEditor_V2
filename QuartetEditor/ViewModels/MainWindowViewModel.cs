@@ -689,6 +689,8 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public void Initialize()
         {
+            // パネルの初期状態をViewへリクエストする
+            this.RisePanelState();
         }
 
         /// <summary>
