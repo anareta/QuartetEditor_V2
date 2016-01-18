@@ -430,7 +430,11 @@ namespace QuartetEditor.ViewModels
             new[] { this.LeftPanelOpen, this.TopPanelOpen, this.BottomPanelOpen }
             .Select(x => INotifyPropertyChangedExtensions.PropertyChangedAsObservable(x))
             .Merge()
-            .Subscribe(_ => this.RisePanelState())
+            .Subscribe(_ =>
+            {
+                this.RisePanelState();
+                this.Model.UpdatePanelReffer(); // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
+            })
             .AddTo(this.Disposable);
 
             this.PanelChangeCommand.Subscribe(kind =>

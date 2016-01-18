@@ -155,7 +155,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 参照されているノードの参照フラグを再設定
         /// </summary>
-        private void UpdatePanelReffer()
+        public void UpdatePanelReffer()
         {
             if (this.ParentNode != null)
             {
@@ -218,13 +218,6 @@ namespace QuartetEditor.Models
                 this.CanMoveParent.OnNext(this.GetParent(this.SelectedNode) != null);
             }).AddTo(this.Disposable);
 
-            new[] { ConfigManager.Current.Config.ObserveProperty(c => c.LeftPanelOpen),
-                    ConfigManager.Current.Config.ObserveProperty(c => c.TopPanelOpen),
-                    ConfigManager.Current.Config.ObserveProperty(c => c.BottomPanelOpen)}
-            .Merge()
-            .Subscribe(_ => this.UpdatePanelReffer())
-            .AddTo(this.Disposable);
-
             #endregion ViewState
 
             #region UndoRedo
@@ -234,26 +227,26 @@ namespace QuartetEditor.Models
 
 
 #if DEBUG
-            {
-                var item = new Node("ノード1") { IsSelected = true };
-                item.ChildrenSource.Add(new Node("ノード1-1"));
-                item.ChildrenSource.Add(new Node("ノード1-2"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
-                this.TreeSource.Add(item);
-            }
-            {
-                var item = new Node("ノード2");
-                item.ChildrenSource.Add(new Node("ノード2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-2"));
-                item.ChildrenSource.Add(new Node("ノード2-2"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
-                this.TreeSource.Add(item);
-            }
+            //{
+            //    var item = new Node("ノード1") { IsSelected = true };
+            //    item.ChildrenSource.Add(new Node("ノード1-1"));
+            //    item.ChildrenSource.Add(new Node("ノード1-2"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
+            //    this.TreeSource.Add(item);
+            //}
+            //{
+            //    var item = new Node("ノード2");
+            //    item.ChildrenSource.Add(new Node("ノード2-1"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-1"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-2"));
+            //    item.ChildrenSource.Add(new Node("ノード2-2"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
+            //    item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
+            //    this.TreeSource.Add(item);
+            //}
 
-            this.TreeSource.Add(new Node("ノード3"));
+            //this.TreeSource.Add(new Node("ノード3"));
 #endif
             // 空の場合は初期化
             if (this.TreeSource.Count == 0)
@@ -794,7 +787,7 @@ namespace QuartetEditor.Models
 
         #endregion DragDrop
 
-        #region Search
+        #region ViewState
 
         /// <summary>
         /// ノードの検索
@@ -1082,7 +1075,7 @@ namespace QuartetEditor.Models
             return this.Find(this.Tree, c => c.Children.Any(child => child.ID == item.ID));
         }
 
-        #endregion  Search
+        #endregion  ViewState
 
         #region UndoRedo
 
