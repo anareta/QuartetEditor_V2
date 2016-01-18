@@ -43,16 +43,17 @@
                      Margin="0,0,-10,0"/>
         </StackPanel>
 
-
-
         <TextBox Name="_TextEditor"
                  BorderThickness="0"
                  KeyDown="TextEditor_KeyDown"
                  LostFocus="TextEditor_LostFocus"
                  LostKeyboardFocus="TextEditor_LostKeyboardFocus"
+                 Margin="-2"
                  TextBlock.FontSize="{Binding FontSize,
-                                              ElementName=_TextBlock}"
-                 Visibility="Collapsed" />
+                 ElementName=_TextBlock}"
+                 Visibility="Collapsed"
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Center" />
 
     </Grid>
 </UserControl>

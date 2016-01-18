@@ -113,7 +113,6 @@ namespace QuartetEditor.Views.Controls
                 thisInstance._TextEditor.Visibility = Visibility.Collapsed;
                 thisInstance._TextBlock.Visibility = Visibility.Visible;
             }
-            thisInstance.SetRefferdMark();
         }
 
         #endregion CanEdit
