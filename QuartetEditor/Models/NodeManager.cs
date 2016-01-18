@@ -891,7 +891,7 @@ namespace QuartetEditor.Models
         {
             for (int i = 0; i < 3; i++)
             {
-                var ancestor = this.GetYounger(this.FollowParent(item, i));
+                var ancestor = this.GetOlder(this.FollowParent(item, i));
 
                 if (ancestor != null)
                 {
