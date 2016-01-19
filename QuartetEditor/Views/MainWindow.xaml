@@ -4,16 +4,17 @@
                    xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
                    xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
                    xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
-                   xmlns:enum="clr-namespace:QuartetEditor.Enums"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
                    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+                   xmlns:enum="clr-namespace:QuartetEditor.Enums"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:local="clr-namespace:QuartetEditor.Views"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
                    xmlns:prism="http://prismlibrary.com/"
+                   Title="{Binding WindowTitle.Value}"
                    Width="800"
                    Height="600"
                    MinWidth="300"
@@ -26,8 +27,7 @@
                    TitleCaps="False"
                    WindowTransitionsEnabled="False"
                    prism:ViewModelLocator.AutoWireViewModel="True"
-                   mc:Ignorable="d"
-                   Title="{Binding WindowTitle.Value}">
+                   mc:Ignorable="d">
 
     <metro:MetroWindow.Resources>
         <ResourceDictionary>
@@ -94,11 +94,11 @@
         <KeyBinding Key="F3"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_NodeView,
-                    Path=Name}" />
+                                               Path=Name}" />
         <KeyBinding Key="F4"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_CenterTextEditor,
-                    Path=Name}" />
+                                               Path=Name}" />
         <KeyBinding Key="S"
                     Command="{Binding SaveCommand}"
                     Modifiers="Control" />
@@ -136,7 +136,7 @@
                           Width="500"
                           Header="このアプリケーションについて"
                           IsOpen="{Binding IsAboutOpen,
-                          Mode=TwoWay}"
+                                           Mode=TwoWay}"
                           IsPinned="False"
                           Position="Right">
                 <local:AboutFlyout />
@@ -144,20 +144,19 @@
 
             <local:ConfigFlyout x:Name="ConfigFlyout"
                                 Width="300"
+                                DataContext="{Binding ConfigFlyoutViewModel}"
                                 Header="設定"
                                 IsPinned="False"
-                                Position="Right"
-                                DataContext="{Binding ConfigFlyoutViewModel}">
-            </local:ConfigFlyout>
-            
+                                Position="Right" />
+
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>
-    
+
     <DockPanel AllowDrop="True">
         <i:Interaction.Behaviors>
             <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
         </i:Interaction.Behaviors>
-        
+
         <Rectangle Height="15" DockPanel.Dock="Bottom" />
         <Grid Margin="0,0,0,0" DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -321,8 +320,8 @@
                               Margin="0, 0, 0, 0"
                               VerticalAlignment="Bottom"
                               IsChecked="{Binding BottomPanelOpen.Value,
-                                          Mode=TwoWay,
-                                          UpdateSourceTrigger=PropertyChanged}"
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
                               Style="{DynamicResource MetroCircleToggleButtonStyle}"
                               ToolTip="下参照パネル（Ctrl+B）">
                     <Rectangle Width="15"
@@ -354,24 +353,23 @@
                     BorderThickness="2"
                     Focusable="False">
                 <i:Interaction.Behaviors>
-                    <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                    NotFocusedBrush="{StaticResource ResourceKey=GrayBrush10}" />
+                    <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush10}" />
                 </i:Interaction.Behaviors>
                 <TreeView x:Name="_NodeView"
                           Grid.Column="0"
                           Margin="0"
-                          Padding="0"
                           AllowDrop="True"
                           ItemsSource="{Binding Tree}"
                           KeyboardNavigation.IsTabStop="True"
-                          KeyboardNavigation.TabNavigation="Once">
+                          KeyboardNavigation.TabNavigation="Once"
+                          Padding="0">
                     <i:Interaction.Behaviors>
                         <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
                         <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
-                        <behavior:CursorKeyBindingBehavior UpCtrlCommand="{Binding MoveUpCommand}" 
-                                                           DownCtrlCommand="{Binding MoveDownCommand}"
+                        <behavior:CursorKeyBindingBehavior DownCtrlCommand="{Binding MoveDownCommand}"
+                                                           LeftCtrlCommand="{Binding MoveParentCommand}"
                                                            RightCtrlCommand="{Binding MoveChildCommand}"
-                                                           LeftCtrlCommand="{Binding MoveParentCommand}"/>
+                                                           UpCtrlCommand="{Binding MoveUpCommand}" />
                     </i:Interaction.Behaviors>
 
                     <TreeView.InputBindings>
@@ -412,12 +410,12 @@
                                                   IsDragOver="{Binding IsDragOver.Value,
                                                                        Mode=TwoWay,
                                                                        UpdateSourceTrigger=PropertyChanged}"
-                                                  IsReferred="{Binding IsReferred.Value,
-                                                                       Mode=TwoWay,
-                                                                       UpdateSourceTrigger=PropertyChanged}"
                                                   IsMarked="{Binding IsEdited.Value,
                                                                      Mode=TwoWay,
                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                  IsReferred="{Binding IsReferred.Value,
+                                                                       Mode=TwoWay,
+                                                                       UpdateSourceTrigger=PropertyChanged}"
                                                   Text="{Binding Name.Value,
                                                                  Mode=TwoWay,
                                                                  UpdateSourceTrigger=PropertyChanged}" />
@@ -425,7 +423,7 @@
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                     <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource MetroTreeViewItem}">
+                        <Style BasedOn="{StaticResource MetroTreeViewItem}" TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
                             <Setter Property="Background" Value="{Binding Background, ElementName=_NodeView}" />
@@ -468,8 +466,7 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_LeftTextBox"
                                                  BindableText="{Binding Path=ParentTextContent.Value,
@@ -487,8 +484,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                 />
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
                 <GridSplitter x:Name="_LeftSplitter"
                               Grid.Row="0"
@@ -503,8 +499,7 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_TopTextBox"
                                                  BindableText="{Binding Path=PrevTextContent.Value,
@@ -522,8 +517,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                 />
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
                 <GridSplitter x:Name="_TopSplitter"
                               Grid.Row="1"
@@ -537,8 +531,7 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_CenterTextEditor"
                                                  Document="{Binding Path=TextContent.Value,
@@ -572,7 +565,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"/>
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 
                 <GridSplitter x:Name="_BottomSplitter"
@@ -587,8 +580,7 @@
                         BorderThickness="2"
                         Focusable="False">
                     <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" 
-                                                        NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
                     </i:Interaction.Behaviors>
                     <controls:BindableTextEditor x:Name="_BottomTextBox"
                                                  BindableText="{Binding Path=NextTextContent.Value,
@@ -606,8 +598,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
                                                                     Mode=TwoWay,
-                                                                    UpdateSourceTrigger=PropertyChanged}"
-                                                 />
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
             </Grid>
         </Grid>
