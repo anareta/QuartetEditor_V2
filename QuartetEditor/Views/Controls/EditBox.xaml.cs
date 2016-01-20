@@ -473,14 +473,7 @@ namespace QuartetEditor.Views.Controls
         /// <param name="position"></param>
         private void ShowAdorner(VerticalAlignment position)
         {
-            if (this.IsReferred)
-            {
-                this._InsertionAdorner = new InsertionAdorner(this._TextBlockReferred, position);
-            }
-            else
-            {
-                this._InsertionAdorner = new InsertionAdorner(this._TextBlock, position);
-            }
+            this._InsertionAdorner = new InsertionAdorner(this, position);
         }
 
         /// <summary>
