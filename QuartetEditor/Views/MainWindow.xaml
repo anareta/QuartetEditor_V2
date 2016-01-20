@@ -370,6 +370,7 @@
                                                            LeftCtrlCommand="{Binding MoveParentCommand}"
                                                            RightCtrlCommand="{Binding MoveChildCommand}"
                                                            UpCtrlCommand="{Binding MoveUpCommand}" />
+                        <behavior:ClickToFocusBehavior />
                     </i:Interaction.Behaviors>
 
                     <TreeView.InputBindings>

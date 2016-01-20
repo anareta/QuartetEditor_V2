@@ -139,6 +139,7 @@
     <Compile Include="Views\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Behaviors\ClickToFocusBehavior.cs" />
     <Compile Include="Views\Behaviors\CursorKeyBindingBehavior.cs" />
     <Compile Include="Views\ConfigFlyout.xaml.cs">
       <DependentUpon>ConfigFlyout.xaml</DependentUpon>
