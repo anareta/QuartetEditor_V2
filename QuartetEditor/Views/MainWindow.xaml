@@ -362,7 +362,8 @@
                           ItemsSource="{Binding Tree}"
                           KeyboardNavigation.IsTabStop="True"
                           KeyboardNavigation.TabNavigation="Once"
-                          Padding="0">
+                          Padding="0"
+                          FocusVisualStyle="{x:Null}">
                     <i:Interaction.Behaviors>
                         <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
                         <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />

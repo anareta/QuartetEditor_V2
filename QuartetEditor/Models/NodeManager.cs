@@ -319,7 +319,8 @@ namespace QuartetEditor.Models
                 {
                     tree.RemoveAt(0);
                 }
-                _tree.Insert(_index, _item);
+
+                this.AddTransaction(_tree, _index, _item);
             });
 
             // 操作実行
@@ -398,6 +399,12 @@ namespace QuartetEditor.Models
         private void AddTransaction(IList<Node> tree, int index, Node item)
         {
             tree.Insert(index, item);
+
+            var parent = this.GetParent(item);
+            if (parent != null)
+            {
+                parent.IsExpanded = true;
+            }
         }
 
         /// <summary>
@@ -431,6 +438,13 @@ namespace QuartetEditor.Models
         private void DeleteTransaction(IList<Node> tree, int index)
         {
             var deleteItem = tree.ElementAt(index);
+
+            var parent = this.GetParent(deleteItem);
+            if (parent != null)
+            {
+                parent.IsExpanded = true;
+            }
+
             tree.RemoveAt(index);
         }
 
@@ -441,6 +455,12 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         private void DeleteTransaction(IList<Node> tree, Node item)
         {
+            var parent = this.GetParent(item);
+            if (parent != null)
+            {
+                parent.IsExpanded = true;
+            }
+
             tree.Remove(item);
         }
 
@@ -606,11 +626,23 @@ namespace QuartetEditor.Models
                                      IList<Node> toTree, int toIndex,
                                      Node item)
         {
+            var fromParent = this.GetParent(item);
+            if (fromParent != null)
+            {
+                fromParent.IsExpanded = true;
+            }
+
             // 移動元から削除
             fromTree.RemoveAt(fromIndex);
 
             // 移動先に挿入
             toTree.Insert(toIndex, item);
+
+            var toParent = this.GetParent(item);
+            if (toParent != null)
+            {
+                toParent.IsExpanded = true;
+            }
 
         }
 
