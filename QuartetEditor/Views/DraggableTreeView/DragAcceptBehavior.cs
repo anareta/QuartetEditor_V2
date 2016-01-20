@@ -29,26 +29,26 @@ namespace QuartetEditor.Views.DraggableTreeView
         {
             Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewDragOver += h,
-                h => this.AssociatedObject.PreviewDragOver -= h)
+                h => this.AssociatedObject.DragOver += h,
+                h => this.AssociatedObject.DragOver -= h)
                 .Subscribe(arg => this.AssociatedObject_DragOver(null, arg));
 
             Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewDrop += h,
-                h => this.AssociatedObject.PreviewDrop -= h)
+                h => this.AssociatedObject.Drop += h,
+                h => this.AssociatedObject.Drop -= h)
                 .Subscribe(arg => this.AssociatedObject_Drop(null, arg));
 
             Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewDragEnter += h,
-                h => this.AssociatedObject.PreviewDragEnter -= h)
+                h => this.AssociatedObject.DragEnter += h,
+                h => this.AssociatedObject.DragEnter -= h)
                 .Subscribe(this.AssociatedObject_Enter);
 
             Observable.FromEvent<DragEventHandler, DragEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewDragLeave += h,
-                h => this.AssociatedObject.PreviewDragLeave -= h)
+                h => this.AssociatedObject.DragLeave += h,
+                h => this.AssociatedObject.DragLeave -= h)
                 .Subscribe(this.AssociatedObject_Leave);
 
             base.OnAttached();

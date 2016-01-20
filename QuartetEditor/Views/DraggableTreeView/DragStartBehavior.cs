@@ -49,21 +49,21 @@ namespace QuartetEditor.Views.DraggableTreeView
         {
             Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewMouseDown += h,
-                h => this.AssociatedObject.PreviewMouseDown -= h)
-                .Subscribe(e => this.AssociatedObject_PreviewMouseDown(null, e));
+                h => this.AssociatedObject.MouseDown += h,
+                h => this.AssociatedObject.MouseDown -= h)
+                .Subscribe(e => this.AssociatedObject_MouseDown(null, e));
 
             Observable.FromEvent<MouseEventHandler, MouseEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewMouseMove += h,
-                h => this.AssociatedObject.PreviewMouseMove -= h)
-                .Subscribe(e => this.AssociatedObject_PreviewMouseMove(null, e));
+                h => this.AssociatedObject.MouseMove += h,
+                h => this.AssociatedObject.MouseMove -= h)
+                .Subscribe(e => this.AssociatedObject_MouseMove(null, e));
 
             Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
                 h => (s, e) => h(e),
-                h => this.AssociatedObject.PreviewMouseUp += h,
-                h => this.AssociatedObject.PreviewMouseUp -= h)
-                .Subscribe(e => this.AssociatedObject_PreviewMouseUp(null, e));
+                h => this.AssociatedObject.MouseUp += h,
+                h => this.AssociatedObject.MouseUp -= h)
+                .Subscribe(e => this.AssociatedObject_MouseUp(null, e));
 
             base.OnAttached();
         }
@@ -73,13 +73,13 @@ namespace QuartetEditor.Views.DraggableTreeView
             base.OnDetaching();
         }
 
-        void AssociatedObject_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        void AssociatedObject_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this._origin = e.GetPosition(this.AssociatedObject);
             this._isButtonDown = true;
         }
 
-        void AssociatedObject_PreviewMouseMove(object sender, MouseEventArgs e)
+        void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed || !this._isButtonDown)
             {
@@ -96,7 +96,7 @@ namespace QuartetEditor.Views.DraggableTreeView
             }
         }
 
-        void AssociatedObject_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        void AssociatedObject_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this._isButtonDown = false;
         }
