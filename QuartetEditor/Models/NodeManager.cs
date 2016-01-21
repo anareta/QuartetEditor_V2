@@ -771,20 +771,20 @@ namespace QuartetEditor.Models
             this.WorkAllNode(c => c.IsDragOver = false);
 
             // ノード名を編集中のときは移動しない
-            if (dropped == null || dropped.IsNameEditMode)
+            if (dropped != null && dropped.IsNameEditMode)
             {
                 return;
             }
 
             // 移動先が自分自身の子の場合は移動しない
-            if (this.Find(dropped.Children, c => c.ID == target?.ID) != null)
+            if (dropped != null && this.Find(dropped.Children, c => c.ID == target?.ID) != null)
             {
                 return;
             }
 
             if (target != null)
             {
-                if (target.ID == dropped.ID)
+                if (target.ID == dropped?.ID)
                 {
                     return;
                 }
@@ -813,14 +813,45 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ノードのドロップ時の処理
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="dropped"></param>
-        public void DragDropAction(Node target, Node dropped)
+        public void DragDropAction(System.Windows.DragEventArgs arg, Node target, Node dropped, bool isPressCtrlKey)
         {
             target = this.Find(this.TreeSource, c => c.IsDragOver);
-
             this.WorkAllNode(c => c.IsDragOver = false);
 
+            if (dropped != null)
+            {
+                // ノードのドロップ
+                if (isPressCtrlKey)
+                {
+                    this.NodeDropCopy(target, dropped);
+                    return;
+                }
+                else
+                {
+                    this.NodeDropMove(target, dropped);
+                    return;
+                }
+            }
+            else
+            {
+                // ファイルのドロップ
+                string[] files = arg.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
+
+                if (files != null)
+                {
+                    this.FileDrop(target, files);
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// ノードのドロップ時の処理
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="dropped"></param>
+        private void NodeDropMove(Node target, Node dropped)
+        {
             if (dropped == null || dropped.IsNameEditMode || target == null)
             {
                 return;
@@ -844,12 +875,8 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="target"></param>
         /// <param name="dropped"></param>
-        public void DragDropCopyAction(Node target, Node dropped)
+        private void NodeDropCopy(Node target, Node dropped)
         {
-            target = this.Find(this.TreeSource, c => c.IsDragOver);
-
-            this.WorkAllNode(c => c.IsDragOver = false);
-
             if (dropped == null || dropped.IsNameEditMode || target == null)
             {
                 return;
@@ -922,6 +949,73 @@ namespace QuartetEditor.Models
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// ファイルを読み込んでノードに展開します
+        /// </summary>
+        private void FileDrop(Node target, string[] files)
+        {
+            // 追加する先
+            IList<Node> toTree = default(IList<Node>);
+            int toIndex = default(int);
+            {
+                switch (target.DropPosition)
+                {
+                    case Enums.DropPositionEnum.Prev:
+                    case Enums.DropPositionEnum.Next:
+                        toTree = this.GetParent(target)?.ChildrenSource;
+                        if (toTree == null)
+                        {
+                            toTree = this.TreeSource;
+                        }
+                        toIndex = toTree.IndexOf(target);
+                        if (target.DropPosition == Enums.DropPositionEnum.Next)
+                        {
+                            ++toIndex;
+                        }
+                        break;
+                    case Enums.DropPositionEnum.Child:
+                        toTree = target.ChildrenSource;
+                        toIndex = target.ChildrenSource.Count();
+                        break;
+                    default:
+                        return;
+                }
+            }
+
+            // 追加するノード
+            var addItems = new Stack<Node>();
+            {
+                foreach (var file in files)
+                {
+                    if (!File.Exists(file))
+                    {
+                        continue;
+                    }
+
+                    string content;
+                    if (!FileUtility.LoadTextByAnyEncoding(file, out content))
+                    {
+                        continue;
+                    }
+
+                    string fileName = Path.GetFileNameWithoutExtension(file);
+
+                    var node = new Node();
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        node.Name = fileName;
+                    }
+
+                    node.Content.Text = content;
+                    node.Content.UndoStack.ClearAll();
+
+                    addItems.Push(node);
+                }
+            }
+
+            this.AddNodes(toTree, toIndex, addItems);
         }
 
         #endregion DragDrop

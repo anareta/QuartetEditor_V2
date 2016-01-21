@@ -131,6 +131,10 @@
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
     <Compile Include="Models\Undo\UndoRedoManager.cs" />
+    <Compile Include="Utilities\CharacterCode\CharCode.cs" />
+    <Compile Include="Utilities\CharacterCode\FileReader.cs" />
+    <Compile Include="Utilities\CharacterCode\FileType.cs" />
+    <Compile Include="Utilities\CharacterCode\ReadJEnc.cs" />
     <Compile Include="Utilities\FileUtility.cs" />
     <Compile Include="Utilities\KeyboardUtility.cs" />
     <Compile Include="Utilities\NodeConverterUtility.cs" />

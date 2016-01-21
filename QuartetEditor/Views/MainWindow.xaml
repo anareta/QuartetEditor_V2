@@ -153,10 +153,6 @@
     </metro:MetroWindow.Flyouts>
 
     <DockPanel AllowDrop="True">
-        <i:Interaction.Behaviors>
-            <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
-        </i:Interaction.Behaviors>
-
         <Rectangle Height="15" DockPanel.Dock="Bottom" />
         <Grid Margin="0,0,0,0" DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -448,7 +444,8 @@
                           BorderThickness="0" />
             <Grid x:Name="_EditorGrid"
                   Grid.Column="2"
-                  DockPanel.Dock="Bottom">
+                  DockPanel.Dock="Bottom"
+                  AllowDrop="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" MinHeight="20"/>
                     <RowDefinition Height="Auto" />
@@ -461,6 +458,10 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="3*" MinWidth="20"/>
                 </Grid.ColumnDefinitions>
+
+                <i:Interaction.Behaviors>
+                    <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
+                </i:Interaction.Behaviors>
 
                 <Border Grid.Row="0"
                         Grid.RowSpan="5"

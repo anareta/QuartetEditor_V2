@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuartetEditor.Utilities.CharacterCode;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -96,6 +97,37 @@ namespace QuartetEditor.Utilities
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// エンコードを自動判別してファイルを読み込みます
+        /// </summary>
+        /// <param name="fileName">ファイル名</param>
+        /// <param name="text">読み込んだテキストデータ</param>
+        /// <returns>読み込みに失敗、またはテキストファイルではないときfalse</returns>
+        public static bool LoadTextByAnyEncoding(string fileName, out string text)
+        {
+            text = default(string);
+
+            if (!File.Exists(fileName))
+            {
+                return false;
+            }
+
+            System.IO.FileInfo file = new FileInfo(fileName);
+            using (FileReader reader = new FileReader(file))
+            {
+                CharCode c = reader.Read(file);
+
+                if (!(c is CharCode.Text))
+                {
+                    // テキストファイルじゃない
+                    return false;
+                }
+
+                text = reader.Text;
+            }
+            return true;
         }
     }
 }

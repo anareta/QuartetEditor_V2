@@ -477,18 +477,38 @@ namespace QuartetEditor.ViewModels
                 var target = fe.DataContext as NodeViewModel;
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-                if (data == null || data.IsNameEditMode.Value)
+                if (data == null)
                 {
-                    return;
-                }
+                    if (!arg.Data.GetDataPresent(DataFormats.FileDrop, true))
+                    {
+                        return;
+                    }
 
-                if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) && !KeyboardUtility.IsCtrlKeyPressed)
-                {
-                    arg.Effects = System.Windows.DragDropEffects.Move;
+                    // ファイルドロップの場合
+                    if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move))
+                    {
+                        arg.Effects = System.Windows.DragDropEffects.Move;
+                    }
                 }
-                else if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Copy) && KeyboardUtility.IsCtrlKeyPressed)
+                else
                 {
-                    arg.Effects = System.Windows.DragDropEffects.Copy;
+                    if (data.IsNameEditMode.Value)
+                    {
+                        return;
+                    }
+
+                    if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Move) && !KeyboardUtility.IsCtrlKeyPressed)
+                    {
+                        arg.Effects = System.Windows.DragDropEffects.Move;
+                    }
+                    else if (arg.AllowedEffects.HasFlag(System.Windows.DragDropEffects.Copy) && KeyboardUtility.IsCtrlKeyPressed)
+                    {
+                        arg.Effects = System.Windows.DragDropEffects.Copy;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 this.Model.DragOverAction(target?.Model, data?.Model);
@@ -537,16 +557,7 @@ namespace QuartetEditor.ViewModels
                 var target = fe.DataContext as NodeViewModel;
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-                if (KeyboardUtility.IsCtrlKeyPressed)
-                {
-                    this.Model.DragDropCopyAction(target?.Model, data?.Model);
-                    return;
-                }
-                else
-                {
-                    this.Model.DragDropAction(target?.Model, data?.Model);
-                    return;
-                }
+                this.Model.DragDropAction(arg, target?.Model, data?.Model, KeyboardUtility.IsCtrlKeyPressed);
 
             }).AddTo(this.Disposable);
 
