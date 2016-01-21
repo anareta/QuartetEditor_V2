@@ -40,6 +40,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.ColumnDefinitions[0].Width = this.AssociatedObject.LeftPanelSize;
+                    this.AssociatedObject._EditorGrid.ColumnDefinitions[0].MinWidth = 20;
                     this.AssociatedObject._LeftSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._LeftTextBox.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -47,6 +48,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 閉じる
                     this.AssociatedObject.LeftPanelSize = this.AssociatedObject._EditorGrid.ColumnDefinitions[0].Width;
+                    this.AssociatedObject._EditorGrid.ColumnDefinitions[0].MinWidth = 0;
                     this.AssociatedObject._EditorGrid.ColumnDefinitions[0].Width = new GridLength(0);
                     this.AssociatedObject._LeftSplitter.Visibility = System.Windows.Visibility.Collapsed;
                     this.AssociatedObject._LeftTextBox.Visibility = System.Windows.Visibility.Collapsed;
@@ -66,6 +68,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.RowDefinitions[4].Height = this.AssociatedObject.BottomPanelSize;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[4].MinHeight = 20;
                     this.AssociatedObject._BottomSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._BottomTextBox.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -73,6 +76,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 閉じる
                     this.AssociatedObject.BottomPanelSize = this.AssociatedObject._EditorGrid.RowDefinitions[4].Height;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[4].MinHeight = 0;
                     this.AssociatedObject._EditorGrid.RowDefinitions[4].Height = new GridLength(0);
                     this.AssociatedObject._BottomSplitter.Visibility = System.Windows.Visibility.Collapsed;
                     this.AssociatedObject._BottomTextBox.Visibility = System.Windows.Visibility.Collapsed;
@@ -92,6 +96,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.RowDefinitions[0].Height = this.AssociatedObject.TopPanelSize;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[0].MinHeight = 20;
                     this.AssociatedObject._TopSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._TopTextBox.Visibility = System.Windows.Visibility.Visible;
                 }
@@ -99,6 +104,7 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 閉じる
                     this.AssociatedObject.TopPanelSize = this.AssociatedObject._EditorGrid.RowDefinitions[0].Height;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[0].MinHeight = 0;
                     this.AssociatedObject._EditorGrid.RowDefinitions[0].Height = new GridLength(0);
                     this.AssociatedObject._TopSplitter.Visibility = System.Windows.Visibility.Collapsed;
                     this.AssociatedObject._TopTextBox.Visibility = System.Windows.Visibility.Collapsed;
