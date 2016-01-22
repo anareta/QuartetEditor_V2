@@ -288,10 +288,28 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
+        /// 条件を満たすノードが存在するか判定します
+        /// </summary>
+        public bool HasAnyNode(Predicate<Node> predicate)
+        {
+            if (predicate(this))
+            {
+                return true;
+            }
+            return this.Children.Any(node => node.HasAnyNode(predicate));
+        }
+
+        /// <summary>
         /// 破棄処理
         /// </summary>
         public void Dispose()
         {
+            if (NodeManager.Current.HasAnyNode(node => node.ID == this.ID))
+            {
+                // NodeMAnagerに登録されている場合は破棄処理を実行しない
+                return;
+            }
+
             this.Disposable.Dispose();
             foreach (var item in this.ChildrenSource)
             {

@@ -59,6 +59,14 @@ namespace QuartetEditor.Models.Undo
         /// </summary>
         private void ClearRedoStack()
         {
+            foreach (var redo in this._Redo)
+            {
+                var disposable = redo as IDisposable;
+                if (disposable != null)
+                {
+                    disposable.Dispose();
+                }
+            }
             this._Redo.Clear();
         }
 
@@ -67,6 +75,14 @@ namespace QuartetEditor.Models.Undo
         /// </summary>
         private void ClearUndoStack()
         {
+            foreach (var undo in this._Undo)
+            {
+                var disposable = undo as IDisposable;
+                if (disposable != null)
+                {
+                    disposable.Dispose();
+                }
+            }
             this._Undo.Clear();
         }
 
@@ -188,7 +204,7 @@ namespace QuartetEditor.Models.Undo
         /// <summary>
         /// 操作
         /// </summary>
-        private class TransactionCommand : ICommand
+        private class TransactionCommand : ICommand, IDisposable
         {
             private Delegate _DoMethod;
             private Delegate _UndoMethod;
@@ -207,17 +223,29 @@ namespace QuartetEditor.Models.Undo
 
             public void Do()
             {
-                _DoMethod.DynamicInvoke(_DoParamater);
+                _DoMethod.DynamicInvoke(this._DoParamater);
             }
 
             public void Undo()
             {
-                _UndoMethod.DynamicInvoke(_UndoParamater);
+                _UndoMethod.DynamicInvoke(this._UndoParamater);
             }
 
             public void Redo()
             {
-                _DoMethod.DynamicInvoke(_DoParamater);
+                _DoMethod.DynamicInvoke(this._DoParamater);
+            }
+
+            public void Dispose()
+            {
+                foreach (var variable in this._DoParamater)
+                {
+                    var disposable = variable as IDisposable;
+                    if (disposable != null)
+                    {
+                        disposable.Dispose();
+                    }
+                }
             }
 
             #endregion

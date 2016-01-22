@@ -276,6 +276,15 @@ namespace QuartetEditor.Models
             this.Tree.ForEach(node => node.WorkAllNode(act));
         }
 
+        /// <summary>
+        /// 条件を満たすノードが存在するか判定します
+        /// </summary>
+        /// <returns></returns>
+        public bool HasAnyNode(Predicate<Node> predicate)
+        {
+            return this.Tree.Any(node => node.HasAnyNode(predicate));
+        }
+
         #region NodeTransaction
 
         /// <summary>
