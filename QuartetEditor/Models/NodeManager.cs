@@ -1000,6 +1000,21 @@ namespace QuartetEditor.Models
                         continue;
                     }
 
+                    // 改行コードの置き換え
+                    if (content.IndexOf("\r\n") != -1)
+                    {
+                        content = content.Replace("\n", Environment.NewLine);
+                    }
+                    else if (content.IndexOf("\r") != -1)
+                    {
+                        content = content.Replace("\r", Environment.NewLine);
+                    }
+                    else if(content.IndexOf("\n") != -1)
+                    {
+                        content = content.Replace("\n", Environment.NewLine);
+                    }
+
+
                     string fileName = Path.GetFileNameWithoutExtension(file);
 
                     var node = new Node();

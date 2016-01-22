@@ -51,7 +51,7 @@ namespace QuartetEditor.Models
         public string Name
         {
             get { return this._Name; }
-            set { this.SetProperty(ref this._Name, value); }
+            set { this.SetProperty(ref this._Name, value.Replace("\n", "").Replace("\r", "")); }
         }
 
         /// <summary>
