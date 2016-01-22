@@ -1003,7 +1003,7 @@ namespace QuartetEditor.Models
                     // 改行コードの置き換え
                     if (content.IndexOf("\r\n") != -1)
                     {
-                        content = content.Replace("\n", Environment.NewLine);
+                        content = content.Replace("\r\n", Environment.NewLine);
                     }
                     else if (content.IndexOf("\r") != -1)
                     {
