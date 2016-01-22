@@ -1003,39 +1003,55 @@ namespace QuartetEditor.Models
                         continue;
                     }
 
-                    string content;
-                    if (!FileUtility.LoadTextByAnyEncoding(file, out content))
+                    QuartetEditorDescription model;
+                    if (FileUtility.LoadJsonObject(file, out model) == true)
                     {
+                        // ファイルはQuartetEditorのファイル
+                        foreach (var node in model.Node)
+                        {
+                            var additem = new Node(node);
+                            addItems.Push(additem);
+                        }
                         continue;
                     }
-
-                    // 改行コードの置き換え
-                    if (content.IndexOf("\r\n") != -1)
+                    else
                     {
-                        content = content.Replace("\r\n", Environment.NewLine);
+                        // QuartetEditor以外のファイル
+                        string content;
+                        if (!FileUtility.LoadTextByAnyEncoding(file, out content))
+                        {
+                            continue;
+                        }
+
+                        // 改行コードの置き換え
+                        if (content.IndexOf("\r\n") != -1)
+                        {
+                            content = content.Replace("\r\n", Environment.NewLine);
+                        }
+                        else if (content.IndexOf("\r") != -1)
+                        {
+                            content = content.Replace("\r", Environment.NewLine);
+                        }
+                        else if (content.IndexOf("\n") != -1)
+                        {
+                            content = content.Replace("\n", Environment.NewLine);
+                        }
+
+
+                        string fileName = Path.GetFileNameWithoutExtension(file);
+
+                        var node = new Node();
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            node.Name = fileName;
+                        }
+
+                        node.Content.Text = content;
+                        node.Content.UndoStack.ClearAll();
+
+                        addItems.Push(node);
+                        continue;
                     }
-                    else if (content.IndexOf("\r") != -1)
-                    {
-                        content = content.Replace("\r", Environment.NewLine);
-                    }
-                    else if(content.IndexOf("\n") != -1)
-                    {
-                        content = content.Replace("\n", Environment.NewLine);
-                    }
-
-
-                    string fileName = Path.GetFileNameWithoutExtension(file);
-
-                    var node = new Node();
-                    if (!string.IsNullOrEmpty(fileName))
-                    {
-                        node.Name = fileName;
-                    }
-
-                    node.Content.Text = content;
-                    node.Content.UndoStack.ClearAll();
-
-                    addItems.Push(node);
                 }
             }
 
