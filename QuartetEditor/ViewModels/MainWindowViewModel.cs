@@ -737,8 +737,8 @@ namespace QuartetEditor.ViewModels
             else if (ApplicationDeployment.IsNetworkDeployed)
             {
                 // ClickOnce引数
-                string[] args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-                if (args.Count() == 1)
+                string[] args = AppDomain.CurrentDomain?.SetupInformation?.ActivationArguments?.ActivationData;
+                if (args != null && args.Count() == 1)
                 {
                     this.Model.Load(args[0]);
                 }
