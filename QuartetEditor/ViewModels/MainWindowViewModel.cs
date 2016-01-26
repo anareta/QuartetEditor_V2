@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using QuartetEditor.Utilities;
+using System.Deployment.Application;
 
 namespace QuartetEditor.ViewModels
 {
@@ -727,9 +728,20 @@ namespace QuartetEditor.ViewModels
             // パネルの初期状態をViewへリクエストする
             this.RisePanelState();
 
+            // 引数で指定されたファイルの読み込み
             if (Environment.GetCommandLineArgs().Count() == 2 && !string.IsNullOrWhiteSpace(Environment.GetCommandLineArgs()[1]))
             {
+                // コマンドライン引数
                 this.Model.Load(Environment.GetCommandLineArgs()[1]);
+            }
+            else if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                // ClickOnce引数
+                string[] args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+                if (args.Count() == 1)
+                {
+                    this.Model.Load(args[0]);
+                }
             }
         }
 
