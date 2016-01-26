@@ -292,6 +292,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void DeleteNode()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (tree == null)
             {
@@ -341,6 +346,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void AddNodeSame()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (tree == null)
             {
@@ -356,6 +366,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void AddNodeLower()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> tree = this.SelectedNode.ChildrenSource;
             int index = tree.Count();
 
@@ -427,6 +442,11 @@ namespace QuartetEditor.Models
                 return;
             }
 
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             var newItem = new Node(this.SelectedNode);
             IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (tree == null)
@@ -478,6 +498,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void MoveDown()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (fromTree == null)
             {
@@ -500,6 +525,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void MoveUp()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (fromTree == null)
             {
@@ -521,6 +551,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void MoveChild()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (fromTree == null)
             {
@@ -548,6 +583,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void MoveParent()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
             if (fromTree == null)
             {
@@ -660,6 +700,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void AddNodeFromHeader()
         {
+            if (this.SelectedNode.IsNameEditMode)
+            {
+                return;
+            }
+
             if (this.SelectedNode == null)
             {
                 return;
