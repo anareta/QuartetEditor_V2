@@ -1562,40 +1562,54 @@ namespace QuartetEditor.Models
         /// <summary>
         /// Viewへのエクスポート先SavePath処理要求
         /// </summary>
-        public Subject<Action<string, ExportKindEnum>> ExportSavePathRequest { get; } = new Subject<Action<string, ExportKindEnum>>();
+        public Subject<Tuple<string, string, Action<string>>> ExportSavePathRequest { get; } = new Subject<Tuple<string, string, Action<string>>>();
 
         /// <summary>
         /// エクスポート
         /// </summary>
-        public void Export()
+        public void Export(ExportSettingModel model)
         {
             bool fail = false;
-            this.ExportSavePathRequest.OnNext((path, kind) =>
+            string ext = "";
+            string filter = "";
+            string exportstr = "";
+            try
             {
-                if (path != null && !string.IsNullOrWhiteSpace(path))
+                switch (model.Kind)
                 {
-                    try
-                    {
-                        switch (kind)
-                        {
-                            case ExportKindEnum.Text:
-                                string exportstr = NodeConverterUtility.ToText(new QuartetEditorDescription(this.TreeSource));
-                                fail = !FileUtility.SaveText(path, exportstr, Encoding.UTF8);
-                                return;
-                            case ExportKindEnum.HTML:
-                                return;
-                            case ExportKindEnum.Directory:
-                                return;
-                            default:
-                                return;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        fail = true;
-                    }
+                    case ExportKindEnum.Text:
+                        exportstr = NodeConverterUtility.ToText(new QuartetEditorDescription(this.TreeSource), model);
+                        ext = "txt";
+                        filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                        break;
+                    case ExportKindEnum.HTML:
+                        exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.TreeSource), Path.GetFileNameWithoutExtension(this.FileName));
+                        ext = "html";
+                        filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
+                        break;
+                    case ExportKindEnum.TreeText:
+                        exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.TreeSource));
+                        ext = "txt";
+                        filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                        break;
+                    default:
+                        break;
                 }
-            });
+
+                // 保存する
+                this.ExportSavePathRequest.OnNext(new Tuple<string, string, Action<string>>(filter, ext, (path) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(path))
+                    {
+                        fail = !FileUtility.SaveText(path, exportstr, Encoding.UTF8);
+                    }
+                    return;
+                }));
+            }
+            catch (Exception)
+            {
+                fail = true;
+            }
 
             if (fail)
             {

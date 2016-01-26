@@ -341,7 +341,21 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// エクスポート要求
         /// </summary>
-        public ReactiveCommand ExportCommand { get; private set; } = new ReactiveCommand();
+        public ReactiveCommand OpenExportDialogCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// ViewへのExportDialog処理要求
+        /// </summary>
+        public Func<Task> ExportDialogViewAction { get; set; }
+
+        /// <summary>
+        /// エクスポートを実行
+        /// </summary>
+        /// <param name="model"></param>
+        public void Export(ExportSettingModel model)
+        {
+            this.Model.Export(model);
+        }
 
         #endregion Export
 
@@ -681,8 +695,11 @@ namespace QuartetEditor.ViewModels
 
             #region Export
 
-            this.ExportCommand.Subscribe(_ => this.Model.Export()).AddTo(this.Disposable);
-            this.Model.ExportSavePathRequest.Subscribe(act =>
+            this.OpenExportDialogCommand.Subscribe(_ =>
+            {
+                this.ExportDialogViewAction();
+            }).AddTo(this.Disposable);
+            this.Model.ExportSavePathRequest.Subscribe(tuple =>
             {
                 if (this.SaveDialogViewAction == null)
                 {
@@ -691,12 +708,12 @@ namespace QuartetEditor.ViewModels
 
                 var dialog = new SaveFileDialog();
                 dialog.Title = "エクスポート";
-                dialog.Filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                dialog.Filter = tuple.Item1;
                 dialog.AddExtension = true;
-                dialog.DefaultExt = "txt";
+                dialog.DefaultExt = tuple.Item2;
                 dialog.FileName = string.IsNullOrWhiteSpace(this.Model.FileName) ? "新規" : System.IO.Path.GetFileNameWithoutExtension(this.Model.FileName);
                 string path = this.SaveDialogViewAction(dialog);
-                act(path, ExportKindEnum.Text);
+                tuple.Item3(path);
             }).AddTo(this.Disposable);
             #endregion Export
 

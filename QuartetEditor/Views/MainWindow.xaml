@@ -216,7 +216,7 @@
                         Width="40"
                         Height="40"
                         Margin="0, 3, 0, 0"
-                        Command="{Binding ExportCommand}"
+                        Command="{Binding OpenExportDialogCommand}"
                         Style="{DynamicResource MetroCircleButtonStyle}"
                         ToolTip="エクスポート">
                     <Rectangle Width="17"

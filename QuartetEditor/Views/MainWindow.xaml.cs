@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using MahApps.Metro.Controls.Dialogs;
 using QuartetEditor.Entities;
+using QuartetEditor.Views.Controls;
 
 namespace QuartetEditor.Views
 {
@@ -76,6 +77,20 @@ namespace QuartetEditor.Views
         }
         #endregion PanelState
 
+        #region ExportDialog
+
+        /// <summary>
+        /// エクスポートのリクエスト
+        /// </summary>
+        private Action<ExportSettingModel> Export { set; get; }
+
+        /// <summary>
+        /// エクスポートダイアログ
+        /// </summary>
+        private ExportDialog ExportDialog { set; get; }
+
+        #endregion ExportDialog
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -101,9 +116,25 @@ namespace QuartetEditor.Views
                 {
                     model.SaveDialogViewAction = this.SaveDialog;
                     model.OpenDialogViewAction = this.OpenDialog;
+                    model.ExportDialogViewAction = this.ShowExportDialog;
                     model.MessageDialogViewAction = this.ShowDialogEventListener;
+                    this.Export = model.Export;
                 }
             };
+
+            #region ExportDialog
+
+            this.ExportDialog = new ExportDialog();
+            this.ExportDialog.DataContext = new ExportDialogViewModel(() => this.HideMetroDialogAsync(this.ExportDialog));
+            this.ExportDialog.Excute.Subscribe(m =>
+            {
+                this.MouseLeftButtonDown -= this.MouseLeftButtonDownWindowMove;
+                if (m != null)
+                {
+                    this.Export(m);
+                }
+            });
+            #endregion ExportDialog
 
             InitializeComponent();
         }
@@ -170,6 +201,17 @@ namespace QuartetEditor.Views
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// エクスポートダイアログを開く
+        /// </summary>
+        /// <returns></returns>
+        private async Task ShowExportDialog()
+        {
+            this.MouseLeftButtonDown += this.MouseLeftButtonDownWindowMove;
+            await this.ShowMetroDialogAsync(this.ExportDialog);
+            return;
         }
 
         /// <summary>

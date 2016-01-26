@@ -98,6 +98,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -130,6 +131,7 @@
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
+    <Compile Include="Models\ExportSettingModel.cs" />
     <Compile Include="Models\Undo\UndoRedoManager.cs" />
     <Compile Include="Utilities\CharacterCode\CharCode.cs" />
     <Compile Include="Utilities\CharacterCode\FileReader.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Utilities\KeyboardUtility.cs" />
     <Compile Include="Utilities\NodeConverterUtility.cs" />
     <Compile Include="ViewModels\ConfigFlyoutViewModel.cs" />
+    <Compile Include="ViewModels\ExportDialogViewModel.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
@@ -147,6 +150,9 @@
     <Compile Include="Views\Behaviors\CursorKeyBindingBehavior.cs" />
     <Compile Include="Views\ConfigFlyout.xaml.cs">
       <DependentUpon>ConfigFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ExportDialog.xaml.cs">
+      <DependentUpon>ExportDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\InsertionAdorner.cs" />
     <Compile Include="Views\Converters\FontFamilyToNameConverter.cs" />
@@ -167,6 +173,10 @@
     <Page Include="Views\Controls\EditBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\ExportDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\HorizontalInsertionCursor.xaml">
       <SubType>Designer</SubType>

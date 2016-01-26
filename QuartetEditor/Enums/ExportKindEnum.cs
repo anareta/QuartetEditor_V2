@@ -22,8 +22,8 @@ namespace QuartetEditor.Enums
         HTML,
 
         /// <summary>
-        /// ディレクトリ
+        /// 階層付きテキストファイル
         /// </summary>
-        Directory,
+        TreeText,
     }
 }
