@@ -18,12 +18,6 @@ namespace QuartetEditor
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
 
-            // コマンドライン引数の取得
-            if (e.Args.Count() > 0)
-            {
-                NodeManager.Current.Load(e.Args[0]);
-            }
-
             // 設定ファイルの読み込み
             ConfigManager.Current.LoadConfig();
         }

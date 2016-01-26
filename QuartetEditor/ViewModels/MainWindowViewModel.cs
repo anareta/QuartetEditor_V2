@@ -685,7 +685,7 @@ namespace QuartetEditor.ViewModels
                 }
 
                 var dialog = new OpenFileDialog();
-                dialog.Title = "QEDファイルを読み込み";
+                dialog.Title = "QEDファイルを開く";
                 dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
                 string path = this.OpenDialogViewAction(dialog);
                 act(path);
@@ -726,6 +726,11 @@ namespace QuartetEditor.ViewModels
         {
             // パネルの初期状態をViewへリクエストする
             this.RisePanelState();
+
+            if (Environment.GetCommandLineArgs().Count() == 2 && !string.IsNullOrWhiteSpace(Environment.GetCommandLineArgs()[1]))
+            {
+                this.Model.Load(Environment.GetCommandLineArgs()[1]);
+            }
         }
 
         /// <summary>
