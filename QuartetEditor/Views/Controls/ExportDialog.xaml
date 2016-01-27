@@ -71,7 +71,7 @@
                            VerticalAlignment="Center"
                            IsEnabled="{Binding IsChecked,
                                                ElementName=_EnablLineWrap}"
-                           Text="バイト" />
+                           Text="桁" />
             </StackPanel>
             <!--  「折り返し」ここまで  -->
         </Grid>
