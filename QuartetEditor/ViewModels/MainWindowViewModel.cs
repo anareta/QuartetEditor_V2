@@ -369,7 +369,7 @@ namespace QuartetEditor.ViewModels
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
-            this.WindowTitle = this.Model.ObserveProperty(x => x.FileName)
+            this.WindowTitle = this.Model.ObserveProperty(x => x.FilePath)
                                    .Select(x => string.IsNullOrWhiteSpace(x) ? "" : System.IO.Path.GetFileName(x))
                                    .Select(x => "Quartet Editor" + (string.IsNullOrWhiteSpace(x) ? "" : $" - {x}"))
                                    .CombineLatest(this.Model.ObserveProperty(x => x.IsEdited), (title, flg) => title + (flg ? "（変更あり）" : ""))
@@ -660,7 +660,7 @@ namespace QuartetEditor.ViewModels
             }).AddTo(this.Disposable);
 
             this.SaveCommand.Subscribe(_ => this.Model.SaveOverwrite()).AddTo(this.Disposable);
-            this.RenameSaveCommand.Subscribe(_ => this.Model.RenameSave()).AddTo(this.Disposable);
+            this.RenameSaveCommand.Subscribe(_ => this.Model.SaveAs()).AddTo(this.Disposable);
             this.Model.SavePathRequest.Subscribe(act =>
             {
                 if (this.SaveDialogViewAction == null)
@@ -712,7 +712,7 @@ namespace QuartetEditor.ViewModels
                 dialog.Filter = tuple.Item1;
                 dialog.AddExtension = true;
                 dialog.DefaultExt = tuple.Item2;
-                dialog.FileName = string.IsNullOrWhiteSpace(this.Model.FileName) ? "新規" : System.IO.Path.GetFileNameWithoutExtension(this.Model.FileName);
+                dialog.FileName = string.IsNullOrWhiteSpace(this.Model.FilePath) ? "新規" : System.IO.Path.GetFileNameWithoutExtension(this.Model.FilePath);
                 string path = this.SaveDialogViewAction(dialog);
                 tuple.Item3(path);
             }).AddTo(this.Disposable);

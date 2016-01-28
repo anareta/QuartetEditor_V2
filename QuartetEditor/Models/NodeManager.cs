@@ -1454,14 +1454,14 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// ファイル名
+        /// ファイル名のフルパス
         /// </summary>
-        private string _FileName;
+        private string _FilePath;
 
-        public string FileName
+        public string FilePath
         {
-            get { return this._FileName; }
-            set { this.SetProperty(ref this._FileName, value); }
+            get { return this._FilePath; }
+            set { this.SetProperty(ref this._FilePath, value); }
         }
 
         /// <summary>
@@ -1470,18 +1470,22 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         public bool SaveOverwrite()
         {
-            if (this.FileName == null ||
-                string.IsNullOrWhiteSpace(this.FileName) ||
-                !File.Exists(this.FileName))
+            if (this.FilePath == null ||
+                string.IsNullOrWhiteSpace(this.FilePath) ||
+                !File.Exists(this.FilePath))
             {
                 // 有効なファイル名が存在しない場合は変名処理へ
-                return this.RenameSave();
+                return this.SaveAs();
             }
 
-            if (this.Save(this.FileName))
+            if (this.Save(this.FilePath))
             {
                 this.OffEditFlag();
                 return true;
+            }
+            else
+            {
+                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。\n別の場所に保存してください。");
             }
 
             return false;
@@ -1491,7 +1495,7 @@ namespace QuartetEditor.Models
         /// ファイルを変名保存する
         /// </summary>
         /// <returns></returns>
-        public bool RenameSave()
+        public bool SaveAs()
         {
             bool result = false;
             this.SavePathRequest.OnNext(path =>
@@ -1500,9 +1504,13 @@ namespace QuartetEditor.Models
                 {
                     if (this.Save(path))
                     {
-                        this.FileName = path;
+                        this.FilePath = path;
                         this.OffEditFlag();
                         result = true;
+                    }
+                    else
+                    {
+                        this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
                     }
                 }
             });
@@ -1512,8 +1520,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ファイルを保存する
         /// </summary>
-        /// <param name="path"></param>
-        private bool Save(string path)
+        public bool Save(string path)
         {
             try
             {
@@ -1527,7 +1534,7 @@ namespace QuartetEditor.Models
             }
             catch
             {
-                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+
             }
             return false;
         }
@@ -1574,7 +1581,7 @@ namespace QuartetEditor.Models
                         {
                             this.TreeSource.Add(new Node(item));
                         }
-                        this.FileName = path;
+                        this.FilePath = path;
                         this.Tree.First().IsSelected = true;
                         this.OffEditFlag();
                     }
@@ -1628,7 +1635,7 @@ namespace QuartetEditor.Models
                         filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                         break;
                     case ExportKindEnum.HTML:
-                        exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.TreeSource), Path.GetFileNameWithoutExtension(this.FileName));
+                        exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.TreeSource), Path.GetFileNameWithoutExtension(this.FilePath));
                         ext = "html";
                         filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
                         break;

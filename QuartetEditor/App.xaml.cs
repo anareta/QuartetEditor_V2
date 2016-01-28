@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,6 +35,30 @@ namespace QuartetEditor
                 "エラー",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+
+            try
+            {
+                var model = NodeManager.Current;
+                if (model.IsEdited && !string.IsNullOrWhiteSpace(model.FilePath))
+                {
+                    // 未保存の場合、保存を試みる
+                    string tmpFilePath = "";
+                    int count = 0;
+
+                    while ((string.IsNullOrWhiteSpace(tmpFilePath) || File.Exists(tmpFilePath)) && count++ < 10)
+                    {
+                        // 重複しないファイル名が出るまでGetRandomFileNameを呼び続ける
+                        tmpFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath),
+                                                   Path.GetFileNameWithoutExtension(model.FilePath) + "_" + Path.GetRandomFileName() + ".qed");
+                    }
+
+                    NodeManager.Current.Save(tmpFilePath);
+                }
+            }
+            catch
+            {
+
+            }
 
             Environment.Exit(1);
         }
