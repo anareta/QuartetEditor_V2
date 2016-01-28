@@ -1524,12 +1524,19 @@ namespace QuartetEditor.Models
         {
             try
             {
-                if (File.Exists(path))
+                bool overwrite = File.Exists(path);
+                if (overwrite)
                 {
-                    File.Delete(path);
+                    File.Move(path, path + ".tmp");
                 }
+
                 var data = new QuartetEditorDescription(this.TreeSource);
                 FileUtility.SaveJsonObject(path, data);
+
+                if (overwrite)
+                {
+                    File.Delete(path + ".tmp");
+                }
                 return true;
             }
             catch
