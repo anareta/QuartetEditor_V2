@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("QuartetEditor")]
 [assembly: AssemblyProduct("QuartetEditor")]
-[assembly: AssemblyCopyright("Copyright © 2015 前田あぞ")]
+[assembly: AssemblyCopyright("Copyright © 2015 あぞ")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
