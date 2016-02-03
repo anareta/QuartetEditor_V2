@@ -40,9 +40,9 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.ColumnDefinitions[0].Width = this.AssociatedObject.LeftPanelSize;
-                    this.AssociatedObject._EditorGrid.ColumnDefinitions[0].MinWidth = 20;
                     this.AssociatedObject._LeftSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._LeftTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this.AssociatedObject._EditorGrid.ColumnDefinitions[0].MinWidth = 20;
                 }
                 else
                 {
