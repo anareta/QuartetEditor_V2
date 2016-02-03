@@ -1525,9 +1525,10 @@ namespace QuartetEditor.Models
             try
             {
                 bool overwrite = File.Exists(path);
+                string overwiteSuffix = Path.GetRandomFileName().Substring(0, 5);
                 if (overwrite)
                 {
-                    File.Move(path, path + ".tmp");
+                    File.Move(path, path + "." + overwiteSuffix);
                 }
 
                 var data = new QuartetEditorDescription(this.TreeSource);
@@ -1535,7 +1536,7 @@ namespace QuartetEditor.Models
 
                 if (overwrite)
                 {
-                    File.Delete(path + ".tmp");
+                    File.Delete(path + "." + overwiteSuffix);
                 }
                 return true;
             }
