@@ -304,8 +304,11 @@ namespace QuartetEditor.Views.Controls
             switch (e.Key)
             {
                 case Key.Return:
-                    this.UpdateText();
-                    this.CanEdit = false;
+                    if (this.CanEdit)
+                    {
+                        this.UpdateText();
+                        this.CanEdit = false;
+                    }
                     break;
                 case Key.Escape:
                     this.CanEdit = false;
@@ -320,8 +323,11 @@ namespace QuartetEditor.Views.Controls
         /// <param name="e"></param>
         private void TextEditor_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            this.UpdateText();
-            this.CanEdit = false;
+            if (this.CanEdit)
+            {
+                this.UpdateText();
+                this.CanEdit = false;
+            }
         }
 
         /// <summary>
@@ -331,8 +337,11 @@ namespace QuartetEditor.Views.Controls
         /// <param name="e"></param>
         private void TextEditor_LostFocus(object sender, RoutedEventArgs e)
         {
-            this.UpdateText();
-            this.CanEdit = false;
+            if (this.CanEdit)
+            {
+                this.UpdateText();
+                this.CanEdit = false;
+            }
         }
 
         /// <summary>
