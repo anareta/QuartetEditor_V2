@@ -68,9 +68,9 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.RowDefinitions[4].Height = this.AssociatedObject.BottomPanelSize;
-                    this.AssociatedObject._EditorGrid.RowDefinitions[4].MinHeight = 20;
                     this.AssociatedObject._BottomSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._BottomTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[4].MinHeight = 20;
                 }
                 else
                 {
@@ -96,9 +96,10 @@ namespace QuartetEditor.Views.Messengers
                 {
                     // 開く
                     this.AssociatedObject._EditorGrid.RowDefinitions[0].Height = this.AssociatedObject.TopPanelSize;
-                    this.AssociatedObject._EditorGrid.RowDefinitions[0].MinHeight = 20;
                     this.AssociatedObject._TopSplitter.Visibility = System.Windows.Visibility.Visible;
                     this.AssociatedObject._TopTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this.AssociatedObject._EditorGrid.RowDefinitions[0].MinHeight = 20;
+
                 }
                 else
                 {
