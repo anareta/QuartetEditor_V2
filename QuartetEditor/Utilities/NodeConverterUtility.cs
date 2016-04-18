@@ -13,7 +13,7 @@ namespace QuartetEditor.Utilities
     /// <summary>
     /// ノード変換ユーティリティ
     /// </summary>
-    static class NodeConverterUtility
+    static public class NodeConverterUtility
     {
         #region Text
 
@@ -237,7 +237,135 @@ namespace QuartetEditor.Utilities
                 ToHTML(child, result, level + 1);
             }
         }
+
         #endregion HTML
+
+        #region FromTreeText
+
+        /// <summary>
+        /// 階層付きテキストファイルをノードに変換する
+        /// </summary>
+        /// <param name="treeText"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        static public bool FromTreeText(string treeText, out QuartetEditorDescription QED)
+        {
+            QED = new QuartetEditorDescription();
+            var nodes = new List<QuartetEditorDescriptionItem>();
+            string lineFeed = FileUtility.GetLineFeedCode(treeText);
+
+            // 行頭の"."がない場合はエラー
+            int index = 0;
+            if (!treeText.StartsWith("."))
+            {
+                index = treeText.IndexOf(lineFeed + ".");
+                if (index == -1)
+                {
+                    return false;
+                }
+                index += lineFeed.Length;
+            }
+
+            treeText = treeText.Substring(index);
+            FromTreeText(ref treeText,
+                         lineFeed,
+                         nodes,
+                         1);
+
+            QED.Node = nodes;
+
+            // バージョンは1.0で固定
+            QED.Version = 1.0;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 階層付きテキストを分解します
+        /// </summary>
+        /// <param name="treeText"></param>
+        /// <param name="lineFeed"></param>
+        /// <param name="Nodes"></param>
+        /// <param name="level"></param>
+        static private void FromTreeText(ref string treeText, string lineFeed, List<QuartetEditorDescriptionItem> Nodes, int level)
+        {
+            var headerMark = new string('.', level);
+
+            // 最初に行頭のマークが現れるまで読み飛ばし
+            int index = 0;
+            while (treeText.StartsWith(headerMark))
+            {
+                var titleStartPos = headerMark.Length;
+                var titleEndPos = treeText.IndexOf(lineFeed);
+                if (titleEndPos == -1)
+                {
+                    // 改行が見つからない場合、残り全部がタイトル
+                    titleEndPos = treeText.Length;
+                }
+                var title = treeText.SubstringByIndex(titleStartPos, titleEndPos);
+                if (title.StartsWith(" ."))
+                {
+                    // タイトルが"."から始まるとき、空白でエスケープされている
+                    title = title.Substring(1);
+                }
+                index = titleEndPos + lineFeed.Length;
+
+                var content = "";
+                var contentStartPos = index;
+                if (treeText.Substring(contentStartPos).StartsWith("."))
+                {
+                    // コンテンツがなく、次のタイトルが現れている場合は何もしない
+                }
+                else
+                {
+                    // コンテンツは次に見つかる行頭の"."までの間
+                    var contentEndPos = treeText.IndexOf(lineFeed + ".", contentStartPos);
+                    if (contentEndPos == -1)
+                    {
+                        // 次のタイトルが見つからないときは残りの文字列全部がコンテンツ
+                        contentEndPos = treeText.Length;
+                    }
+
+                    content = treeText.SubstringByIndex(contentStartPos, contentEndPos);
+                    if (content.StartsWith(" ."))
+                    {
+                        // コンテンツが"."から始まるとき、空白でエスケープされているため空白を削除
+                        content = content.Substring(1);
+                    }
+                    index = contentEndPos + lineFeed.Length;
+                }
+
+                var node = new QuartetEditorDescriptionItem() { Name = title, Content = content.Replace(lineFeed, Environment.NewLine) };
+
+                if (treeText.Length > index)
+                {
+                    treeText = treeText.Substring(index);
+                }
+                else
+                {
+                    treeText = "";
+                }
+
+                index = 0;
+
+                // 子ノードの探索
+                int nextChildTitleIndex = treeText.IndexOf(headerMark + ".", index);
+                if (nextChildTitleIndex != -1 &&
+                    !treeText.Substring(0, nextChildTitleIndex).Contains(lineFeed + "."))
+                {
+                    // 子階層のタイトルまでの間に別の階層のタイトルが見つからない場合
+                    FromTreeText(ref treeText,
+                                 lineFeed,
+                                 node.Children,
+                                 level + 1);
+                }
+
+                Nodes.Add(node);
+            }
+
+        }
+
+        #endregion FromTreeText
     }
 
     namespace ConverterExtensions
@@ -284,6 +412,24 @@ namespace QuartetEditor.Utilities
                 Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
                 return sjisEnc.GetByteCount(s);
             }
+
+            /// <summary>
+            /// 指定されたindexとindexの間の文字を取り出します
+            /// </summary>
+            /// <param name="s"></param>
+            /// <param name="start"></param>
+            /// <param name="end"></param>
+            /// <returns></returns>
+            public static string SubstringByIndex(this string s, int start, int end)
+            {
+                if (start >= end)
+                {
+                    return "";
+                }
+
+                return s.Substring(start, end - start);
+            }
+            
         }
         #endregion Text
     }

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace QuartetEditor.Models
 {
-    class Node : BindableBase, IDisposable
+    public class Node : BindableBase, IDisposable
     {
         /// <summary>
         /// 破棄用

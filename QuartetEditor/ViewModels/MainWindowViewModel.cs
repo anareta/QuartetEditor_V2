@@ -687,7 +687,7 @@ namespace QuartetEditor.ViewModels
 
                 var dialog = new OpenFileDialog();
                 dialog.Title = "QEDファイルを開く";
-                dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
+                dialog.Filter = "QEDファイル(*.qed)|*.qed|階層付きテキスト(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                 string path = this.OpenDialogViewAction(dialog);
                 act(path);
             }).AddTo(this.Disposable);

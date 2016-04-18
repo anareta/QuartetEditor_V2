@@ -10,7 +10,7 @@ namespace QuartetEditor.Entities
     /// <summary>
     /// QEDエンティティクラス
     /// </summary>
-    class QuartetEditorDescription
+    public class QuartetEditorDescription
     {
         /// <summary>
         /// ノード
@@ -46,7 +46,7 @@ namespace QuartetEditor.Entities
     /// <summary>
     /// QEDエンティティクラス
     /// </summary>
-    class QuartetEditorDescriptionItem
+    public class QuartetEditorDescriptionItem
     {
         /// <summary>
         /// ノード名

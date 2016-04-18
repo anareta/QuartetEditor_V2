@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using QuartetEditor.Entities;
 
 namespace QuartetEditor.Utilities
 {
@@ -128,6 +129,30 @@ namespace QuartetEditor.Utilities
                 text = reader.Text;
             }
             return true;
+        }
+
+        /// <summary>
+        /// テキストに含まれる改行コードを取得します
+        /// 改行コードが混在している場合の動作は未保証
+        /// CRには未対応（どうせないし）
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string GetLineFeedCode(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return Environment.NewLine;
+            }
+
+            if (text.Contains("\r\n"))
+            {
+                // CR+LF
+                return "\r\n";
+            }
+            // LF
+            return "\n";
+
         }
     }
 }

@@ -959,7 +959,7 @@ namespace QuartetEditor.Models
         /// <param name="toTree"></param>
         /// <param name="toIndex"></param>
         /// <returns>移動に必要な情報の取得に成功したらtrue</returns>
-        private bool GetDragDropInfo(Node target, Node dropped, 
+        private bool GetDragDropInfo(Node target, Node dropped,
                                      out IList<Node> fromTree, out int fromIndex, out IList<Node> toTree, out int toIndex)
         {
             fromTree = default(IList<Node>);
@@ -1574,22 +1574,35 @@ namespace QuartetEditor.Models
                 }
 
                 bool fail = false;
+                bool fromTextFile = false;
                 try
                 {
                     QuartetEditorDescription model;
                     if (FileUtility.LoadJsonObject(path, out model) == false)
                     {
-                        fail = true;
+                        string treeText;
+                        if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == false ||
+                            NodeConverterUtility.FromTreeText(treeText, out model) == false)
+                        {
+                            fail = true;
+                        }
+                        else
+                        {
+                            fromTextFile = true;
+                        }
                     }
-                    else
+
+                    if (!fail)
                     {
+                        // 失敗していない場合、QuartetEditorDescriptionをNodeとして設定
                         this.TreeSource.Clear();
                         this.UndoRedoModel.Clear();
                         foreach (var item in model.Node)
                         {
                             this.TreeSource.Add(new Node(item));
                         }
-                        this.FilePath = path;
+                        this.FilePath = fromTextFile ? null : path;
+
                         this.Tree.First().IsSelected = true;
                         this.OffEditFlag();
                     }
