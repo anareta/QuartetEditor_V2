@@ -266,7 +266,7 @@ namespace QuartetEditor.Utilities
                 index += lineFeed.Length;
             }
 
-            treeText = treeText.Substring(index);
+            treeText = treeText.SafeSubstring(index);
             FromTreeText(ref treeText,
                          lineFeed,
                          nodes,
@@ -306,13 +306,14 @@ namespace QuartetEditor.Utilities
                 if (title.StartsWith(" ."))
                 {
                     // タイトルが"."から始まるとき、空白でエスケープされている
-                    title = title.Substring(1);
+                    title = title.SafeSubstring(1);
                 }
                 index = titleEndPos + lineFeed.Length;
 
                 var content = "";
                 var contentStartPos = index;
-                if (treeText.Substring(contentStartPos).StartsWith("."))
+                if (treeText.SafeSubstring(contentStartPos).StartsWith(".") ||
+                    treeText.Length <= contentStartPos)
                 {
                     // コンテンツがなく、次のタイトルが現れている場合は何もしない
                 }
@@ -330,7 +331,7 @@ namespace QuartetEditor.Utilities
                     if (content.StartsWith(" ."))
                     {
                         // コンテンツが"."から始まるとき、空白でエスケープされているため空白を削除
-                        content = content.Substring(1);
+                        content = content.SafeSubstring(1);
                     }
                     index = contentEndPos + lineFeed.Length;
                 }
@@ -339,7 +340,7 @@ namespace QuartetEditor.Utilities
 
                 if (treeText.Length > index)
                 {
-                    treeText = treeText.Substring(index);
+                    treeText = treeText.SafeSubstring(index);
                 }
                 else
                 {
@@ -351,7 +352,7 @@ namespace QuartetEditor.Utilities
                 // 子ノードの探索
                 int nextChildTitleIndex = treeText.IndexOf(headerMark + ".", index);
                 if (nextChildTitleIndex != -1 &&
-                    !treeText.Substring(0, nextChildTitleIndex).Contains(lineFeed + "."))
+                    !treeText.SafeSubstring(0, nextChildTitleIndex).Contains(lineFeed + "."))
                 {
                     // 子階層のタイトルまでの間に別の階層のタイトルが見つからない場合
                     FromTreeText(ref treeText,
@@ -427,9 +428,63 @@ namespace QuartetEditor.Utilities
                     return "";
                 }
 
-                return s.Substring(start, end - start);
+                return s.SafeSubstring(start, end - start);
             }
-            
+
+            /// <summary>
+            /// 例外を出さないSubstring
+            /// </summary>
+            /// <param name="s"></param>
+            /// <param name="startIndex"></param>
+            /// <returns></returns>
+            public static string SafeSubstring(this string s, int startIndex)
+            {
+                if (startIndex < 0)
+                {
+                    startIndex = 0;
+                }
+
+                if (startIndex > s.Length - 1)
+                {
+                    return "";
+                }
+
+                return s.Substring(startIndex);
+
+            }
+
+            /// <summary>
+            /// 例外を出さないSubstring
+            /// </summary>
+            /// <param name="s"></param>
+            /// <param name="startIndex"></param>
+            /// <param name="length"></param>
+            /// <returns></returns>
+            public static string SafeSubstring(this string s, int startIndex, int length)
+            {
+                if (startIndex < 0)
+                {
+                    startIndex = 0;
+                }
+
+                if (length < 1)
+                {
+                    return "";
+                }
+
+                if (startIndex > s.Length - 1)
+                {
+                    return "";
+                }
+
+                if (startIndex + length > s.Length)
+                {
+                    return s;
+                }
+
+                return s.Substring(startIndex, length);
+            }
+
         }
         #endregion Text
     }

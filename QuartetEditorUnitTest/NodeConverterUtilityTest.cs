@@ -12,7 +12,7 @@ namespace QuartetEditorUnitTest
         public void FromTreeText_一段階の構造()
         {
             string lineFeed = Environment.NewLine;
-            var text = lineFeed + lineFeed + 
+            var text = lineFeed + "ノードの構造とは無関係の文章" + lineFeed + 
                        ".ノード１のタイトル" + lineFeed + 
                        "ノード1の本文" + lineFeed + "ノード１の本文" + lineFeed + lineFeed +
                        ".ノード２のタイトル" + lineFeed +
@@ -95,6 +95,20 @@ namespace QuartetEditorUnitTest
             string lineFeed = Environment.NewLine;
             var text = lineFeed + lineFeed +
                        ".ノード１のタイトル" + lineFeed;
+            QuartetEditorDescription result;
+            NodeConverterUtility.FromTreeText(text, out result);
+
+            Assert.AreEqual(1, result.Node.Count);
+            Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
+            Assert.AreEqual("", result.Node[0].Content);
+            Assert.AreEqual(0, result.Node[0].Children.Count);
+        }
+
+        [TestMethod]
+        public void FromTreeText_タイトルだけで終わり改行がない()
+        {
+            string lineFeed = Environment.NewLine;
+            var text = ".ノード１のタイトル";
             QuartetEditorDescription result;
             NodeConverterUtility.FromTreeText(text, out result);
 
