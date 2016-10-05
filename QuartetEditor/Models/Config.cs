@@ -42,6 +42,13 @@ namespace QuartetEditor.Models
             this.LeftPanelOpen = true;
             this.TopPanelOpen = true;
             this.BottomPanelOpen = true;
+
+            this.LeftPanelWidth = 1;
+            this.TopPanelHeight = 1;
+            this.BottomPanelHeight = 1;
+            this.NodePanelWidth = 1;
+            this.MainPanelHeight = 5;
+            this.MainPanelWidth = 3;
         }
 
         #region CenterTextEditor
@@ -281,6 +288,88 @@ namespace QuartetEditor.Models
         }
 
         #endregion PanelState
+
+        #region PanelSize
+
+        /// <summary>
+        /// 左パネルの幅
+        /// </summary>
+        public double _LeftPanelWidth;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double LeftPanelWidth
+        {
+            get { return this._LeftPanelWidth; }
+            set { this.SetProperty(ref this._LeftPanelWidth, value); }
+        }
+
+        /// <summary>
+        /// 上パネルの高さ
+        /// </summary>
+        public double _TopPanelHeight;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double TopPanelHeight
+        {
+            get { return this._TopPanelHeight; }
+            set { this.SetProperty(ref this._TopPanelHeight, value); }
+        }
+
+        /// <summary>
+        /// 下パネルの高さ
+        /// </summary>
+        public double _BottomPanelHeight;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double BottomPanelHeight
+        {
+            get { return this._BottomPanelHeight; }
+            set { this.SetProperty(ref this._BottomPanelHeight, value); }
+        }
+
+        /// <summary>
+        /// ノードパネルの幅
+        /// </summary>
+        public double _NodePanelWidth;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double NodePanelWidth
+        {
+            get { return this._NodePanelWidth; }
+            set { this.SetProperty(ref this._NodePanelWidth, value); }
+        }
+
+        /// <summary>
+        /// メインパネルの高さ
+        /// </summary>
+        public double _MainPanelHeight;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double MainPanelHeight
+        {
+            get { return this._MainPanelHeight; }
+            set { this.SetProperty(ref this._MainPanelHeight, value); }
+        }
+
+        /// <summary>
+        /// メインパネルの幅
+        /// </summary>
+        public double _MainPanelWidth;
+
+        [JsonProperty]
+        [Transaction(IsEnlist = false)]
+        public double MainPanelWidth
+        {
+            get { return this._MainPanelWidth; }
+            set { this.SetProperty(ref this._MainPanelWidth, value); }
+        }
+
+        #endregion PanelSize
 
     }
 }

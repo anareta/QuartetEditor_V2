@@ -137,6 +137,17 @@ namespace QuartetEditor.Views
             #endregion ExportDialog
 
             InitializeComponent();
+
+            var config = ConfigManager.Current.Config;
+            this._EditorGrid.ColumnDefinitions[0].Width = new GridLength(config.LeftPanelWidth, GridUnitType.Star);
+            this._EditorGrid.RowDefinitions[0].Height = new GridLength(config.TopPanelHeight, GridUnitType.Star);
+            this._EditorGrid.RowDefinitions[4].Height = new GridLength(config.BottomPanelHeight, GridUnitType.Star);
+
+            this._EditorGrid.ColumnDefinitions[2].Width = new GridLength(config.MainPanelWidth, GridUnitType.Star);
+            this._EditorGrid.RowDefinitions[2].Height = new GridLength(config.MainPanelHeight, GridUnitType.Star);
+
+            this._MainGrid.ColumnDefinitions[0].Width = new GridLength(config.NodePanelWidth, GridUnitType.Star);
+            this._MainGrid.ColumnDefinitions[2].Width = new GridLength(config.LeftPanelWidth + config.MainPanelWidth, GridUnitType.Star);
         }
 
         /// <summary>
@@ -220,6 +231,11 @@ namespace QuartetEditor.Views
         private bool canShutdown = false;
 
         /// <summary>
+        /// 設定ファイルの保存中フラグ
+        /// </summary>
+        private bool configSaving = false;
+
+        /// <summary>
         /// ウィンドウを閉じるときの処理
         /// </summary>
         /// <param name="e"></param>
@@ -227,56 +243,181 @@ namespace QuartetEditor.Views
         {
             e.Cancel = true;
 
-            if (!NodeManager.Current.IsEdited || this.canShutdown)
+            if (this.configSaving)
             {
-                ConfigManager.Current.SaveConfig();
+                return;
+            }
 
+            if (this.canShutdown)
+            {
                 // ウィンドウ閉じる
                 e.Cancel = false;
                 base.OnClosing(e);
                 return;
             }
 
-            var mySettings = new MetroDialogSettings()
+            if (NodeManager.Current.IsEdited)
             {
-                AffirmativeButtonText = "保存して閉じる(_S)",
-                NegativeButtonText = "保存せずに閉じる(_E)",
-                FirstAuxiliaryButtonText = "閉じるのをキャンセル(_C)",
-                AnimateShow = true,
-                AnimateHide = false
-            };
 
-            var result = await this.ShowMessageAsync("終了します",
-                                                     "ファイルが保存されていません。保存しますか？",
-                                                     MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
-                                                     mySettings);
-            canShutdown = (result != MessageDialogResult.FirstAuxiliary);
-
-            if (this.canShutdown)
-            {
-                // 閉じる
-                if (result == MessageDialogResult.Affirmative)
+                var mySettings = new MetroDialogSettings()
                 {
-                    // 保存する
-                    try
+                    AffirmativeButtonText = "保存して閉じる(_S)",
+                    NegativeButtonText = "保存せずに閉じる(_E)",
+                    FirstAuxiliaryButtonText = "閉じるのをキャンセル(_C)",
+                    AnimateShow = true,
+                    AnimateHide = false
+                };
+
+                var result = await this.ShowMessageAsync("終了します",
+                                                         "ファイルが保存されていません。保存しますか？",
+                                                         MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary,
+                                                         mySettings);
+                canShutdown = (result != MessageDialogResult.FirstAuxiliary);
+
+                if (this.canShutdown)
+                {
+                    // 閉じる
+                    if (result == MessageDialogResult.Affirmative)
                     {
-                        if (!NodeManager.Current.SaveOverwrite())
+                        // 保存する
+                        try
+                        {
+                            if (!NodeManager.Current.SaveOverwrite())
+                            {
+                                this.canShutdown = false;
+                            }
+                        }
+                        catch
                         {
                             this.canShutdown = false;
                         }
                     }
-                    catch
-                    {
-                        this.canShutdown = false;
-                    }
                 }
             }
+            else
+            {
+                this.canShutdown = true;
+            }
 
+            // 終了処理
             if (this.canShutdown)
             {
-                // Closingイベント中にCloseすると例外が出るので一旦Closingイベントを確実に抜けて続きをやる
-                await this.Dispatcher.InvokeAsync( () => this.Close() );
+                this.configSaving = true;
+
+                this.LeftPanelUpdate(true);
+                this.TopPanelUpdate(true);
+                this.BottomPanelUpdate(true);
+
+                await this.Dispatcher.InvokeAsync( () =>
+                {
+                    {
+                        var config = ConfigManager.Current.Config;
+                        config.LeftPanelWidth = this._EditorGrid.ColumnDefinitions[0].ActualWidth;
+                        config.TopPanelHeight = this._EditorGrid.RowDefinitions[0].ActualHeight;
+                        config.BottomPanelHeight = this._EditorGrid.RowDefinitions[4].ActualHeight;
+
+                        config.NodePanelWidth = this._MainGrid.ColumnDefinitions[0].ActualWidth;
+                        config.MainPanelWidth = this._EditorGrid.ColumnDefinitions[2].ActualWidth;
+                        config.MainPanelHeight = this._EditorGrid.RowDefinitions[2].ActualHeight;
+                    }
+
+                    ConfigManager.Current.SaveConfig();
+                    this.configSaving = false;
+                    this.Close();
+
+                }, System.Windows.Threading.DispatcherPriority.SystemIdle);
+
             }
         }
+
+        #region PanelUpdate
+
+        /// <summary>
+        /// 左パネルの開閉を更新
+        /// </summary>
+        /// <param name="state"></param>
+        public void LeftPanelUpdate(bool state)
+        {
+            if (this.LeftPanelOpen != state)
+            {
+                if (state)
+                {
+                    // 開く
+                    this._EditorGrid.ColumnDefinitions[0].Width = this.LeftPanelSize;
+                    this._LeftSplitter.Visibility = System.Windows.Visibility.Visible;
+                    this._LeftTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this._EditorGrid.ColumnDefinitions[0].MinWidth = 20;
+                }
+                else
+                {
+                    // 閉じる
+                    this.LeftPanelSize = this._EditorGrid.ColumnDefinitions[0].Width;
+                    this._EditorGrid.ColumnDefinitions[0].MinWidth = 0;
+                    this._EditorGrid.ColumnDefinitions[0].Width = new GridLength(0);
+                    this._LeftSplitter.Visibility = System.Windows.Visibility.Collapsed;
+                    this._LeftTextBox.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 下パネルの開閉を更新
+        /// </summary>
+        /// <param name="state"></param>
+        public void BottomPanelUpdate(bool state)
+        {
+            if (this.BottomPanelOpen != state)
+            {
+                if (state)
+                {
+                    // 開く
+                    this._EditorGrid.RowDefinitions[4].Height = this.BottomPanelSize;
+                    this._BottomSplitter.Visibility = System.Windows.Visibility.Visible;
+                    this._BottomTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this._EditorGrid.RowDefinitions[4].MinHeight = 20;
+                }
+                else
+                {
+                    // 閉じる
+                    this.BottomPanelSize = this._EditorGrid.RowDefinitions[4].Height;
+                    this._EditorGrid.RowDefinitions[4].MinHeight = 0;
+                    this._EditorGrid.RowDefinitions[4].Height = new GridLength(0);
+                    this._BottomSplitter.Visibility = System.Windows.Visibility.Collapsed;
+                    this._BottomTextBox.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 上パネルの開閉を更新
+        /// </summary>
+        /// <param name="state"></param>
+        public void TopPanelUpdate(bool state)
+        {
+            if (this.TopPanelOpen != state)
+            {
+                if (state)
+                {
+                    // 開く
+                    this._EditorGrid.RowDefinitions[0].Height = this.TopPanelSize;
+                    this._TopSplitter.Visibility = System.Windows.Visibility.Visible;
+                    this._TopTextBox.Visibility = System.Windows.Visibility.Visible;
+                    this._EditorGrid.RowDefinitions[0].MinHeight = 20;
+
+                }
+                else
+                {
+                    // 閉じる
+                    this.TopPanelSize = this._EditorGrid.RowDefinitions[0].Height;
+                    this._EditorGrid.RowDefinitions[0].MinHeight = 0;
+                    this._EditorGrid.RowDefinitions[0].Height = new GridLength(0);
+                    this._TopSplitter.Visibility = System.Windows.Visibility.Collapsed;
+                    this._TopTextBox.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
+        }
+
+        #endregion PanelUpdate
+
     }
 }
