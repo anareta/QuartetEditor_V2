@@ -138,6 +138,8 @@ namespace QuartetEditor.Views
 
             InitializeComponent();
 
+            #region PanelSize
+
             var config = ConfigManager.Current.Config;
             this._EditorGrid.ColumnDefinitions[0].Width = new GridLength(config.LeftPanelWidth, GridUnitType.Star);
             this._EditorGrid.RowDefinitions[0].Height = new GridLength(config.TopPanelHeight, GridUnitType.Star);
@@ -148,6 +150,8 @@ namespace QuartetEditor.Views
 
             this._MainGrid.ColumnDefinitions[0].Width = new GridLength(config.NodePanelWidth, GridUnitType.Star);
             this._MainGrid.ColumnDefinitions[2].Width = new GridLength(config.LeftPanelWidth + config.MainPanelWidth, GridUnitType.Star);
+            
+            #endregion PanelSize
         }
 
         /// <summary>
