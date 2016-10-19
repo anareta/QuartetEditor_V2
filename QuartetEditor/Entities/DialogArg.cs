@@ -31,5 +31,10 @@ namespace QuartetEditor.Entities
         /// ダイアログの設定
         /// </summary>
         public MetroDialogSettings Settings { get; set; }
+
+        /// <summary>
+        /// ダイアログの結果
+        /// </summary>
+        public MessageDialogResult Result { get; set; }
     }
 }

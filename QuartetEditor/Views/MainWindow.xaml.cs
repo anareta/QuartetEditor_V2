@@ -117,7 +117,6 @@ namespace QuartetEditor.Views
                     model.SaveDialogViewAction = this.SaveDialog;
                     model.OpenDialogViewAction = this.OpenDialog;
                     model.ExportDialogViewAction = this.ShowExportDialog;
-                    model.MessageDialogViewAction = this.ShowDialogEventListener;
                     this.Export = model.Export;
                 }
             };
@@ -167,21 +166,6 @@ namespace QuartetEditor.Views
                 return;
             }
             this.DragMove();
-        }
-
-        /// <summary>
-        /// ダイアログ表示要求を処理する
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        private async Task<MessageDialogResult> ShowDialogEventListener(DialogArg e)
-        {
-            var result = await this.ShowMessageAsync(e.Title,
-                                                    e.Message,
-                                                    e.Style,
-                                                    e.Settings);
-            this.DragMove();
-            return result;
         }
 
         /// <summary>

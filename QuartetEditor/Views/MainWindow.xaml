@@ -149,6 +149,10 @@
     </metro:MetroWindow.InputBindings>
 
     <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding MessageDialogRequest}">
+            <messenger:MessageDialogAction />
+        </prism:InteractionRequestTrigger>
+
         <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
             <messenger:PanelOpenAction />
         </prism:InteractionRequestTrigger>

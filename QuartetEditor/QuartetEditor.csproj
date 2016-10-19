@@ -204,6 +204,7 @@
     </Compile>
     <Compile Include="Views\Messengers\FindReplaceAction.cs" />
     <Compile Include="Views\Messengers\FindReplaceDialogRequestAction.cs" />
+    <Compile Include="Views\Messengers\MessageDialogAction.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
     <Compile Include="Views\Messengers\SetFocusAction.cs" />
     <Page Include="Resources\Icons.xaml">

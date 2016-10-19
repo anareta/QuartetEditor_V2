@@ -29,11 +29,6 @@ namespace QuartetEditor.ViewModels
     class MainWindowViewModel : BindableBase, IDisposable
     {
         /// <summary>
-        /// メッセージダイアログ表示要求
-        /// </summary>
-        public Func<DialogArg, Task<MessageDialogResult>> MessageDialogViewAction { get; set; }
-
-        /// <summary>
         /// 破棄用
         /// </summary>
         private CompositeDisposable Disposable { get; } = new CompositeDisposable();
@@ -91,6 +86,17 @@ namespace QuartetEditor.ViewModels
                 this.SetProperty(ref this._ConfigFlyoutViewModel, value);
             }
         }
+
+        #region MessageDialog
+
+        /// <summary>
+        /// メッセージダイアログを開く要求
+        /// </summary>
+        private InteractionRequest<Confirmation> _MessageDialogRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest MessageDialogRequest { get { return this._MessageDialogRequest; } }
+
+        #endregion MessageDialog
 
         #region DragDrop
 
@@ -408,21 +414,19 @@ namespace QuartetEditor.ViewModels
                                    .AddTo(this.Disposable);
 
             // エラーメッセージ表示要求の処理
-            this.Model.ShowErrorMessageRequest.Subscribe(message =>
+            this.Model.ShowErrorMessageRequest.Subscribe(async message =>
             {
-                if (this.MessageDialogViewAction == null)
-                {
-                    return;
-                }
-
                 var arg = new DialogArg
                 {
                     Title = "エラー",
                     Message = message,
                     Style = MessageDialogStyle.Affirmative
                 };
-                var task = this.MessageDialogViewAction(arg);
 
+                await this._MessageDialogRequest.RaiseAsync(new Confirmation
+                {
+                    Content = arg
+                });
                 return;
             });
 
