@@ -131,9 +131,9 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// パネルの開閉要求
         /// </summary>
-        private InteractionRequest<Confirmation> panelOpenRequest = new InteractionRequest<Confirmation>();
+        private InteractionRequest<Confirmation> _PanelOpenRequest = new InteractionRequest<Confirmation>();
 
-        public IInteractionRequest PanelOpenRequest { get { return this.panelOpenRequest; } }
+        public IInteractionRequest PanelOpenRequest { get { return this._PanelOpenRequest; } }
 
         /// <summary>
         /// 左参照パネルの開閉状態
@@ -162,7 +162,7 @@ namespace QuartetEditor.ViewModels
                 BottomPanelOpen = this.BottomPanelOpen.Value,
             };
             // Viewにリクエストを投げる
-            panelOpenRequest.Raise(new Confirmation { Content = state });
+            _PanelOpenRequest.Raise(new Confirmation { Content = state });
         }
 
         /// <summary>
@@ -359,6 +359,37 @@ namespace QuartetEditor.ViewModels
         }
 
         #endregion Export
+
+        #region FindAndReplace
+
+        /// <summary>
+        /// 検索機能要求
+        /// </summary>
+        private InteractionRequest<Confirmation> _FindReplaceDialogRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest FindReplaceDialogRequest { get { return this._FindReplaceDialogRequest; } }
+
+        /// <summary>
+        /// 検索ダイアログを開く
+        /// </summary>
+        public ReactiveCommand OpenFindDialogCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 置換ダイアログを開く
+        /// </summary>
+        public ReactiveCommand OpenReplaceDialogCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 「次を検索」
+        /// </summary>
+        public ReactiveCommand FindNextCommand { get; private set; } = new ReactiveCommand();
+
+        /// <summary>
+        /// 「前を検索」
+        /// </summary>
+        public ReactiveCommand FindPrevCommand { get; private set; } = new ReactiveCommand();
+
+        #endregion ExportFindAndReplace
 
         /// <summary>
         /// コンストラクタ
@@ -700,6 +731,7 @@ namespace QuartetEditor.ViewModels
             {
                 this.ExportDialogViewAction();
             }).AddTo(this.Disposable);
+
             this.Model.ExportSavePathRequest.Subscribe(tuple =>
             {
                 if (this.SaveDialogViewAction == null)
@@ -716,7 +748,56 @@ namespace QuartetEditor.ViewModels
                 string path = this.SaveDialogViewAction(dialog);
                 tuple.Item3(path);
             }).AddTo(this.Disposable);
+
             #endregion Export
+
+            #region FindAndReplace
+
+            this.OpenFindDialogCommand.Subscribe(_ =>
+            {
+                this._FindReplaceDialogRequest.Raise(new Confirmation
+                {
+                    Content = new FindReplaceDialogRequestEntity()
+                    {
+                        RequestKind = FindReplaceDialogRequestEntity.DialogRequest.OpenFind
+                    }
+                });
+            }).AddTo(this.Disposable);
+
+            this.OpenReplaceDialogCommand.Subscribe(_ =>
+            {
+                this._FindReplaceDialogRequest.Raise(new Confirmation
+                {
+                    Content = new FindReplaceDialogRequestEntity()
+                    {
+                        RequestKind = FindReplaceDialogRequestEntity.DialogRequest.OpenReplace
+                    }
+                });
+            }).AddTo(this.Disposable);
+
+            this.FindNextCommand.Subscribe(_ =>
+            {
+                this._FindReplaceDialogRequest.Raise(new Confirmation
+                {
+                    Content = new FindReplaceDialogRequestEntity()
+                    {
+                        RequestKind = FindReplaceDialogRequestEntity.DialogRequest.FindNext
+                    }
+                });
+            }).AddTo(this.Disposable);
+
+            this.FindPrevCommand.Subscribe(_ =>
+            {
+                this._FindReplaceDialogRequest.Raise(new Confirmation
+                {
+                    Content = new FindReplaceDialogRequestEntity()
+                    {
+                        RequestKind = FindReplaceDialogRequestEntity.DialogRequest.FindPrev
+                    }
+                });
+            }).AddTo(this.Disposable);
+
+            #endregion FindAndReplace
 
         }
 

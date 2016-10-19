@@ -91,14 +91,31 @@
     </metro:MetroWindow.Resources>
 
     <metro:MetroWindow.InputBindings>
-        <KeyBinding Key="F3"
+        <KeyBinding Key="N"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_NodeView,
-                                               Path=Name}" />
-        <KeyBinding Key="F4"
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="C"
                     Command="{Binding SetFocusCommand}"
                     CommandParameter="{Binding ElementName=_CenterTextEditor,
-                                               Path=Name}" />
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="T"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_TopTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="L"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_LeftTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="B"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_BottomTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
         <KeyBinding Key="S"
                     Command="{Binding SaveCommand}"
                     Modifiers="Control" />
@@ -114,6 +131,21 @@
                     Command="{Binding PanelChangeCommand}"
                     CommandParameter="{x:Static enum:PanelKindEnum.Bottom}"
                     Modifiers="Control" />
+        <KeyBinding Key="F"
+                    Command="{Binding OpenFindDialogCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="R"
+                    Command="{Binding OpenReplaceDialogCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="F3"
+                    Command="{Binding FindNextCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}" />
+        <KeyBinding Key="F3"
+                    Command="{Binding FindPrevCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}"
+                    Modifiers="Shift"/>
     </metro:MetroWindow.InputBindings>
 
     <i:Interaction.Triggers>
@@ -123,6 +155,10 @@
 
         <prism:InteractionRequestTrigger SourceObject="{Binding SetFocusRequest}">
             <messenger:SetFocusAction />
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding FindReplaceDialogRequest}">
+            <messenger:FindReplaceDialogRequestAction />
         </prism:InteractionRequestTrigger>
 
         <i:EventTrigger EventName="ContentRendered">
@@ -225,6 +261,23 @@
                                Fill="{DynamicResource BlackBrush}">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_page_arrow}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_FindReplaceButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding OpenFindDialogCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="検索と置換">
+                    <Rectangle Width="17"
+                               Height="17"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_magnify}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </Button>

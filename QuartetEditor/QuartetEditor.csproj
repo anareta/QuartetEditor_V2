@@ -30,8 +30,8 @@
     <TargetCulture>ja</TargetCulture>
     <ProductName>QuartetEditor</ProductName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>2.8.0.0</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.8.0.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -164,6 +164,8 @@
     <Compile Include="Attributes\TransactionAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="Entities\DialogArg.cs" />
+    <Compile Include="Entities\FindReplaceDialogRequestEntity.cs" />
+    <Compile Include="Entities\FindReplaceEntity.cs" />
     <Compile Include="Entities\QuartetEditorDescription.cs" />
     <Compile Include="Enums\ExportKindEnum.cs" />
     <Compile Include="Enums\PanelKindEnum.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ConfigManager.cs" />
     <Compile Include="Models\ExportSettingModel.cs" />
+    <Compile Include="Models\Search.cs" />
     <Compile Include="Models\Undo\UndoRedoManager.cs" />
     <Compile Include="Utilities\CharacterCode\CharCode.cs" />
     <Compile Include="Utilities\CharacterCode\FileReader.cs" />
@@ -181,6 +184,7 @@
     <Compile Include="Utilities\NodeConverterUtility.cs" />
     <Compile Include="ViewModels\ConfigFlyoutViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
+    <Compile Include="ViewModels\FindReplaceDialogViewModel.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
@@ -195,6 +199,11 @@
     </Compile>
     <Compile Include="Views\Controls\InsertionAdorner.cs" />
     <Compile Include="Views\Converters\FontFamilyToNameConverter.cs" />
+    <Compile Include="Views\FindReplaceDialog.xaml.cs">
+      <DependentUpon>FindReplaceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Messengers\FindReplaceAction.cs" />
+    <Compile Include="Views\Messengers\FindReplaceDialogRequestAction.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
     <Compile Include="Views\Messengers\SetFocusAction.cs" />
     <Page Include="Resources\Icons.xaml">
@@ -218,6 +227,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\HorizontalInsertionCursor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FindReplaceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
