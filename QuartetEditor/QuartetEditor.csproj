@@ -167,6 +167,7 @@
     <Compile Include="Entities\FindReplaceDialogRequestEntity.cs" />
     <Compile Include="Entities\FindReplaceEntity.cs" />
     <Compile Include="Entities\QuartetEditorDescription.cs" />
+    <Compile Include="Entities\SearchResult.cs" />
     <Compile Include="Enums\ExportKindEnum.cs" />
     <Compile Include="Enums\PanelKindEnum.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
@@ -202,7 +203,7 @@
     <Compile Include="Views\FindReplaceDialog.xaml.cs">
       <DependentUpon>FindReplaceDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Messengers\FindReplaceAction.cs" />
+    <Compile Include="Views\Messengers\ShowSearchResultAction.cs" />
     <Compile Include="Views\Messengers\FindReplaceDialogRequestAction.cs" />
     <Compile Include="Views\Messengers\MessageDialogAction.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />

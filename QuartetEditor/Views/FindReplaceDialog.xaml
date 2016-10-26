@@ -19,8 +19,11 @@
                    WindowStyle="ToolWindow"
                    mc:Ignorable="d">
     <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding FindReplaceRequest}">
-            <messenger:FindReplaceAction />
+        <prism:InteractionRequestTrigger SourceObject="{Binding ShowSearchResultRequest}">
+            <messenger:ShowSearchResultAction />
+        </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding ShowDialogRequest}">
+            <messenger:MessageDialogAction />
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
 

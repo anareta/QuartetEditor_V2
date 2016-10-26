@@ -64,16 +64,29 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 検索置換要求
         /// </summary>
-        private InteractionRequest<Confirmation> _FindReplaceRequest = new InteractionRequest<Confirmation>();
+        private InteractionRequest<Confirmation> _ShowSearchResultRequest = new InteractionRequest<Confirmation>();
 
-        public IInteractionRequest FindReplaceRequest { get { return this._FindReplaceRequest; } }
+        public IInteractionRequest ShowSearchResultRequest { get { return this._ShowSearchResultRequest; } }
+
+        /// <summary>
+        /// ダイアログ表示要求
+        /// </summary>
+        private InteractionRequest<Confirmation> _ShowDialogRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest ShowDialogRequest { get { return this._ShowDialogRequest; } }
+
+        /// <summary>
+        /// テキストエディタへの参照
+        /// </summary>
+        private TextEditor Editor { get; }
 
         /// <summary>
         /// FindReplaceDialogViewModel
         /// </summary>
-        public FindReplaceDialogViewModel(Search model)
+        public FindReplaceDialogViewModel(Search model, TextEditor editor)
         {
             this.Model = model;
+            this.Editor = editor;
 
             // プロパティの設定
             this.TextToFind = this.Model
@@ -105,10 +118,10 @@ namespace QuartetEditor.ViewModels
             .Select(x => !string.IsNullOrEmpty(x))
             .ToReactiveCommand();
 
-            this.FindNextCommand.Subscribe( _ =>
-            {
-                this.Model.FindNext();
-            }).AddTo(this.Disposable);
+            this.FindNextCommand.Subscribe(_ =>
+           {
+               this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength);
+           }).AddTo(this.Disposable);
 
             this.FindPrevCommand = this.TextToFind
             .Select(x => !string.IsNullOrEmpty(x))
@@ -116,7 +129,7 @@ namespace QuartetEditor.ViewModels
 
             this.FindPrevCommand.Subscribe(_ =>
             {
-                this.Model.FindPrev();
+                this.Model.FindPrev(this.Editor.SelectionStart, this.Editor.SelectionLength);
             }).AddTo(this.Disposable);
 
             this.ReplaceCommand = new[] {
@@ -126,10 +139,10 @@ namespace QuartetEditor.ViewModels
             .CombineLatestValuesAreAllTrue()
             .ToReactiveCommand();
 
-            this.ReplaceCommand.Subscribe( _ =>
-            {
-                this.Model.Replace();
-            }).AddTo(this.Disposable);
+            this.ReplaceCommand.Subscribe(_ =>
+           {
+               this.Model.Replace(this.Editor.SelectionStart, this.Editor.SelectionLength);
+           }).AddTo(this.Disposable);
 
 
             this.ReplaceAllCommand = new[] {
@@ -139,19 +152,43 @@ namespace QuartetEditor.ViewModels
             .CombineLatestValuesAreAllTrue()
             .ToReactiveCommand();
 
-            this.ReplaceAllCommand.Subscribe( _ =>
-            {
-                this.Model.ReplaceAll();
-            }).AddTo(this.Disposable);
+            this.ReplaceAllCommand.Subscribe(_ =>
+           {
+               this.Model.ReplaceAll();
+           }).AddTo(this.Disposable);
 
-            this.Model.FindReplaceRequest.Subscribe(async entity =>
-            {
-               await this._FindReplaceRequest.RaiseAsync(new Confirmation
+            this.Model.Found.Subscribe(entity =>
+           {
+               this._ShowSearchResultRequest.Raise(new Confirmation
                {
                    Content = entity
                });
-            })
+           })
             .AddTo(this.Disposable);
+
+            this.Model.Confirmation.Subscribe(async tuple =>
+            {
+                var arg = new DialogArg()
+                {
+                    Title = "確認",
+                    Style = MahApps.Metro.Controls.Dialogs.MessageDialogStyle.AffirmativeAndNegative,
+                    Message = tuple.Item1,
+                    Settings = new MahApps.Metro.Controls.Dialogs.MetroDialogSettings()
+                    {
+                        AffirmativeButtonText = "置換",
+                        NegativeButtonText = "キャンセル",
+                        DefaultButtonFocus = MahApps.Metro.Controls.Dialogs.MessageDialogResult.Negative
+                    }
+                };
+
+                await this._ShowDialogRequest.RaiseAsync(new Confirmation
+                {
+                    Content = arg
+                });
+
+                tuple.Item2(arg.Result == MahApps.Metro.Controls.Dialogs.MessageDialogResult.Affirmative);
+
+            });
         }
 
         /// <summary>

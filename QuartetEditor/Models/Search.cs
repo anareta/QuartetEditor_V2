@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using ICSharpCode.AvalonEdit.Document;
+using Prism.Mvvm;
 using QuartetEditor.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,14 @@ namespace QuartetEditor.Models
     public class Search : BindableBase
     {
         /// <summary>
-        /// Viewへの検索置換要求
+        /// 検索結果
         /// </summary>
-        public Subject<FindReplaceEntity> FindReplaceRequest { get; } = new Subject<FindReplaceEntity>();
+        public Subject<SearchResult> Found { get; } = new Subject<SearchResult>();
+
+        /// <summary>
+        /// 確認要求
+        /// </summary>
+        public Subject<Tuple<string, Action<bool>>> Confirmation { get; } = new Subject<Tuple<string, Action<bool>>>();
 
         /// <summary>
         /// 検索文字
@@ -175,43 +181,67 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// 次へ
+        /// 次へ検索
         /// </summary>
-        public void FindNext()
+        public void FindNext(int selectionStart, int selectionLength)
         {
-            var entity = new FindReplaceEntity
+            var regex = this.GetRegEx(this.TextToFind, false);
+            int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
+
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+
+            if (result != null)
             {
-                Kind = FindReplaceEntity.Action.Find,
-                Find = this.GetRegEx(this.TextToFind, false)
-            };
-            this.FindReplaceRequest.OnNext(entity);
+                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
+                {
+                    NodeManager.Current.SelectedNode = result.Node;
+                }
+            }
+            this.Found.OnNext(result);
         }
 
         /// <summary>
-        /// 前へ
+        /// 前へ検索
         /// </summary>
-        public void FindPrev()
+        public void FindPrev(int selectionStart, int selectionLength)
         {
-            var entity = new FindReplaceEntity
+            var regex = this.GetRegEx(this.TextToFind, true);
+            int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
+
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+
+            if (result != null)
             {
-                Kind = FindReplaceEntity.Action.Find,
-                Find = this.GetRegEx(this.TextToFind, true)
-            };
-            this.FindReplaceRequest.OnNext(entity);
+                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
+                {
+                    NodeManager.Current.SelectedNode = result.Node;
+                }
+            }
+            this.Found.OnNext(result);
         }
 
         /// <summary>
         /// 置換
         /// </summary>
-        public void Replace()
+        public void Replace(int selectionStart, int selectionLength)
         {
-            var entity = new FindReplaceEntity
+            var regex = this.GetRegEx(this.TextToFind, false);
+            int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
+
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+
+            if (result != null)
             {
-                Kind = FindReplaceEntity.Action.Replace,
-                Find = this.GetRegEx(this.TextToFind, false),
-                Replace = this.TextToReplace
-            };
-            this.FindReplaceRequest.OnNext(entity);
+                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
+                {
+                    NodeManager.Current.SelectedNode = result.Node;
+                }
+
+                result.Node.Content.Replace(result.Index, result.Length, this.TextToReplace);
+                result.Length = this.TextToReplace.Length;
+            }
+
+            this.Found.OnNext(result);
         }
 
         /// <summary>
@@ -219,13 +249,91 @@ namespace QuartetEditor.Models
         /// </summary>
         public void ReplaceAll()
         {
-            var entity = new FindReplaceEntity
+            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("本当にすべて置換しますか？", (OK) =>
             {
-                Kind = FindReplaceEntity.Action.ReplaceAll,
-                Find = this.GetRegEx(this.TextToFind, false, true),
-                Replace = this.TextToReplace
-            };
-            this.FindReplaceRequest.OnNext(entity);
+                if (!OK)
+                {
+                    return;
+                }
+
+                var regex = this.GetRegEx(this.TextToFind, false, true);
+                var content = NodeManager.Current.SelectedNode.Content;
+
+                int offset = 0;
+                content.BeginUpdate();
+                foreach (Match match in regex.Matches(content.Text))
+                {
+                    content.Replace(offset + match.Index, match.Length, this.TextToReplace);
+                    offset += this.TextToReplace.Length - match.Length;
+                }
+                content.EndUpdate();
+
+            }));
         }
+
+
+        /// <summary>
+        /// 次のテキストを検索
+        /// </summary>
+        /// <param name="textToFind"></param>
+        /// <returns></returns>
+        private SearchResult Find(Regex regex, int start, Node node, bool findPrev)
+        {
+            //int start = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
+            //this.AssociatedObject.Editor.SelectionStart : this.AssociatedObject.Editor.SelectionStart + this.AssociatedObject.Editor.SelectionLength;
+
+            string text = node.Content.Text;
+            Match match = regex.Match(text, start);
+
+            if (!match.Success)  // 見つからなかった場合先頭に戻って探索
+            {
+                if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+                {
+                    match = regex.Match(text, text.Length);
+                }
+                else
+                {
+                    match = regex.Match(text, 0);
+                }
+            }
+
+            if (match.Success)
+            {
+                var loc = new SearchResult() { Type = Entities.SearchResult.TargetType.Content };
+                loc.Index = match.Index;
+                loc.Length = match.Length;
+                loc.Node = node;
+
+                return loc;
+            }
+            else
+            {
+                //var next = NodeManager.Current.GetCousinLast(node);
+                //if (next != null)
+                //{
+                //    Match titleMatch;
+                //    if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+                //        titleMatch = regex.Match(next.Name, next.Name.Length);
+                //    else
+                //        titleMatch = regex.Match(next.Name, 0);
+
+                //    if (titleMatch.Success)
+                //    {
+                //        var loc = new Location() { Type = Location.TargetType.Node };
+                //        loc.Index = titleMatch.Index;
+                //        loc.Length = titleMatch.Length;
+                //        loc.Node = next;
+
+                //        return new Tuple<bool, Location>(true, loc);
+                //    }
+
+                //    return Find(regex, start, next);
+                //}
+
+            }
+
+            return null;
+        }
+
     }
 }

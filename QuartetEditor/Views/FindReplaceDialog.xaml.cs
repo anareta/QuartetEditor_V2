@@ -36,10 +36,10 @@ namespace QuartetEditor.Views
         /// <param name="editor"></param>
         public FindReplaceDialog(TextEditor editor)
         {
-            this.DataContext = new FindReplaceDialogViewModel(_Model);
-            InitializeComponent();
-
+            this.DataContext = new FindReplaceDialogViewModel(_Model, editor);
             this.Editor = editor;
+
+            InitializeComponent();
         }
 
         /// <summary>
@@ -105,17 +105,17 @@ namespace QuartetEditor.Views
             {
                 _Dialog.txtFind.Text = editor.TextArea.Selection.GetText();
                 _Dialog.txtFind2.Text = editor.TextArea.Selection.GetText();
+            }
 
-                if (isFind)
-                {
-                    _Dialog.txtFind.SelectAll();
-                    _Dialog.txtFind.Focus();
-                }
-                else
-                {
-                    _Dialog.txtFind2.SelectAll();
-                    _Dialog.txtFind2.Focus();
-                }
+            if (isFind)
+            {
+                _Dialog.txtFind.SelectAll();
+                _Dialog.txtFind.Focus();
+            }
+            else
+            {
+                _Dialog.txtFind2.SelectAll();
+                _Dialog.txtFind2.Focus();
             }
         }
 
