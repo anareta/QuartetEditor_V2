@@ -126,9 +126,9 @@ namespace QuartetEditor.ViewModels
             .ToReactiveCommand();
 
             this.FindNextCommand.Subscribe(_ =>
-           {
-               this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength);
-           }).AddTo(this.Disposable);
+            {
+                this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength);
+            }).AddTo(this.Disposable);
 
             this.FindPrevCommand = this.TextToFind
             .Select(x => !string.IsNullOrEmpty(x))
