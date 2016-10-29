@@ -22,6 +22,11 @@ namespace QuartetEditor.Models
         public Subject<SearchResult> Found { get; } = new Subject<SearchResult>();
 
         /// <summary>
+        /// 検索結果
+        /// </summary>
+        public Subject<IEnumerable<SearchResult>> FoundAll { get; } = new Subject<IEnumerable<SearchResult>>();
+
+        /// <summary>
         /// 確認要求
         /// </summary>
         public Subject<Tuple<string, Action<bool>>> Confirmation { get; } = new Subject<Tuple<string, Action<bool>>>();
@@ -145,6 +150,7 @@ namespace QuartetEditor.Models
         /// 検索用の正規表現を生成する
         /// </summary>
         /// <param name="textToFind"></param>
+        /// <param name="searchUp"></param>
         /// <param name="leftToRight"></param>
         /// <returns></returns>
         private Regex GetRegEx(string textToFind, bool searchUp, bool leftToRight = false)
@@ -185,10 +191,12 @@ namespace QuartetEditor.Models
         /// </summary>
         public void FindNext(int selectionStart, int selectionLength)
         {
+            this.FindAll();
+
             var regex = this.GetRegEx(this.TextToFind, false);
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
 
             if (result != null)
             {
@@ -205,10 +213,12 @@ namespace QuartetEditor.Models
         /// </summary>
         public void FindPrev(int selectionStart, int selectionLength)
         {
+            this.FindAll();
+
             var regex = this.GetRegEx(this.TextToFind, true);
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
 
             if (result != null)
             {
@@ -221,14 +231,41 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
+        /// すべて検索する
+        /// </summary>
+        public void FindAll()
+        {
+            var regex = this.GetRegEx(this.TextToFind, false);
+
+            var list = new List<SearchResult>();
+            var find = this.Find(regex, 0, NodeManager.Current.SelectedNode, false, false);
+
+            if (find != null)
+            {
+                do
+                {
+                    list.Add(find);
+                    find = this.Find(regex, find.Index + find.Length, NodeManager.Current.SelectedNode, false, false);
+
+                } while (find != null);
+
+            }
+            this.FoundAll.OnNext(list);
+
+            return;
+        }
+
+        /// <summary>
         /// 置換
         /// </summary>
+        /// <param name="selectionStart"></param>
+        /// <param name="selectionLength"></param>
         public void Replace(int selectionStart, int selectionLength)
         {
             var regex = this.GetRegEx(this.TextToFind, false);
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
 
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false);
+            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
 
             if (result != null)
             {
@@ -271,21 +308,21 @@ namespace QuartetEditor.Models
             }));
         }
 
-
         /// <summary>
         /// 次のテキストを検索
         /// </summary>
-        /// <param name="textToFind"></param>
+        /// <param name="regex"></param>
+        /// <param name="start"></param>
+        /// <param name="node"></param>
+        /// <param name="findPrev"></param>
+        /// <param name="loop"></param>
         /// <returns></returns>
-        private SearchResult Find(Regex regex, int start, Node node, bool findPrev)
+        private SearchResult Find(Regex regex, int start, Node node, bool findPrev, bool loop)
         {
-            //int start = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
-            //this.AssociatedObject.Editor.SelectionStart : this.AssociatedObject.Editor.SelectionStart + this.AssociatedObject.Editor.SelectionLength;
-
             string text = node.Content.Text;
             Match match = regex.Match(text, start);
 
-            if (!match.Success)  // 見つからなかった場合先頭に戻って探索
+            if (loop && !match.Success)  // 見つからなかった場合先頭に戻って探索
             {
                 if (regex.Options.HasFlag(RegexOptions.RightToLeft))
                 {

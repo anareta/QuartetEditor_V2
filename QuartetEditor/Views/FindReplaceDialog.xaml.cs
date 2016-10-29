@@ -43,6 +43,14 @@ namespace QuartetEditor.Views
         }
 
         /// <summary>
+        /// ハイライトの表示状態を更新
+        /// </summary>
+        public void UpdateHighlight()
+        {
+            ((FindReplaceDialogViewModel)_Dialog.DataContext).UpdateHighlight();
+        }
+
+        /// <summary>
         /// ウィンドウを閉じる
         /// </summary>
         /// <param name="sender"></param>

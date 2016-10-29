@@ -76,6 +76,13 @@ namespace QuartetEditor.ViewModels
         public IInteractionRequest ShowDialogRequest { get { return this._ShowDialogRequest; } }
 
         /// <summary>
+        /// 検索結果のハイライト表示要求
+        /// </summary>
+        private InteractionRequest<Confirmation> _SearchResultHighlightRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest SearchResultHighlightRequest { get { return this._SearchResultHighlightRequest; } }
+
+        /// <summary>
         /// テキストエディタへの参照
         /// </summary>
         private TextEditor Editor { get; }
@@ -133,8 +140,7 @@ namespace QuartetEditor.ViewModels
             }).AddTo(this.Disposable);
 
             this.ReplaceCommand = new[] {
-              this.TextToFind.Select(x => !string.IsNullOrEmpty(x)),
-              this.TextToReplace.Select(x => !string.IsNullOrEmpty(x))
+              this.TextToFind.Select(x => !string.IsNullOrEmpty(x))
             }
             .CombineLatestValuesAreAllTrue()
             .ToReactiveCommand();
@@ -146,8 +152,7 @@ namespace QuartetEditor.ViewModels
 
 
             this.ReplaceAllCommand = new[] {
-              this.TextToFind.Select(x => !string.IsNullOrEmpty(x)),
-              this.TextToReplace.Select(x => !string.IsNullOrEmpty(x))
+              this.TextToFind.Select(x => !string.IsNullOrEmpty(x))
             }
             .CombineLatestValuesAreAllTrue()
             .ToReactiveCommand();
@@ -187,8 +192,17 @@ namespace QuartetEditor.ViewModels
                 });
 
                 tuple.Item2(arg.Result == MahApps.Metro.Controls.Dialogs.MessageDialogResult.Affirmative);
+            })
+            .AddTo(this.Disposable);
 
-            });
+            this.Model.FoundAll.Subscribe(List =>
+           {
+               this._SearchResultHighlightRequest.Raise(new Confirmation
+               {
+                   Content = List
+               });
+           })
+           .AddTo(this.Disposable);
         }
 
         /// <summary>
@@ -221,5 +235,12 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<bool> UseWildcards { get; }
 
+        /// <summary>
+        /// ハイライトの表示状態を更新
+        /// </summary>
+        public void UpdateHighlight()
+        {
+            this.Model.FindAll();
+        }
     }
 }

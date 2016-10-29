@@ -25,6 +25,9 @@
         <prism:InteractionRequestTrigger SourceObject="{Binding ShowDialogRequest}">
             <messenger:MessageDialogAction />
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding SearchResultHighlightRequest}">
+            <messenger:SearchResultHighlightAction />
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
 
     <metro:MetroWindow.InputBindings>

@@ -186,6 +186,7 @@
     <Compile Include="ViewModels\ConfigFlyoutViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
     <Compile Include="ViewModels\FindReplaceDialogViewModel.cs" />
+    <Compile Include="Views\AvalonEdit\OffsetHighlighter.cs" />
     <Compile Include="Views\Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Views\AboutFlyout.xaml.cs">
       <DependentUpon>AboutFlyout.xaml</DependentUpon>
@@ -208,6 +209,7 @@
     <Compile Include="Views\Messengers\MessageDialogAction.cs" />
     <Compile Include="Views\Messengers\PanelOpenAction.cs" />
     <Compile Include="Views\Messengers\SetFocusAction.cs" />
+    <Compile Include="Views\Messengers\TextHighlightAction.cs" />
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
