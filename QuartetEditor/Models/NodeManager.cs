@@ -23,7 +23,7 @@ namespace QuartetEditor.Models
     /// <summary>
     ///データモデルクラス
     /// </summary>
-    class NodeManager : BindableBase, IDisposable
+    public class NodeManager : BindableBase, IDisposable
     {
         /// <summary>
         /// 破棄用
@@ -182,9 +182,9 @@ namespace QuartetEditor.Models
         #endregion ViewState
 
         /// <summary>
-        /// コンストラクタ
+        /// Node管理クラス
         /// </summary>
-        private NodeManager()
+        public NodeManager()
         {
             // 接続
             this.Tree = new ReadOnlyObservableCollection<Node>(this.TreeSource);
@@ -225,15 +225,29 @@ namespace QuartetEditor.Models
             this.UndoRedoModel.CanUndoChange.Subscribe(b => this.CanUndo.OnNext(b));
             #endregion UndoRedo
 
+            // 空の場合は初期化
+            if (this.TreeSource.Count == 0)
+            {
+                this.TreeSource.Add(new Node() { IsSelected = true });
+            }
 
+            this.OffEditFlag();
+        }
+
+        /// <summary>
+        /// Currentへの初期化
+        /// </summary>
+        static NodeManager()
+        {
 #if DEBUG
+            NodeManager.Current.TreeSource.Clear();
             {
                 var item = new Node("ノード1") { IsSelected = true };
                 item.ChildrenSource.Add(new Node("ノード1-1"));
                 item.ChildrenSource.Add(new Node("ノード1-2"));
                 item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
                 item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
-                this.TreeSource.Add(item);
+                NodeManager.Current.TreeSource.Add(item);
             }
             {
                 var item = new Node("ノード2");
@@ -243,18 +257,13 @@ namespace QuartetEditor.Models
                 item.ChildrenSource.Add(new Node("ノード2-2"));
                 item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
                 item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
-                this.TreeSource.Add(item);
+                NodeManager.Current.TreeSource.Add(item);
             }
 
-            this.TreeSource.Add(new Node("ノード3"));
+            NodeManager.Current.TreeSource.Add(new Node("ノード3"));
+
+            NodeManager.Current.OffEditFlag();
 #endif
-            // 空の場合は初期化
-            if (this.TreeSource.Count == 0)
-            {
-                this.TreeSource.Add(new Node() { IsSelected = true });
-            }
-
-            this.OffEditFlag();
         }
 
         /// <summary>
@@ -1595,16 +1604,8 @@ namespace QuartetEditor.Models
                     if (!fail)
                     {
                         // 失敗していない場合、QuartetEditorDescriptionをNodeとして設定
-                        this.TreeSource.Clear();
-                        this.UndoRedoModel.Clear();
-                        foreach (var item in model.Node)
-                        {
-                            this.TreeSource.Add(new Node(item));
-                        }
+                        this.Load(model);
                         this.FilePath = fromTextFile ? null : path;
-
-                        this.Tree.First().IsSelected = true;
-                        this.OffEditFlag();
                     }
                 }
                 catch
@@ -1617,6 +1618,23 @@ namespace QuartetEditor.Models
                     this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
                 }
             }
+        }
+
+        /// <summary>
+        /// QuartetEditorDescriptionを設定します
+        /// </summary>
+        /// <param name="model"></param>
+        private void Load(QuartetEditorDescription model)
+        {
+            this.TreeSource.Clear();
+            this.UndoRedoModel.Clear();
+            foreach (var item in model.Node)
+            {
+                this.TreeSource.Add(new Node(item));
+            }
+
+            this.Tree.First().IsSelected = true;
+            this.OffEditFlag();
         }
 
         /// <summary>
