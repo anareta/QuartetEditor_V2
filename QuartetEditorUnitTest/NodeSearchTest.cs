@@ -596,6 +596,202 @@ namespace QuartetEditorUnitTest
 
         #endregion GetYounger
 
-   
+        #region GetUp
+
+        [TestMethod]
+        public void GetUp_同階層()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード２");
+            var find = model.GetUp(selected);
+
+            Assert.AreSame("ノード１", find.Name);
+        }
+
+        [TestMethod]
+        public void GetUp_なし()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード１");
+
+            var find = model.GetUp(selected);
+
+            Assert.AreSame(null, find);
+        }
+
+        [TestMethod]
+        public void GetUp_親()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[1].Children = CreateItemList(
+                CreateItem("ノード２-１"),
+                CreateItem("ノード２-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード２-１");
+
+            var find = model.GetUp(selected);
+
+            Assert.AreSame("ノード２", find.Name);
+        }
+
+        [TestMethod]
+        public void GetUp_姉妹の子()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[0].Children = CreateItemList(
+                CreateItem("ノード１-１"),
+                CreateItem("ノード１-２")
+                );
+            nodes.Node[0].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-１"),
+                CreateItem("ノード１-２-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード２");
+
+            var find = model.GetUp(selected);
+
+            Assert.AreSame("ノード１-２-２", find.Name);
+        }
+
+        #endregion GetUp
+
+        #region GetDown
+
+        [TestMethod]
+        public void GetDown_同階層()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード１");
+            var find = model.GetDown(selected);
+
+            Assert.AreSame("ノード２", find.Name);
+        }
+
+        [TestMethod]
+        public void GetDown_なし()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード２");
+
+            var find = model.GetDown(selected);
+
+            Assert.AreSame(null, find);
+        }
+
+        [TestMethod]
+        public void GetDown_親の妹()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[0].Children = CreateItemList(
+                CreateItem("ノード１-１"),
+                CreateItem("ノード１-２")
+                );
+            nodes.Node[1].Children = CreateItemList(
+                CreateItem("ノード２-１"),
+                CreateItem("ノード２-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード１-２");
+
+            var find = model.GetDown(selected);
+
+            Assert.AreSame("ノード２", find.Name);
+        }
+
+        [TestMethod]
+        public void GetDown_子()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[0].Children = CreateItemList(
+                CreateItem("ノード１-１"),
+                CreateItem("ノード１-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード１");
+
+            var find = model.GetDown(selected);
+
+            Assert.AreSame("ノード１-１", find.Name);
+        }
+
+        #endregion GetUp
     }
 }

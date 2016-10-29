@@ -1114,7 +1114,7 @@ namespace QuartetEditor.Models
 
         #endregion DragDrop
 
-        #region ViewState
+        #region NodeSearch
 
         /// <summary>
         /// ノードの検索
@@ -1170,7 +1170,7 @@ namespace QuartetEditor.Models
             if (index == 0 && hasParent)
             {
                 // 姉妹の先頭の場合
-                return this.GetCousinLast(item);
+                return this.GetCousinLast(item, 3);
             }
             else
             {
@@ -1205,11 +1205,12 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 祖先をたどり、親類（上）のノードを取得します
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private Node GetCousinLast(Node item)
+        /// <param name="item">基準となるノード</param>
+        /// <param name="maxDistance">何階層まで検索するか</param>
+        /// <returns>見つかったノード（見つからなかったらnull）</returns>
+        private Node GetCousinLast(Node item, int maxDistance)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < maxDistance; i++)
             {
                 var ancestor = this.GetOlder(this.FollowParent(item, i));
 
@@ -1278,7 +1279,7 @@ namespace QuartetEditor.Models
             }
             else
             {
-                return this.FollowLastChild(item.Children.Last(), --count);
+                return this.FollowLastChild(item.Children.Last(), count < 0 ? -1 : --count);
             }
         }
 
@@ -1334,7 +1335,7 @@ namespace QuartetEditor.Models
             if (index + 1 == list.Count && hasParent)
             {
                 // 姉妹の末尾の場合
-                return this.GetCousinFirst(item);
+                return this.GetCousinFirst(item, 3);
             }
             else
             {
@@ -1367,11 +1368,12 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 祖先をたどり、親類（下）のノードを取得します
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private Node GetCousinFirst(Node item)
+        /// <param name="item">基準となるノード</param>
+        /// <param name="maxDistance">何階層まで検索するか</param>
+        /// <returns>見つかったノード（見つからなかったらnull）</returns>
+        private Node GetCousinFirst(Node item, int maxDistance)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < maxDistance; i++)
             {
                 var ancestor = this.GetYounger(this.FollowParent(item, i));
 
@@ -1402,7 +1404,72 @@ namespace QuartetEditor.Models
             return this.Find(this.Tree, c => c.Children.Any(child => child.ID == item.ID));
         }
 
-        #endregion  ViewState
+        /// <summary>
+        /// １つ上のノードを取得します
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public Node GetUp(Node item)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+
+            var older = this.GetOlder(item);
+
+            if (older != null)
+            {
+                return this.FollowLastChild(older, -1);
+            }
+
+            var parent = this.GetParent(item);
+
+            if (parent == null)
+            {
+                return null;
+            }
+
+            return parent;
+        }
+
+        /// <summary>
+        /// １つ下のノードを取得します
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public Node GetDown(Node item)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+
+            var child = item.Children.FirstOrDefault();
+            if (child != null)
+            {
+                return child;
+            }
+
+            var younger = this.GetYounger(item);
+
+            if (younger != null)
+            {
+                return younger;
+            }
+
+            var parent = this.GetParent(item);
+
+            if (parent == null)
+            {
+                return null;
+            }
+
+            return this.GetYounger(parent);
+        }
+
+
+        #endregion  NodeSearch
 
         #region UndoRedo
 
