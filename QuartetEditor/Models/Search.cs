@@ -17,12 +17,12 @@ namespace QuartetEditor.Models
     public class Search : BindableBase
     {
         /// <summary>
-        /// 検索結果
+        /// 検索結果の通知
         /// </summary>
         public Subject<SearchResult> Found { get; } = new Subject<SearchResult>();
 
         /// <summary>
-        /// 検索結果
+        /// 検索結果（すべて）の通知
         /// </summary>
         public Subject<IEnumerable<SearchResult>> FoundAll { get; } = new Subject<IEnumerable<SearchResult>>();
 
@@ -30,6 +30,11 @@ namespace QuartetEditor.Models
         /// 確認要求
         /// </summary>
         public Subject<Tuple<string, Action<bool>>> Confirmation { get; } = new Subject<Tuple<string, Action<bool>>>();
+
+        /// <summary>
+        /// 検索対象のドキュメント
+        /// </summary>
+        public NodeManager Document { get; private set; } = NodeManager.Current;
 
         /// <summary>
         /// 検索文字
@@ -147,6 +152,38 @@ namespace QuartetEditor.Models
         private bool _UseWildcards = false;
 
         /// <summary>
+        /// 全ノードを対象に検索
+        /// </summary>
+        public bool WholeAllNode
+        {
+            get
+            {
+                return this._WholeAllNode;
+            }
+            set
+            {
+                this.SetProperty(ref this._WholeAllNode, value);
+            }
+        }
+        private bool _WholeAllNode = false;
+
+        /// <summary>
+        /// 全ノードを対象に検索
+        /// </summary>
+        public bool HilightText
+        {
+            get
+            {
+                return this._HilightText;
+            }
+            set
+            {
+                this.SetProperty(ref this._HilightText, value);
+            }
+        }
+        private bool _HilightText = false;
+
+        /// <summary>
         /// 検索用の正規表現を生成する
         /// </summary>
         /// <param name="textToFind"></param>
@@ -189,42 +226,30 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 次へ検索
         /// </summary>
-        public void FindNext(int selectionStart, int selectionLength)
+        public void FindNext(int selectionStart, int selectionLength, bool findPrev)
         {
-            this.FindAll();
-
-            var regex = this.GetRegEx(this.TextToFind, false);
-            int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
-
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
-
-            if (result != null)
+            if (this.HilightText)
             {
-                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
-                {
-                    NodeManager.Current.SelectedNode = result.Node;
-                }
+                this.FindAll();
             }
-            this.Found.OnNext(result);
-        }
+            else
+            {
+                // ハイライトを消去
+                this.FoundAll.OnNext(new List<SearchResult>());
+            }
 
-        /// <summary>
-        /// 前へ検索
-        /// </summary>
-        public void FindPrev(int selectionStart, int selectionLength)
-        {
-            this.FindAll();
-
-            var regex = this.GetRegEx(this.TextToFind, true);
+            var regex = this.GetRegEx(this.TextToFind, findPrev);
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
+            var result = this.WholeAllNode ? 
+                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode, this.Document.SelectedNode) :
+                            this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
 
             if (result != null)
             {
-                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
+                if (result.Node.ID != this.Document.SelectedNode.ID)
                 {
-                    NodeManager.Current.SelectedNode = result.Node;
+                    result.Node.IsSelected = true;
                 }
             }
             this.Found.OnNext(result);
@@ -238,14 +263,14 @@ namespace QuartetEditor.Models
             var regex = this.GetRegEx(this.TextToFind, false);
 
             var list = new List<SearchResult>();
-            var find = this.Find(regex, 0, NodeManager.Current.SelectedNode, false, false);
+            var find = this.Find(regex, 0, this.Document.SelectedNode, false, false);
 
             if (find != null)
             {
                 do
                 {
                     list.Add(find);
-                    find = this.Find(regex, find.Index + find.Length, NodeManager.Current.SelectedNode, false, false);
+                    find = this.Find(regex, find.Index + find.Length, this.Document.SelectedNode, false, false);
 
                 } while (find != null);
 
@@ -265,13 +290,13 @@ namespace QuartetEditor.Models
             var regex = this.GetRegEx(this.TextToFind, false);
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
 
-            var result = this.Find(regex, startIndex, NodeManager.Current.SelectedNode, false, true);
+            var result = this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
 
             if (result != null)
             {
-                if (result.Node.ID != NodeManager.Current.SelectedNode.ID)
+                if (result.Node.ID != this.Document.SelectedNode.ID)
                 {
-                    NodeManager.Current.SelectedNode = result.Node;
+                    this.Document.SelectedNode = result.Node;
                 }
 
                 result.Node.Content.Replace(result.Index, result.Length, this.TextToReplace);
@@ -294,7 +319,7 @@ namespace QuartetEditor.Models
                 }
 
                 var regex = this.GetRegEx(this.TextToFind, false, true);
-                var content = NodeManager.Current.SelectedNode.Content;
+                var content = this.Document.SelectedNode.Content;
 
                 int offset = 0;
                 content.BeginUpdate();
@@ -343,30 +368,62 @@ namespace QuartetEditor.Models
 
                 return loc;
             }
+
+            return null;
+        }
+
+        /// <summary>
+        /// ドキュメント全体から文字を検索します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="start"></param>
+        /// <param name="node"></param>
+        /// <param name="findPrev"></param>
+        /// <returns></returns>
+        private SearchResult FindFromDocument(Regex regex, int start, Node node, Node startNode)
+        {
+            var result = this.Find(regex, start, node, false, false);
+
+            if (result != null)
+            {
+                return result;
+            }
             else
             {
-                //var next = NodeManager.Current.GetCousinLast(node);
-                //if (next != null)
-                //{
-                //    Match titleMatch;
-                //    if (regex.Options.HasFlag(RegexOptions.RightToLeft))
-                //        titleMatch = regex.Match(next.Name, next.Name.Length);
-                //    else
-                //        titleMatch = regex.Match(next.Name, 0);
+                var next = regex.Options.HasFlag(RegexOptions.RightToLeft) ? 
+                    this.Document.GetUp(node) ?? this.Document.Tree.Last(): 
+                    this.Document.GetDown(node) ?? this.Document.Tree.First();
 
-                //    if (titleMatch.Success)
-                //    {
-                //        var loc = new Location() { Type = Location.TargetType.Node };
-                //        loc.Index = titleMatch.Index;
-                //        loc.Length = titleMatch.Length;
-                //        loc.Node = next;
+                if (next != null)
+                {
+                    Match titleMatch;
+                    if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+                    {
+                        titleMatch = regex.Match(next.Name, next.Name.Length);
+                    }
+                    else
+                    {
+                        titleMatch = regex.Match(next.Name, 0);
+                    }
 
-                //        return new Tuple<bool, Location>(true, loc);
-                //    }
+                    if (titleMatch.Success)
+                    {
+                        var loc = new SearchResult() { Type = SearchResult.TargetType.Title };
+                        loc.Node = next;
+                        return loc;
+                    }
 
-                //    return Find(regex, start, next);
-                //}
+                    if (next.ID == startNode.ID)
+                    {
+                        return null;
+                    }
 
+                    return this.FindFromDocument(
+                        regex, 
+                        regex.Options.HasFlag(RegexOptions.RightToLeft) ? next.Content.Text.Length : 0,
+                        next,
+                        startNode);
+                }
             }
 
             return null;

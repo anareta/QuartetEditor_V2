@@ -27,16 +27,24 @@ namespace QuartetEditor.Views.Messengers
                 switch (entity.RequestKind)
                 {
                     case FindReplaceDialogRequestEntity.DialogRequest.OpenFind:
-                        FindReplaceDialog.ShowFindReplaceDialog(this.AssociatedObject, this.AssociatedObject._CenterTextEditor, true);
+                        FindReplaceDialog.ShowFindReplaceDialog(
+                            this.AssociatedObject, 
+                            this.AssociatedObject._CenterTextEditor,
+                            this.AssociatedObject._NodeView, 
+                            true);
                         break;
                     case FindReplaceDialogRequestEntity.DialogRequest.OpenReplace:
-                        FindReplaceDialog.ShowFindReplaceDialog(this.AssociatedObject, this.AssociatedObject._CenterTextEditor, false);
+                        FindReplaceDialog.ShowFindReplaceDialog(
+                            this.AssociatedObject, 
+                            this.AssociatedObject._CenterTextEditor, 
+                            this.AssociatedObject._NodeView,
+                            false);
                         break;
                     case FindReplaceDialogRequestEntity.DialogRequest.FindNext:
-                        FindReplaceDialog.Find(this.AssociatedObject, this.AssociatedObject._CenterTextEditor, false);
+                        FindReplaceDialog.Find(this.AssociatedObject, false);
                         break;
                     case FindReplaceDialogRequestEntity.DialogRequest.FindPrev:
-                        FindReplaceDialog.Find(this.AssociatedObject, this.AssociatedObject._CenterTextEditor, true);
+                        FindReplaceDialog.Find(this.AssociatedObject, true);
                         break;
                     default:
                         break;

@@ -7,6 +7,8 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using QuartetEditor.ViewModels;
 using QuartetEditor.Models;
+using QuartetEditor.Views.Controls;
+using System.Windows.Controls;
 
 namespace QuartetEditor.Views
 {
@@ -28,16 +30,22 @@ namespace QuartetEditor.Views
         /// <summary>
         /// テキストエディタへの参照
         /// </summary>
-        public TextEditor Editor { get; }
+        public BindableTextEditor Editor { get; }
+
+        /// <summary>
+        /// ノードパネルへの参照
+        /// </summary>
+        public TreeView NodePanel { get; }
 
         /// <summary>
         /// FindReplaceDialog
         /// </summary>
         /// <param name="editor"></param>
-        public FindReplaceDialog(TextEditor editor)
+        public FindReplaceDialog(BindableTextEditor editor, TreeView nodePanel)
         {
             this.DataContext = new FindReplaceDialogViewModel(_Model, editor);
             this.Editor = editor;
+            this.NodePanel = nodePanel;
 
             InitializeComponent();
         }
@@ -67,7 +75,7 @@ namespace QuartetEditor.Views
         /// <param name="owner"></param>
         /// <param name="editor"></param>
         /// <param name="prev"></param>
-        public static void Find(Window owner, TextEditor editor, bool prev)
+        public static void Find(Window owner, bool prev)
         {
             if (_Dialog != null)
             {
@@ -88,11 +96,11 @@ namespace QuartetEditor.Views
         /// <param name="owner"></param>
         /// <param name="editor"></param>
         /// <param name="isFind"></param>
-        public static void ShowFindReplaceDialog(Window owner, TextEditor editor, bool isFind = true)
+        public static void ShowFindReplaceDialog(Window owner, BindableTextEditor editor, TreeView tree, bool isFind)
         {
             if (_Dialog == null)
             {
-                _OpenDialog(owner, editor, isFind);
+                _OpenDialog(owner, editor, tree, isFind);
             }
             else
             {
@@ -130,12 +138,9 @@ namespace QuartetEditor.Views
         /// <summary>
         /// ダイアログを生成する
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="editor"></param>
-        /// <param name="isFind"></param>
-        private static void _OpenDialog(Window owner, TextEditor editor, bool isFind)
+        private static void _OpenDialog(Window owner, BindableTextEditor editor, TreeView tree, bool isFind)
         {
-            _Dialog = new FindReplaceDialog(editor);
+            _Dialog = new FindReplaceDialog(editor, tree);
 
             if (isFind)
             {

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -183,8 +184,30 @@ namespace QuartetEditor.Views.Controls
             {
 
             }
+        }
 
+        /// <summary>
+        /// テキストボックスが選択されているか
+        /// </summary>
+        public bool IsSelected { get; set; }
 
+        /// <summary>
+        /// バインド可能なTextEditorクラス
+        /// TextEditorクラスのラッパー
+        /// </summary>
+        public BindableTextEditor()
+        {
+            Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            h => (s, e) => h(e),
+            h => this.GotFocus += h,
+            h => this.GotFocus -= h)
+            .Subscribe( _ => this.IsSelected = true);
+
+            Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
+            h => (s, e) => h(e),
+            h => this.LostFocus += h,
+            h => this.LostFocus -= h)
+            .Subscribe(_ => this.IsSelected = false);
         }
     }
 }

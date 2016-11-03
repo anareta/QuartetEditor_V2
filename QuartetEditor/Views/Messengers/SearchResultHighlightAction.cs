@@ -44,7 +44,7 @@ namespace QuartetEditor.Views.Messengers
                         case SearchResult.TargetType.Content:
                             highlightList.Add(new OffsetHighlighter(result.Index, 
                                                                     result.Index + result.Length, 
-                                                                    new SolidColorBrush(Color.FromArgb(0xa0, 0xff, 0xff, 0x10))));
+                                                                    new SolidColorBrush(Color.FromArgb(0x60, 0xff, 0xff, 0x20))));
                             break;
                         case SearchResult.TargetType.Title:
                             continue;

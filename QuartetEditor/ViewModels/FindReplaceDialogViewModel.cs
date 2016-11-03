@@ -4,6 +4,7 @@ using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using QuartetEditor.Entities;
 using QuartetEditor.Models;
+using QuartetEditor.Views.Controls;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -15,6 +16,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace QuartetEditor.ViewModels
 {
@@ -85,12 +87,12 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// テキストエディタへの参照
         /// </summary>
-        private TextEditor Editor { get; }
+        private BindableTextEditor Editor { get; }
 
         /// <summary>
         /// FindReplaceDialogViewModel
         /// </summary>
-        public FindReplaceDialogViewModel(Search model, TextEditor editor)
+        public FindReplaceDialogViewModel(Search model, BindableTextEditor editor)
         {
             this.Model = model;
             this.Editor = editor;
@@ -120,6 +122,14 @@ namespace QuartetEditor.ViewModels
             .ToReactivePropertyAsSynchronized(x => x.UseWildcards)
             .AddTo(this.Disposable);
 
+            this.WholeAllNode = this.Model
+            .ToReactivePropertyAsSynchronized(x => x.WholeAllNode)
+            .AddTo(this.Disposable);
+
+            this.HilightText = this.Model
+            .ToReactivePropertyAsSynchronized(x => x.HilightText)
+            .AddTo(this.Disposable);
+
             // コマンドの設定
             this.FindNextCommand = this.TextToFind
             .Select(x => !string.IsNullOrEmpty(x))
@@ -127,7 +137,7 @@ namespace QuartetEditor.ViewModels
 
             this.FindNextCommand.Subscribe(_ =>
             {
-                this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength);
+                this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength, false);
             }).AddTo(this.Disposable);
 
             this.FindPrevCommand = this.TextToFind
@@ -136,7 +146,14 @@ namespace QuartetEditor.ViewModels
 
             this.FindPrevCommand.Subscribe(_ =>
             {
-                this.Model.FindPrev(this.Editor.SelectionStart, this.Editor.SelectionLength);
+                if (this.Editor.IsSelected)
+                {
+                    this.Model.FindNext(this.Editor.SelectionStart, this.Editor.SelectionLength, true);
+                }
+                else
+                {
+                    this.Model.FindNext(this.Editor.Text.Length, 0, true);
+                }
             }).AddTo(this.Disposable);
 
             this.ReplaceCommand = new[] {
@@ -234,6 +251,16 @@ namespace QuartetEditor.ViewModels
         /// ワイルドカードを使用
         /// </summary>
         public ReactiveProperty<bool> UseWildcards { get; }
+
+        /// <summary>
+        /// 文書全体から検索
+        /// </summary>
+        public ReactiveProperty<bool> WholeAllNode { get; }
+
+        /// <summary>
+        /// 検索対象をハイライト表示
+        /// </summary>
+        public ReactiveProperty<bool> HilightText { get; }
 
         /// <summary>
         /// ハイライトの表示状態を更新

@@ -1460,12 +1460,17 @@ namespace QuartetEditor.Models
 
             var parent = this.GetParent(item);
 
-            if (parent == null)
+            while (parent != null)
             {
-                return null;
+                var parentYounger = this.GetYounger(parent);
+                if (parentYounger != null)
+                {
+                    return parentYounger;
+                }
+                parent = this.GetParent(parent);
             }
 
-            return this.GetYounger(parent);
+            return null;
         }
 
 

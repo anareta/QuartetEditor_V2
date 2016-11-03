@@ -693,6 +693,43 @@ namespace QuartetEditorUnitTest
             Assert.AreSame("ノード１-２-２", find.Name);
         }
 
+        [TestMethod]
+        public void GetUp_姉妹の子孫()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[0].Children = CreateItemList(
+                CreateItem("ノード１-１"),
+                CreateItem("ノード１-２")
+                );
+            nodes.Node[0].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-１"),
+                CreateItem("ノード１-２-２")
+                );
+            nodes.Node[0].Children[1].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-２-１"),
+                CreateItem("ノード１-２-２-２")
+                );
+            nodes.Node[0].Children[1].Children[1].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-２-２-１"),
+                CreateItem("ノード１-２-２-２-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード２");
+
+            var find = model.GetUp(selected);
+
+            Assert.AreSame("ノード１-２-２-２-２", find.Name);
+        }
+
         #endregion GetUp
 
         #region GetDown
@@ -790,6 +827,43 @@ namespace QuartetEditorUnitTest
             var find = model.GetDown(selected);
 
             Assert.AreSame("ノード１-１", find.Name);
+        }
+
+        [TestMethod]
+        public void GetDown_祖先の妹()
+        {
+            var model = new NodeManager();
+
+            var nodes = new QuartetEditorDescription()
+            {
+                Node = CreateItemList(
+                    CreateItem("ノード１"),
+                    CreateItem("ノード２")
+                    )
+            };
+            nodes.Node[0].Children = CreateItemList(
+                CreateItem("ノード１-１"),
+                CreateItem("ノード１-２")
+                );
+            nodes.Node[0].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-１"),
+                CreateItem("ノード１-２-２")
+                );
+            nodes.Node[0].Children[1].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-２-１"),
+                CreateItem("ノード１-２-２-２")
+                );
+            nodes.Node[0].Children[1].Children[1].Children[1].Children = CreateItemList(
+                CreateItem("ノード１-２-２-２-１"),
+                CreateItem("ノード１-２-２-２-２")
+                );
+
+            SetQED(ref model, nodes);
+            var selected = FindNode(model, "ノード１-２-２-２-２");
+
+            var find = model.GetDown(selected);
+
+            Assert.AreSame("ノード２", find.Name);
         }
 
         #endregion GetUp

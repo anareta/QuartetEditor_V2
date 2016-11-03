@@ -33,11 +33,21 @@ namespace QuartetEditor.Views.Messengers
 
             if (entity != null)
             {
+                switch (entity.Type)
+                {
+                    case SearchResult.TargetType.Content:
+                        this.AssociatedObject.Editor.Select(entity.Index, entity.Length);
+                        TextLocation loc = this.AssociatedObject.Editor.Document.GetLocation(entity.Index);
+                        this.AssociatedObject.Editor.ScrollTo(loc.Line, loc.Column);
 
-                this.AssociatedObject.Editor.Select(entity.Index, entity.Length);
-                TextLocation loc = this.AssociatedObject.Editor.Document.GetLocation(entity.Index);
-                this.AssociatedObject.Editor.ScrollTo(loc.Line, loc.Column);
-
+                        this.AssociatedObject.Editor.Focus();
+                        break;
+                    case SearchResult.TargetType.Title:
+                        this.AssociatedObject.NodePanel.Focus();
+                        break;
+                    default:
+                        break;
+                }
             }
             else
             {
