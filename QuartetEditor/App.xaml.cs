@@ -38,7 +38,7 @@ namespace QuartetEditor
 
             try
             {
-                var model = NodeManager.Current;
+                var model = QEDocument.Current;
                 if (model.IsEdited && !string.IsNullOrWhiteSpace(model.FilePath))
                 {
                     // 未保存の場合、保存を試みる
@@ -52,7 +52,7 @@ namespace QuartetEditor
                                                    Path.GetFileNameWithoutExtension(model.FilePath) + "_" + Path.GetRandomFileName() + ".qed");
                     }
 
-                    NodeManager.Current.Save(tmpFilePath);
+                    model.Save(tmpFilePath);
                 }
             }
             catch

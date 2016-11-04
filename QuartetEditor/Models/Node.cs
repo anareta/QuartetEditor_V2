@@ -304,9 +304,9 @@ namespace QuartetEditor.Models
         /// </summary>
         public void Dispose()
         {
-            if (NodeManager.Current.HasAnyNode(node => node.ID == this.ID))
+            if (QEDocument.Current.Content.HasAnyNode(node => node.ID == this.ID))
             {
-                // NodeMAnagerに登録されている場合は破棄処理を実行しない
+                // NodeManagerに登録されている場合は破棄処理を実行しない
                 return;
             }
 

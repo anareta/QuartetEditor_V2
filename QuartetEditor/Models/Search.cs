@@ -34,7 +34,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 検索対象のドキュメント
         /// </summary>
-        public NodeManager Document { get; private set; } = NodeManager.Current;
+        public NodeManager Document { get; private set; } = QEDocument.Current.Content;
 
         /// <summary>
         /// 検索文字

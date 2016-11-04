@@ -36,7 +36,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// モデルクラス
         /// </summary>
-        private NodeManager Model { get; } = NodeManager.Current;
+        private QEDocument Model { get; } = QEDocument.Current;
 
         /// <summary>
         /// 木構造
@@ -402,7 +402,7 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
-            this.Tree = this.Model
+            this.Tree = this.Model.Content
                 .Tree
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
 
@@ -434,7 +434,7 @@ namespace QuartetEditor.ViewModels
 
             // VM -> M 一方向バインド
             this.SelectedNode = ReactiveProperty.FromObject(
-                this.Model,
+                this.Model.Content,
                 x => x.SelectedNode,
                 convert: x => (NodeViewModel)null, // M -> VMの変換処理
                 convertBack: x => x?.Model); // VM -> Mの変換処理
@@ -445,22 +445,22 @@ namespace QuartetEditor.ViewModels
             });
 
             // M -> VM 一方向バインド
-            this.TextContent = this.Model
+            this.TextContent = this.Model.Content
                 .ObserveProperty(x => x.TextContent)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.ParentTextContent = this.Model
+            this.ParentTextContent = this.Model.Content
                 .ObserveProperty(x => x.ParentTextContent)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.PrevTextContent = this.Model
+            this.PrevTextContent = this.Model.Content
                 .ObserveProperty(x => x.PrevTextContent)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.NextTextContent = this.Model
+            this.NextTextContent = this.Model.Content
                 .ObserveProperty(x => x.NextTextContent)
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
@@ -488,7 +488,7 @@ namespace QuartetEditor.ViewModels
             .Subscribe(_ =>
             {
                 this.RisePanelState();
-                this.Model.UpdatePanelReffer(); // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
+                this.Model.Content.UpdatePanelReffer(); // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
             })
             .AddTo(this.Disposable);
 
@@ -561,7 +561,7 @@ namespace QuartetEditor.ViewModels
                     }
                 }
 
-                this.Model.DragOverAction(target?.Model, data?.Model);
+                this.Model.Content.DragOverAction(target?.Model, data?.Model);
             }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
@@ -577,7 +577,7 @@ namespace QuartetEditor.ViewModels
                 var target = fe.DataContext as NodeViewModel;
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-                this.Model.DragEnterAction(target?.Model, data?.Model);
+                this.Model.Content.DragEnterAction(target?.Model, data?.Model);
             }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
@@ -591,7 +591,7 @@ namespace QuartetEditor.ViewModels
                     return;
                 }
                 var target = fe.DataContext as NodeViewModel;
-                this.Model.DragLeaveAction(target?.Model);
+                this.Model.Content.DragLeaveAction(target?.Model);
             }).AddTo(this.Disposable);
 
             Observable.FromEvent<Action<DragEventArgs>, DragEventArgs>(
@@ -607,7 +607,7 @@ namespace QuartetEditor.ViewModels
                 var target = fe.DataContext as NodeViewModel;
                 var data = arg.Data.GetData(typeof(NodeViewModel)) as NodeViewModel;
 
-                this.Model.DragDropAction(arg, target?.Model, data?.Model, KeyboardUtility.IsCtrlKeyPressed);
+                this.Model.Content.DragDropAction(arg, target?.Model, data?.Model, KeyboardUtility.IsCtrlKeyPressed);
 
             }).AddTo(this.Disposable);
 
@@ -631,38 +631,38 @@ namespace QuartetEditor.ViewModels
 
             #region NodeManipulation
 
-            this.NameEditCommand.Subscribe(_ => this.Model.CallNameEditMode()).AddTo(this.Disposable);
+            this.NameEditCommand.Subscribe(_ => this.Model.Content.CallNameEditMode()).AddTo(this.Disposable);
 
-            this.UndoCommand = new ReactiveCommand(this.Model.CanUndo, false);
+            this.UndoCommand = new ReactiveCommand(this.Model.Content.CanUndo, false);
             this.UndoCommand.Subscribe(_ =>
             {
-                this.Model.Undo();
+                this.Model.Content.Undo();
             }).AddTo(this.Disposable);
 
-            this.RedoCommand = new ReactiveCommand(this.Model.CanRedo, false);
-            this.RedoCommand.Subscribe(_ => this.Model.Redo()).AddTo(this.Disposable);
+            this.RedoCommand = new ReactiveCommand(this.Model.Content.CanRedo, false);
+            this.RedoCommand.Subscribe(_ => this.Model.Content.Redo()).AddTo(this.Disposable);
 
-            this.DeleteNodeCommand.Subscribe(_ => this.Model.DeleteNode()).AddTo(this.Disposable);
+            this.DeleteNodeCommand.Subscribe(_ => this.Model.Content.DeleteNode()).AddTo(this.Disposable);
 
-            this.AddNodeSameCommand.Subscribe(_ => this.Model.AddNodeSame()).AddTo(this.Disposable);
+            this.AddNodeSameCommand.Subscribe(_ => this.Model.Content.AddNodeSame()).AddTo(this.Disposable);
 
-            this.AddNodeLowerCommand.Subscribe(_ => this.Model.AddNodeLower()).AddTo(this.Disposable);
+            this.AddNodeLowerCommand.Subscribe(_ => this.Model.Content.AddNodeLower()).AddTo(this.Disposable);
 
-            this.ReproduceCommand.Subscribe(_ => this.Model.Reproduce()).AddTo(this.Disposable);
+            this.ReproduceCommand.Subscribe(_ => this.Model.Content.Reproduce()).AddTo(this.Disposable);
 
-            this.AddNodeFromHeaderCommand.Subscribe(_ => this.Model.AddNodeFromHeader()).AddTo(this.Disposable);
+            this.AddNodeFromHeaderCommand.Subscribe(_ => this.Model.Content.AddNodeFromHeader()).AddTo(this.Disposable);
 
-            this.MoveUpCommand = new ReactiveCommand(this.Model.CanMoveUp, false);
-            this.MoveUpCommand.Subscribe(_ => this.Model.MoveUp()).AddTo(this.Disposable);
+            this.MoveUpCommand = new ReactiveCommand(this.Model.Content.CanMoveUp, false);
+            this.MoveUpCommand.Subscribe(_ => this.Model.Content.MoveUp()).AddTo(this.Disposable);
 
-            this.MoveDownCommand = new ReactiveCommand(this.Model.CanMoveDown, false);
-            this.MoveDownCommand.Subscribe(_ => this.Model.MoveDown()).AddTo(this.Disposable);
+            this.MoveDownCommand = new ReactiveCommand(this.Model.Content.CanMoveDown, false);
+            this.MoveDownCommand.Subscribe(_ => this.Model.Content.MoveDown()).AddTo(this.Disposable);
 
-            this.MoveChildCommand = new ReactiveCommand(this.Model.CanMoveChild, false);
-            this.MoveChildCommand.Subscribe(_ => this.Model.MoveChild()).AddTo(this.Disposable);
+            this.MoveChildCommand = new ReactiveCommand(this.Model.Content.CanMoveChild, false);
+            this.MoveChildCommand.Subscribe(_ => this.Model.Content.MoveChild()).AddTo(this.Disposable);
 
-            this.MoveParentCommand = new ReactiveCommand(this.Model.CanMoveParent, false);
-            this.MoveParentCommand.Subscribe(_ => this.Model.MoveParent()).AddTo(this.Disposable);
+            this.MoveParentCommand = new ReactiveCommand(this.Model.Content.CanMoveParent, false);
+            this.MoveParentCommand.Subscribe(_ => this.Model.Content.MoveParent()).AddTo(this.Disposable);
 
             #endregion NodeManipulation
 

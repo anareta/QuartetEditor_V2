@@ -32,14 +32,9 @@ namespace QuartetEditor.Models
         private CompositeDisposable Disposable { get; } = new CompositeDisposable();
 
         /// <summary>
-        /// ユーザーへのエラー通知要求
+        /// ノードの変更状態を通知
         /// </summary>
-        public Subject<string> ShowErrorMessageRequest { get; } = new Subject<string>();
-
-        /// <summary>
-        /// システムのデータ
-        /// </summary>
-        public static NodeManager Current { get; } = new NodeManager();
+        public Subject<bool> NodeEdited = new Subject<bool>();
 
         /// <summary>
         /// 内部データクラス
@@ -195,11 +190,11 @@ namespace QuartetEditor.Models
                 .Merge(this.TreeSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
                 .Subscribe(x =>
                 {
-                    this.IsEdited = true;
+                    this.NodeEdited.OnNext(true);
                 }).AddTo(this.Disposable);
 
             this.TreeSource.CollectionChangedAsObservable()
-                .Subscribe(x => this.IsEdited = true)
+                .Subscribe(x => this.NodeEdited.OnNext(true) )
                 .AddTo(this.Disposable);
 
             #region ViewState
@@ -236,45 +231,12 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// Currentへの初期化
-        /// </summary>
-        static NodeManager()
-        {
-#if DEBUG
-            NodeManager.Current.TreeSource.Clear();
-            {
-                var item = new Node("ノード1") { IsSelected = true };
-                item.ChildrenSource.Add(new Node("ノード1-1"));
-                item.ChildrenSource.Add(new Node("ノード1-2"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード1-2-2"));
-                NodeManager.Current.TreeSource.Add(item);
-            }
-            {
-                var item = new Node("ノード2");
-                item.ChildrenSource.Add(new Node("ノード2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-1-2"));
-                item.ChildrenSource.Add(new Node("ノード2-2"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-1"));
-                item.ChildrenSource.Last().ChildrenSource.Add(new Node("ノード2-2-2"));
-                NodeManager.Current.TreeSource.Add(item);
-            }
-
-            NodeManager.Current.TreeSource.Add(new Node("ノード3"));
-
-            NodeManager.Current.OffEditFlag();
-#endif
-        }
-
-        /// <summary>
         /// すべての編集フラグをオフにします
         /// </summary>
-        private void OffEditFlag()
+        public void OffEditFlag()
         {
             this.WorkAllNode(n => n.IsEdited = false);
             this.WorkAllNode(n => n.ChildrenEdited = false);
-            this.IsEdited = false;
         }
 
         /// <summary>
@@ -1512,192 +1474,13 @@ namespace QuartetEditor.Models
 
         #endregion UndoRedo
 
-        #region File
-
-        /// <summary>
-        /// ViewへのSavePath処理要求
-        /// </summary>
-        public Subject<Action<string>> SavePathRequest { get; } = new Subject<Action<string>>();
-
-        /// <summary>
-        /// ViewへのOpenPath処理要求
-        /// </summary>
-        public Subject<Action<string>> OpenPathRequest { get; } = new Subject<Action<string>>();
-
-        /// <summary>
-        /// 編集されたか
-        /// </summary>
-        private bool _IsEdited = false;
-
-        public bool IsEdited
-        {
-            get { return this._IsEdited; }
-            set { this.SetProperty(ref this._IsEdited, value); }
-        }
-
-        /// <summary>
-        /// ファイル名のフルパス
-        /// </summary>
-        private string _FilePath;
-
-        public string FilePath
-        {
-            get { return this._FilePath; }
-            set { this.SetProperty(ref this._FilePath, value); }
-        }
-
-        /// <summary>
-        /// ファイルを上書き保存する
-        /// </summary>
-        /// <returns></returns>
-        public bool SaveOverwrite()
-        {
-            if (this.FilePath == null ||
-                string.IsNullOrWhiteSpace(this.FilePath) ||
-                !File.Exists(this.FilePath))
-            {
-                // 有効なファイル名が存在しない場合は変名処理へ
-                return this.SaveAs();
-            }
-
-            if (this.Save(this.FilePath))
-            {
-                this.OffEditFlag();
-                return true;
-            }
-            else
-            {
-                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。\n別の場所に保存してください。");
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// ファイルを変名保存する
-        /// </summary>
-        /// <returns></returns>
-        public bool SaveAs()
-        {
-            bool result = false;
-            this.SavePathRequest.OnNext(path =>
-            {
-                if (path != null && !string.IsNullOrWhiteSpace(path))
-                {
-                    if (this.Save(path))
-                    {
-                        this.FilePath = path;
-                        this.OffEditFlag();
-                        result = true;
-                    }
-                    else
-                    {
-                        this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
-                    }
-                }
-            });
-            return result;
-        }
-
-        /// <summary>
-        /// ファイルを保存する
-        /// </summary>
-        public bool Save(string path)
-        {
-            try
-            {
-                bool overwrite = File.Exists(path);
-                string overwiteSuffix = Path.GetRandomFileName().Substring(0, 5);
-                if (overwrite)
-                {
-                    File.Move(path, path + "." + overwiteSuffix);
-                }
-
-                var data = new QuartetEditorDescription(this.TreeSource);
-                FileUtility.SaveJsonObject(path, data);
-
-                if (overwrite)
-                {
-                    File.Delete(path + "." + overwiteSuffix);
-                }
-                return true;
-            }
-            catch
-            {
-
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// ファイルを開いて読み込む
-        /// </summary>
-        /// <returns></returns>
-        public void OpenQED()
-        {
-            this.OpenPathRequest.OnNext(path =>
-            {
-                this.Load(path);
-            });
-        }
-
-        /// <summary>
-        /// ファイルの読み込みを行います
-        /// </summary>
-        /// <param name="path"></param>
-        public void Load(string path)
-        {
-            if (File.Exists(path))
-            {
-                if (this.IsEdited)
-                {
-                    this.OpenNewProcess(path);
-                    return;
-                }
-
-                bool fail = false;
-                bool fromTextFile = false;
-                try
-                {
-                    QuartetEditorDescription model;
-                    if (FileUtility.LoadJsonObject(path, out model) == false)
-                    {
-                        string treeText;
-                        if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == false ||
-                            NodeConverterUtility.FromTreeText(treeText, out model) == false)
-                        {
-                            fail = true;
-                        }
-                        else
-                        {
-                            fromTextFile = true;
-                        }
-                    }
-
-                    if (!fail)
-                    {
-                        // 失敗していない場合、QuartetEditorDescriptionをNodeとして設定
-                        this.Load(model);
-                        this.FilePath = fromTextFile ? null : path;
-                    }
-                }
-                catch
-                {
-                    fail = true;
-                }
-
-                if (fail)
-                {
-                    this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
-                }
-            }
-        }
+        #region Load
 
         /// <summary>
         /// QuartetEditorDescriptionを設定します
         /// </summary>
         /// <param name="model"></param>
-        private void Load(QuartetEditorDescription model)
+        public void Load(QuartetEditorDescription model)
         {
             this.TreeSource.Clear();
             this.UndoRedoModel.Clear();
@@ -1710,78 +1493,7 @@ namespace QuartetEditor.Models
             this.OffEditFlag();
         }
 
-        /// <summary>
-        /// 新しいプロセスでファイルを開く
-        /// </summary>
-        /// <param name="path"></param>
-        private void OpenNewProcess(string path)
-        {
-            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetEntryAssembly().Location, "\"" + path + "\"");
-        }
-
-        #endregion File
-
-        #region Export
-
-        /// <summary>
-        /// Viewへのエクスポート先SavePath処理要求
-        /// </summary>
-        public Subject<Tuple<string, string, Action<string>>> ExportSavePathRequest { get; } = new Subject<Tuple<string, string, Action<string>>>();
-
-        /// <summary>
-        /// エクスポート
-        /// </summary>
-        public void Export(ExportSettingModel model)
-        {
-            bool fail = false;
-            string ext = "";
-            string filter = "";
-            string exportstr = "";
-            try
-            {
-                switch (model.Kind)
-                {
-                    case ExportKindEnum.Text:
-                        exportstr = NodeConverterUtility.ToText(new QuartetEditorDescription(this.TreeSource), model);
-                        ext = "txt";
-                        filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
-                        break;
-                    case ExportKindEnum.HTML:
-                        exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.TreeSource), Path.GetFileNameWithoutExtension(this.FilePath));
-                        ext = "html";
-                        filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
-                        break;
-                    case ExportKindEnum.TreeText:
-                        exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.TreeSource));
-                        ext = "txt";
-                        filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
-                        break;
-                    default:
-                        break;
-                }
-
-                // 保存する
-                this.ExportSavePathRequest.OnNext(new Tuple<string, string, Action<string>>(filter, ext, (path) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(path))
-                    {
-                        fail = !FileUtility.SaveText(path, exportstr, Encoding.UTF8);
-                    }
-                    return;
-                }));
-            }
-            catch (Exception)
-            {
-                fail = true;
-            }
-
-            if (fail)
-            {
-                this.ShowErrorMessageRequest.OnNext("エクスポートに失敗しました…");
-            }
-        }
-
-        #endregion Export
+        #endregion Load
 
         #region Replace
 

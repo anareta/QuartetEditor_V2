@@ -244,7 +244,7 @@ namespace QuartetEditor.Views
                 return;
             }
 
-            if (NodeManager.Current.IsEdited)
+            if (QEDocument.Current.IsEdited)
             {
 
                 var mySettings = new MetroDialogSettings()
@@ -270,7 +270,7 @@ namespace QuartetEditor.Views
                         // 保存する
                         try
                         {
-                            if (!NodeManager.Current.SaveOverwrite())
+                            if (!QEDocument.Current.SaveOverwrite())
                             {
                                 this.canShutdown = false;
                             }
