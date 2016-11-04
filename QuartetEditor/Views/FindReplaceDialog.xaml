@@ -110,8 +110,8 @@
                   Content="単語として検索"
                   IsChecked="{Binding WholeWord.Value}" />
         <CheckBox Name="cbRegex"
-                  Grid.Row="1"
-                  Grid.Column="1"
+                  Grid.Row="3"
+                  Grid.Column="0"
                   Margin="10,2"
                   Content="正規表現を使用"
                   IsChecked="{Binding UseRegex.Value}" />
@@ -121,16 +121,16 @@
                   Margin="10,2"
                   Content="ワイルドカードを使用"
                   IsChecked="{Binding UseWildcards.Value}" />
+        <CheckBox Grid.Row="1"
+                  Grid.Column="1"
+                  Margin="10,2"
+                  Content="検索対象をハイライト"
+                  IsChecked="{Binding HilightText.Value}" />
         <CheckBox Grid.Row="2"
                   Grid.Column="1"
                   Margin="10,2"
                   Content="文書全体から検索"
                   IsChecked="{Binding WholeAllNode.Value}" />
-        <CheckBox Grid.Row="3"
-                  Grid.Column="0"
-                  Margin="10,2"
-                  Content="検索対象をハイライト"
-                  IsChecked="{Binding HilightText.Value}" />
 
         <CheckBox Name="cbCaseSensitive"
                   Grid.Row="3"
