@@ -68,6 +68,8 @@ namespace QuartetEditor.Models
             desctiption.Node.Add(new QuartetEditorDescriptionItem() { Name = "ノード３", Content = "ノード３" });
 
             Current.Content.Load(desctiption);
+
+            Current.IsEdited = false;
 #endif
         }
 

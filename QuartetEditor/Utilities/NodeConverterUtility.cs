@@ -57,9 +57,9 @@ namespace QuartetEditor.Utilities
             // コンテンツ変換
             string indent = new string(' ', (level + 1) * 2);
             int lineWidth = setting.LineWrap;
-            if (lineWidth - indent.GetSJISByte() < lineWidth/2)
+            if (lineWidth - indent.GetSJISByte() < lineWidth / 2)
             {
-                lineWidth = indent.GetSJISByte() + lineWidth/2;
+                lineWidth = indent.GetSJISByte() + lineWidth / 2;
             }
 
             int index = 0;
@@ -202,6 +202,13 @@ namespace QuartetEditor.Utilities
             export.AppendLine(@"</head>");
             export.AppendLine(@"<body>");
 
+            export.AppendLine(@"<p>");
+            foreach (var item in data.Node)
+            {
+                ToHTMLList(item, export, level);
+            }
+            export.AppendLine(@"</p>");
+
             foreach (var item in data.Node)
             {
                 ToHTML(item, export, level);
@@ -213,6 +220,23 @@ namespace QuartetEditor.Utilities
         }
 
         /// <summary>
+        /// ノードタイトルをHTMLのリストに変換する
+        /// </summary>
+        /// <returns></returns>
+        static private void ToHTMLList(QuartetEditorDescriptionItem item, StringBuilder result, int level)
+        {
+            result.AppendLine(@"<ul>");
+            result.AppendLine(@"<li>");
+            result.AppendLine(string.Format("<a href=\"#{0}\">{0}</a>", HttpUtility.HtmlEncode(item.Name)));
+            foreach (var child in item.Children)
+            {
+                ToHTMLList(child, result, level + 1);
+            }
+            result.AppendLine(@"</li>");
+            result.AppendLine(@"</ul>");
+        }
+
+        /// <summary>
         /// ノードをHTMLデータに変換する
         /// </summary>
         /// <returns></returns>
@@ -221,7 +245,7 @@ namespace QuartetEditor.Utilities
             // タイトルを変換
             int h = level > 6 ? 6 : level;
 
-            result.AppendLine(string.Format(@"<h{0}>{1}</h{0}>", h, HttpUtility.HtmlEncode(item.Name)));
+            result.AppendLine(string.Format("<h{0} id=\"{1}\">{1}</a></h{0}>", h, HttpUtility.HtmlEncode(item.Name)));
 
             // コンテンツ変換
             result.AppendLine(string.Format("<p class=\"Level{0}\">", level));
