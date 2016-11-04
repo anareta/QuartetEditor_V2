@@ -189,7 +189,7 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// テキストボックスが選択されているか
         /// </summary>
-        public bool IsSelected { get; set; }
+        public bool IsSelected { get; private set; }
 
         /// <summary>
         /// バインド可能なTextEditorクラス

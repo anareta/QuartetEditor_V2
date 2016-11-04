@@ -17,6 +17,7 @@ using QuartetEditor.Enums;
 using System.IO;
 using QuartetEditor.Entities;
 using QuartetEditor.Utilities;
+using System.Text.RegularExpressions;
 
 namespace QuartetEditor.Models
 {
@@ -1781,6 +1782,60 @@ namespace QuartetEditor.Models
         }
 
         #endregion Export
+
+        #region Replace
+
+        /// <summary>
+        /// 全ノードのノード名、コンテンツすべてのテキストを置換します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="textToReplace"></param>
+        public void ReplaceAllTextWholeAllNode(Regex regex, string textToReplace)
+        {
+            this.WorkAllNode(node =>
+            {
+                ReplaceAllText(regex, textToReplace, node);
+                ReplaceNodeName(regex, textToReplace, node);
+
+            });
+        }
+
+        /// <summary>
+        /// ノードのテキストを全文置換します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="textToReplace"></param>
+        /// <param name="node"></param>
+        public void ReplaceAllText(Regex regex, string textToReplace, Node node)
+        {
+            int offset = 0;
+            node.Content.BeginUpdate();
+            foreach (Match match in regex.Matches(node.Content.Text))
+            {
+                node.Content.Replace(offset + match.Index, match.Length, textToReplace);
+                offset += textToReplace.Length - match.Length;
+            }
+            node.Content.EndUpdate();
+        }
+
+        /// <summary>
+        /// ノード名のテキストを置換します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="textToReplace"></param>
+        /// <param name="node"></param>
+        private void ReplaceNodeName(Regex regex, string textToReplace, Node node)
+        {
+            int offset = 0;
+            foreach (Match match in regex.Matches(node.Name))
+            {
+                node.Content.Replace(offset + match.Index, match.Length, textToReplace);
+                node.Name = node.Name.Substring(0, match.Index) + textToReplace + node.Name.Substring(match.Index + match.Length);
+                offset += textToReplace.Length - match.Length;
+            }
+        }
+
+        #endregion Replace
 
         /// <summary>
         /// 破棄処理

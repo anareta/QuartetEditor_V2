@@ -164,7 +164,7 @@ namespace QuartetEditor.ViewModels
 
             this.ReplaceCommand.Subscribe(_ =>
            {
-               this.Model.Replace(this.Editor.SelectionStart, this.Editor.SelectionLength);
+               this.Model.Replace(this.Editor.SelectionStart, this.Editor.SelectionLength, this.Editor.IsSelected);
            }).AddTo(this.Disposable);
 
 
