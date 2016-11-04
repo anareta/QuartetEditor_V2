@@ -51,7 +51,15 @@ namespace QuartetEditor.Models
         public string Name
         {
             get { return this._Name; }
-            set { this.SetProperty(ref this._Name, value.Replace("\n", "").Replace("\r", "")); }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    this.SetProperty(ref this._Name, "新しいノード");
+                    return;
+                }
+                this.SetProperty(ref this._Name, value.Replace("\n", "").Replace("\r", ""));
+            }
         }
 
         /// <summary>

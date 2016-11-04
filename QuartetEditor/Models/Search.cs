@@ -205,7 +205,14 @@ namespace QuartetEditor.Models
 
             if (this.UseRegex)
             {
-                return new Regex(textToFind, options);
+                try
+                {
+                    return new Regex(textToFind, options);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
             else
             {
@@ -239,6 +246,11 @@ namespace QuartetEditor.Models
             }
 
             var regex = this.GetRegEx(this.TextToFind, findPrev);
+            if (regex == null)
+            {
+                return;
+            }
+
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
             var result = this.WholeAllNode ? 
@@ -261,6 +273,10 @@ namespace QuartetEditor.Models
         public void FindAll()
         {
             var regex = this.GetRegEx(this.TextToFind, false);
+            if (regex == null)
+            {
+                return;
+            }
 
             var list = new List<SearchResult>();
             var find = this.Find(regex, 0, this.Document.SelectedNode, false, false);
@@ -288,6 +304,11 @@ namespace QuartetEditor.Models
         public void Replace(int selectionStart, int selectionLength, bool editorSelected)
         {
             var regex = this.GetRegEx(this.TextToFind, false);
+            if (regex == null)
+            {
+                return;
+            }
+
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
 
             var result = this.WholeAllNode ?
@@ -324,7 +345,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public void ReplaceAll()
         {
-            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("本当にすべて置換しますか？", (OK) =>
+            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("この操作は元に戻せません。本当にすべて置換しますか？", (OK) =>
             {
                 if (!OK)
                 {
@@ -332,6 +353,10 @@ namespace QuartetEditor.Models
                 }
 
                 var regex = this.GetRegEx(this.TextToFind, false, true);
+                if (regex == null)
+                {
+                    return;
+                }
 
                 if (this.WholeAllNode)
                 {

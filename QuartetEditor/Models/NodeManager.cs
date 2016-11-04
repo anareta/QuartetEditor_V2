@@ -1541,8 +1541,7 @@ namespace QuartetEditor.Models
             int offset = 0;
             foreach (Match match in regex.Matches(node.Name))
             {
-                node.Content.Replace(offset + match.Index, match.Length, textToReplace);
-                node.Name = node.Name.Substring(0, match.Index) + textToReplace + node.Name.Substring(match.Index + match.Length);
+                node.Name = node.Name.Substring(0, match.Index + offset) + textToReplace + node.Name.Substring(match.Index + match.Length + offset);
                 offset += textToReplace.Length - match.Length;
             }
         }
