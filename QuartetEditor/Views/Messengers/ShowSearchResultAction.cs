@@ -36,10 +36,13 @@ namespace QuartetEditor.Views.Messengers
                 switch (entity.Type)
                 {
                     case SearchResult.TargetType.Content:
-                        this.AssociatedObject.Editor.Focus();
-                        this.AssociatedObject.Editor.Select(entity.Index, entity.Length);
-                        TextLocation loc = this.AssociatedObject.Editor.Document.GetLocation(entity.Index);
-                        this.AssociatedObject.Editor.ScrollTo(loc.Line, loc.Column);
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            this.AssociatedObject.Editor.Focus();
+                            this.AssociatedObject.Editor.Select(entity.Index, entity.Length);
+                            TextLocation loc = this.AssociatedObject.Editor.Document.GetLocation(entity.Index);
+                            this.AssociatedObject.Editor.ScrollTo(loc.Line, loc.Column);
+                        }, System.Windows.Threading.DispatcherPriority.SystemIdle);
                 
                         break;
                     case SearchResult.TargetType.Title:
