@@ -235,15 +235,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public void FindNext(int selectionStart, int selectionLength, bool findPrev)
         {
-            if (this.HilightText)
-            {
-                this.FindAll();
-            }
-            else
-            {
-                // ハイライトを消去
-                this.FoundAll.OnNext(new List<SearchResult>());
-            }
+            this.FindAll();
 
             var regex = this.GetRegEx(this.TextToFind, findPrev);
             if (regex == null)
@@ -272,6 +264,13 @@ namespace QuartetEditor.Models
         /// </summary>
         public void FindAll()
         {
+            if (!this.HilightText)
+            { 
+                // ハイライトを消去
+                this.FoundAll.OnNext(new List<SearchResult>());
+                return;
+            }
+
             var regex = this.GetRegEx(this.TextToFind, false);
             if (regex == null)
             {
