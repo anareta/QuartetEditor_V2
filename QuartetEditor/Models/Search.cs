@@ -431,8 +431,8 @@ namespace QuartetEditor.Models
             }
             else
             {
-                var next = regex.Options.HasFlag(RegexOptions.RightToLeft) ? 
-                    this.Document.GetUp(node) ?? this.Document.Tree.Last(): 
+                var next = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
+                    this.Document.GetUp(node) ?? this.Document.FollowLastChild(node, -1) :
                     this.Document.GetDown(node) ?? this.Document.Tree.First();
 
                 if (next != null)

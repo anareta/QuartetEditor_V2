@@ -1224,7 +1224,7 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private Node FollowLastChild(Node item, int count)
+        public Node FollowLastChild(Node item, int count)
         {
             if (item == null)
             {
