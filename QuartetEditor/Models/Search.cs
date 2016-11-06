@@ -246,7 +246,7 @@ namespace QuartetEditor.Models
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
             var result = this.WholeAllNode ? 
-                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode, this.Document.SelectedNode) :
+                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode) :
                             this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
 
             if (result != null)
@@ -311,7 +311,7 @@ namespace QuartetEditor.Models
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
 
             var result = this.WholeAllNode ?
-                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode, this.Document.SelectedNode, !editorSelected) :
+                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode, null, !editorSelected) :
                             this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
 
 
@@ -411,7 +411,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ドキュメント全体から文字を検索します
         /// </summary>
-        private SearchResult FindFromDocument(Regex regex, int start, Node node, Node startNode, bool titleFirst = false)
+        private SearchResult FindFromDocument(Regex regex, int start, Node node, Node startNode = null, bool titleFirst = false)
         {
             if (titleFirst)
             {
@@ -444,7 +444,7 @@ namespace QuartetEditor.Models
                         return titlematch;
                     }
 
-                    if (next.ID == startNode.ID)
+                    if (node.ID == startNode?.ID)
                     {
                         return null;
                     }
@@ -453,7 +453,7 @@ namespace QuartetEditor.Models
                         regex,
                         regex.Options.HasFlag(RegexOptions.RightToLeft) ? next.Content.Text.Length : 0,
                         next,
-                        startNode);
+                        startNode ?? node);
                 }
             }
 
