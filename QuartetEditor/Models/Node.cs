@@ -54,7 +54,7 @@ namespace QuartetEditor.Models
             get { return this._Name; }
             set
             {
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     this.SetProperty(ref this._Name, "新しいノード");
                     return;
