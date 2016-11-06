@@ -202,16 +202,20 @@ namespace QuartetEditor.Utilities
             export.AppendLine(@"</head>");
             export.AppendLine(@"<body>");
 
+            var idDictionary = new Dictionary< QuartetEditorDescriptionItem, string>();
+
             export.AppendLine(@"<p>");
+            export.AppendLine(@"<ul>");
             foreach (var item in data.Node)
             {
-                ToHTMLList(item, export, level);
+                ToHTMLList(item, ref idDictionary, export, level);
             }
+            export.AppendLine(@"</ul>");
             export.AppendLine(@"</p>");
 
             foreach (var item in data.Node)
             {
-                ToHTML(item, export, level);
+                ToHTML(item, idDictionary, export, level);
             }
 
             export.AppendLine(@"</body>");
@@ -223,29 +227,42 @@ namespace QuartetEditor.Utilities
         /// ノードタイトルをHTMLのリストに変換する
         /// </summary>
         /// <returns></returns>
-        static private void ToHTMLList(QuartetEditorDescriptionItem item, StringBuilder result, int level)
+        static private void ToHTMLList
+            (
+            QuartetEditorDescriptionItem item, 
+            ref Dictionary<QuartetEditorDescriptionItem, string> idDictionary, 
+            StringBuilder result, 
+            int level
+            )
         {
-            result.AppendLine(@"<ul>");
-            result.AppendLine(@"<li>");
-            result.AppendLine(string.Format("<a href=\"#{0}\">{0}</a>", HttpUtility.HtmlEncode(item.Name)));
-            foreach (var child in item.Children)
+            string id = level.ToString() + "-" + Guid.NewGuid().ToString("N");
+            idDictionary.Add(item, id);
+
+            result.AppendLine(@"<li>" + string.Format("<a href=\"#{0}\">{1}</a>", HttpUtility.HtmlEncode(id), HttpUtility.HtmlEncode(item.Name)) + @"</li>");
+
+            if (item.Children.Count() > 0)
             {
-                ToHTMLList(child, result, level + 1);
+                result.AppendLine(@"<ul>");
+                foreach (var child in item.Children)
+                {
+                    ToHTMLList(child, ref idDictionary, result, level + 1);
+                }
+                result.AppendLine(@"</ul>");
             }
-            result.AppendLine(@"</li>");
-            result.AppendLine(@"</ul>");
+
+            return;
         }
 
         /// <summary>
         /// ノードをHTMLデータに変換する
         /// </summary>
         /// <returns></returns>
-        static private void ToHTML(QuartetEditorDescriptionItem item, StringBuilder result, int level)
+        static private void ToHTML(QuartetEditorDescriptionItem item, Dictionary<QuartetEditorDescriptionItem, string> idDictionary, StringBuilder result, int level)
         {
             // タイトルを変換
             int h = level > 6 ? 6 : level;
 
-            result.AppendLine(string.Format("<h{0} id=\"{1}\">{1}</a></h{0}>", h, HttpUtility.HtmlEncode(item.Name)));
+            result.AppendLine(string.Format("<h{0} id=\"{2}\">{1}</h{0}>", h, HttpUtility.HtmlEncode(item.Name), idDictionary[item]));
 
             // コンテンツ変換
             result.AppendLine(string.Format("<p class=\"Level{0}\">", level));
@@ -258,7 +275,7 @@ namespace QuartetEditor.Utilities
 
             foreach (var child in item.Children)
             {
-                ToHTML(child, result, level + 1);
+                ToHTML(child, idDictionary, result, level + 1);
             }
         }
 
