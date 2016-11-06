@@ -1224,7 +1224,7 @@ namespace QuartetEditor.Models
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public Node FollowLastChild(Node item, int count)
+        private Node FollowLastChild(Node item, int count)
         {
             if (item == null)
             {
@@ -1372,7 +1372,7 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetUp(Node item)
+        private Node GetUp(Node item)
         {
             if (item == null)
             {
@@ -1401,7 +1401,7 @@ namespace QuartetEditor.Models
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Node GetDown(Node item)
+        private Node GetDown(Node item)
         {
             if (item == null)
             {
@@ -1495,7 +1495,59 @@ namespace QuartetEditor.Models
 
         #endregion Load
 
-        #region Replace
+        #region FindAndReplace
+
+        /// <summary>
+        /// ドキュメント全体から文字を検索します
+        /// </summary>
+        public SearchResult Find(Regex regex, int start, Node node, Node startNode = null, bool titleFirst = false)
+        {
+            if (titleFirst)
+            {
+                var titlematch = node.FindFromNodeName(regex);
+
+                if (titlematch != null)
+                {
+                    return titlematch;
+                }
+            }
+
+            var result = node.Find(regex, start, false, false);
+
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                var next = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
+                    this.GetUp(node) ?? this.FollowLastChild(node, -1) :
+                    this.GetDown(node) ?? this.Tree.First();
+
+                if (next != null)
+                {
+                    var titlematch = next.FindFromNodeName(regex);
+
+                    if (titlematch != null)
+                    {
+                        return titlematch;
+                    }
+
+                    if (node.ID == startNode?.ID)
+                    {
+                        return null;
+                    }
+
+                    return this.Find(
+                        regex,
+                        regex.Options.HasFlag(RegexOptions.RightToLeft) ? next.Content.Text.Length : 0,
+                        next,
+                        startNode ?? node);
+                }
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// 全ノードのノード名、コンテンツすべてのテキストを置換します
@@ -1506,47 +1558,13 @@ namespace QuartetEditor.Models
         {
             this.WorkAllNode(node =>
             {
-                ReplaceAllText(regex, textToReplace, node);
-                ReplaceNodeName(regex, textToReplace, node);
+                node.ReplaceAll(regex, textToReplace);
+                node.ReplaceNodeName(regex, textToReplace);
 
             });
         }
 
-        /// <summary>
-        /// ノードのテキストを全文置換します
-        /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="textToReplace"></param>
-        /// <param name="node"></param>
-        public void ReplaceAllText(Regex regex, string textToReplace, Node node)
-        {
-            int offset = 0;
-            node.Content.BeginUpdate();
-            foreach (Match match in regex.Matches(node.Content.Text))
-            {
-                node.Content.Replace(offset + match.Index, match.Length, textToReplace);
-                offset += textToReplace.Length - match.Length;
-            }
-            node.Content.EndUpdate();
-        }
-
-        /// <summary>
-        /// ノード名のテキストを置換します
-        /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="textToReplace"></param>
-        /// <param name="node"></param>
-        private void ReplaceNodeName(Regex regex, string textToReplace, Node node)
-        {
-            int offset = 0;
-            foreach (Match match in regex.Matches(node.Name))
-            {
-                node.Name = node.Name.Substring(0, match.Index + offset) + textToReplace + node.Name.Substring(match.Index + match.Length + offset);
-                offset += textToReplace.Length - match.Length;
-            }
-        }
-
-        #endregion Replace
+        #endregion FindAndReplace
 
         /// <summary>
         /// 破棄処理

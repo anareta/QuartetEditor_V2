@@ -80,6 +80,20 @@ namespace QuartetEditorUnitTest
             return pbObj.Invoke("Find", target.Tree, search) as Node;
         }
 
+        private Node GetUp(NodeManager target, Node node)
+        {
+            var pbObj = new PrivateObject(target);
+
+            return pbObj.Invoke("GetUp", node) as Node;
+        }
+
+        private Node GetDown(NodeManager target, Node node)
+        {
+            var pbObj = new PrivateObject(target);
+
+            return pbObj.Invoke("GetDown", node) as Node;
+        }
+
         #region GetPrev
 
         [TestMethod]
@@ -613,7 +627,7 @@ namespace QuartetEditorUnitTest
 
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード２");
-            var find = model.GetUp(selected);
+            var find = this.GetUp(model, selected);
 
             Assert.AreSame("ノード１", find.Name);
         }
@@ -634,7 +648,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード１");
 
-            var find = model.GetUp(selected);
+            var find = this.GetUp(model, selected);
 
             Assert.AreSame(null, find);
         }
@@ -659,7 +673,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード２-１");
 
-            var find = model.GetUp(selected);
+            var find = this.GetUp(model, selected);
 
             Assert.AreSame("ノード２", find.Name);
         }
@@ -688,7 +702,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード２");
 
-            var find = model.GetUp(selected);
+            var find = this.GetUp(model, selected);
 
             Assert.AreSame("ノード１-２-２", find.Name);
         }
@@ -725,7 +739,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード２");
 
-            var find = model.GetUp(selected);
+            var find = this.GetUp(model, selected);
 
             Assert.AreSame("ノード１-２-２-２-２", find.Name);
         }
@@ -749,7 +763,7 @@ namespace QuartetEditorUnitTest
 
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード１");
-            var find = model.GetDown(selected);
+            var find = this.GetDown(model, selected);
 
             Assert.AreSame("ノード２", find.Name);
         }
@@ -770,7 +784,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード２");
 
-            var find = model.GetDown(selected);
+            var find = this.GetDown(model, selected);
 
             Assert.AreSame(null, find);
         }
@@ -799,7 +813,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード１-２");
 
-            var find = model.GetDown(selected);
+            var find = this.GetDown(model, selected);
 
             Assert.AreSame("ノード２", find.Name);
         }
@@ -824,7 +838,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード１");
 
-            var find = model.GetDown(selected);
+            var find = this.GetDown(model, selected);
 
             Assert.AreSame("ノード１-１", find.Name);
         }
@@ -861,7 +875,7 @@ namespace QuartetEditorUnitTest
             SetQED(ref model, nodes);
             var selected = FindNode(model, "ノード１-２-２-２-２");
 
-            var find = model.GetDown(selected);
+            var find = this.GetDown(model, selected);
 
             Assert.AreSame("ノード２", find.Name);
         }

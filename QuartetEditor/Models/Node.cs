@@ -14,6 +14,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace QuartetEditor.Models
@@ -306,6 +307,154 @@ namespace QuartetEditor.Models
             }
             return this.Children.Any(node => node.HasAnyNode(predicate));
         }
+
+        #region FindAndReplace
+
+        /// <summary>
+        /// 次のテキストを検索
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="start"></param>
+        /// <param name="node"></param>
+        /// <param name="findPrev"></param>
+        /// <param name="loop"></param>
+        /// <returns></returns>
+        public SearchResult Find(Regex regex, int start, bool findPrev, bool loop)
+        {
+            string text = this.Content.Text;
+            Match match = regex.Match(text, start);
+
+            if (loop && !match.Success)  // 見つからなかった場合先頭に戻って探索
+            {
+                if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+                {
+                    match = regex.Match(text, text.Length);
+                }
+                else
+                {
+                    match = regex.Match(text, 0);
+                }
+            }
+
+            if (match.Success)
+            {
+                var loc = new SearchResult() { Type = Entities.SearchResult.TargetType.Content };
+                loc.Index = match.Index;
+                loc.Length = match.Length;
+                loc.Node = this;
+
+                return loc;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// すべて検索する
+        /// </summary>
+        public IEnumerable<SearchResult> FindAll(Regex regex)
+        {
+            var list = new List<SearchResult>();
+            var find = this.Find(regex, 0, false, false);
+
+            if (find != null)
+            {
+                do
+                {
+                    list.Add(find);
+                    find = this.Find(regex, find.Index + find.Length, false, false);
+
+                } while (find != null);
+
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// ノード名が正規表現に一致するか判定する
+        /// </summary>
+        public SearchResult FindFromNodeName(Regex regex)
+        {
+            Match titleMatch;
+            if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+            {
+                titleMatch = regex.Match(this.Name, this.Name.Length);
+            }
+            else
+            {
+                titleMatch = regex.Match(this.Name, 0);
+            }
+
+            if (titleMatch.Success)
+            {
+                var loc = new SearchResult() { Type = SearchResult.TargetType.Title };
+                loc.Node = this;
+                loc.Index = titleMatch.Index;
+                loc.Length = titleMatch.Length;
+                return loc;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// １つ置換
+        /// </summary>
+        public SearchResult Replace(SearchResult find, string textToReplace)
+        {
+            if (find != null)
+            {
+                switch (find.Type)
+                {
+                    case SearchResult.TargetType.Content:
+                        find.Node.Content.Replace(find.Index, find.Length, textToReplace);
+                        find.Length = textToReplace.Length;
+                        break;
+                    case SearchResult.TargetType.Title:
+                        find.Node.Name = find.Node.Name.Substring(0, find.Index) + textToReplace + find.Node.Name.Substring(find.Index + find.Length);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return find;
+        }
+
+        /// <summary>
+        /// ノードのテキストを全文置換します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="textToReplace"></param>
+        /// <param name="node"></param>
+        public void ReplaceAll(Regex regex, string textToReplace)
+        {
+            int offset = 0;
+            this.Content.BeginUpdate();
+            foreach (Match match in regex.Matches(this.Content.Text))
+            {
+                this.Content.Replace(offset + match.Index, match.Length, textToReplace);
+                offset += textToReplace.Length - match.Length;
+            }
+            this.Content.EndUpdate();
+        }
+
+        /// <summary>
+        /// ノード名のテキストを置換します
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="textToReplace"></param>
+        /// <param name="node"></param>
+        public void ReplaceNodeName(Regex regex, string textToReplace)
+        {
+            int offset = 0;
+            foreach (Match match in regex.Matches(this.Name))
+            {
+                this.Name = this.Name.Substring(0, match.Index + offset) + textToReplace + this.Name.Substring(match.Index + match.Length + offset);
+                offset += textToReplace.Length - match.Length;
+            }
+        }
+        #endregion FindAndReplace
 
         /// <summary>
         /// 破棄処理

@@ -235,7 +235,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public void FindNext(int selectionStart, int selectionLength, bool findPrev)
         {
-            this.FindAll();
+            this.HilightAll();
 
             var regex = this.GetRegEx(this.TextToFind, findPrev);
             if (regex == null)
@@ -246,8 +246,8 @@ namespace QuartetEditor.Models
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart : selectionStart + selectionLength;
 
             var result = this.WholeAllNode ? 
-                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode) :
-                            this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
+                            this.Document.Find(regex, startIndex, this.Document.SelectedNode) :
+                            this.Document.SelectedNode.Find(regex, startIndex, false, true);
 
             if (result != null)
             {
@@ -260,12 +260,12 @@ namespace QuartetEditor.Models
         }
 
         /// <summary>
-        /// すべて検索する
+        /// すべて検索してハイライト表示する
         /// </summary>
-        public void FindAll()
+        public void HilightAll()
         {
             if (!this.HilightText)
-            { 
+            {
                 // ハイライトを消去
                 this.FoundAll.OnNext(new List<SearchResult>());
                 return;
@@ -277,20 +277,9 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            var list = new List<SearchResult>();
-            var find = this.Find(regex, 0, this.Document.SelectedNode, false, false);
+            var find = this.Document.SelectedNode.FindAll(regex);
 
-            if (find != null)
-            {
-                do
-                {
-                    list.Add(find);
-                    find = this.Find(regex, find.Index + find.Length, this.Document.SelectedNode, false, false);
-
-                } while (find != null);
-
-            }
-            this.FoundAll.OnNext(list);
+            this.FoundAll.OnNext(find);
 
             return;
         }
@@ -298,8 +287,6 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 置換
         /// </summary>
-        /// <param name="selectionStart"></param>
-        /// <param name="selectionLength"></param>
         public void Replace(int selectionStart, int selectionLength, bool editorSelected)
         {
             var regex = this.GetRegEx(this.TextToFind, false);
@@ -311,9 +298,8 @@ namespace QuartetEditor.Models
             int startIndex = regex.Options.HasFlag(RegexOptions.RightToLeft) ? selectionStart + selectionLength : selectionStart;
 
             var result = this.WholeAllNode ?
-                            this.FindFromDocument(regex, startIndex, this.Document.SelectedNode, null, !editorSelected) :
-                            this.Find(regex, startIndex, this.Document.SelectedNode, false, true);
-
+                            this.Document.Find(regex, startIndex, this.Document.SelectedNode, null, !editorSelected) :
+                            this.Document.SelectedNode.Find(regex, startIndex, false, true);
 
             if (result != null)
             {
@@ -322,18 +308,7 @@ namespace QuartetEditor.Models
                     result.Node.IsSelected = true;
                 }
 
-                switch (result.Type)
-                {
-                    case SearchResult.TargetType.Content:
-                        result.Node.Content.Replace(result.Index, result.Length, this.TextToReplace);
-                        result.Length = this.TextToReplace.Length;
-                        break;
-                    case SearchResult.TargetType.Title:
-                        result.Node.Name = result.Node.Name.Substring(0, result.Index) + this.TextToReplace + result.Node.Name.Substring(result.Index + result.Length);
-                        break;
-                    default:
-                        break;
-                }
+                result.Node.Replace(result, this.TextToReplace);
             }
 
             this.Found.OnNext(result);
@@ -363,128 +338,10 @@ namespace QuartetEditor.Models
                 }
                 else
                 {
-                    this.Document.ReplaceAllText(regex, this.TextToReplace, this.Document.SelectedNode);
+                this.Document.SelectedNode.ReplaceAll(regex, this.TextToReplace);
                 }
 
             }));
-        }
-
-        /// <summary>
-        /// 次のテキストを検索
-        /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="start"></param>
-        /// <param name="node"></param>
-        /// <param name="findPrev"></param>
-        /// <param name="loop"></param>
-        /// <returns></returns>
-        private SearchResult Find(Regex regex, int start, Node node, bool findPrev, bool loop)
-        {
-            string text = node.Content.Text;
-            Match match = regex.Match(text, start);
-
-            if (loop && !match.Success)  // 見つからなかった場合先頭に戻って探索
-            {
-                if (regex.Options.HasFlag(RegexOptions.RightToLeft))
-                {
-                    match = regex.Match(text, text.Length);
-                }
-                else
-                {
-                    match = regex.Match(text, 0);
-                }
-            }
-
-            if (match.Success)
-            {
-                var loc = new SearchResult() { Type = Entities.SearchResult.TargetType.Content };
-                loc.Index = match.Index;
-                loc.Length = match.Length;
-                loc.Node = node;
-
-                return loc;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// ドキュメント全体から文字を検索します
-        /// </summary>
-        private SearchResult FindFromDocument(Regex regex, int start, Node node, Node startNode = null, bool titleFirst = false)
-        {
-            if (titleFirst)
-            {
-                var titlematch = FindFromNodeName(regex, node);
-
-                if (titlematch != null)
-                {
-                    return titlematch;
-                }
-            }
-
-            var result = this.Find(regex, start, node, false, false);
-
-            if (result != null)
-            {
-                return result;
-            }
-            else
-            {
-                var next = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
-                    this.Document.GetUp(node) ?? this.Document.FollowLastChild(node, -1) :
-                    this.Document.GetDown(node) ?? this.Document.Tree.First();
-
-                if (next != null)
-                {
-                    var titlematch = FindFromNodeName(regex, next);
-
-                    if (titlematch != null)
-                    {
-                        return titlematch;
-                    }
-
-                    if (node.ID == startNode?.ID)
-                    {
-                        return null;
-                    }
-
-                    return this.FindFromDocument(
-                        regex,
-                        regex.Options.HasFlag(RegexOptions.RightToLeft) ? next.Content.Text.Length : 0,
-                        next,
-                        startNode ?? node);
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// ノードが正規表現に一致するか判定する
-        /// </summary>
-        private static SearchResult FindFromNodeName(Regex regex, Node next)
-        {
-            Match titleMatch;
-            if (regex.Options.HasFlag(RegexOptions.RightToLeft))
-            {
-                titleMatch = regex.Match(next.Name, next.Name.Length);
-            }
-            else
-            {
-                titleMatch = regex.Match(next.Name, 0);
-            }
-
-            if (titleMatch.Success)
-            {
-                var loc = new SearchResult() { Type = SearchResult.TargetType.Title };
-                loc.Node = next;
-                loc.Index = titleMatch.Index;
-                loc.Length = titleMatch.Length;
-                return loc;
-            }
-
-            return null;
         }
     }
 }

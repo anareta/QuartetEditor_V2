@@ -267,7 +267,7 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public void UpdateHighlight()
         {
-            this.Model.FindAll();
+            this.Model.HilightAll();
         }
     }
 }
