@@ -275,7 +275,7 @@
                         Margin="0, 3, 0, 0"
                         Command="{Binding OpenFindDialogCommand}"
                         Style="{DynamicResource MetroCircleButtonStyle}"
-                        ToolTip="検索と置換">
+                        ToolTip="検索（Ctrl+F）">
                     <Rectangle Width="17"
                                Height="17"
                                Margin="0,0,0,0"

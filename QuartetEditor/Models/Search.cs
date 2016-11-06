@@ -319,7 +319,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public void ReplaceAll()
         {
-            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("この操作は元に戻せません。本当にすべて置換しますか？", (OK) =>
+            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("本当にすべて置換しますか？", (OK) =>
             {
                 if (!OK)
                 {
