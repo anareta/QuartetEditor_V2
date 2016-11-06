@@ -242,6 +242,7 @@ namespace QuartetEditor.Models
                     {
                         // 失敗していない場合、QuartetEditorDescriptionをNodeとして設定
                         this.Content.Load(model);
+                        this.IsEdited = false;
                         this.FilePath = fromTextFile ? null : path;
                     }
                 }
