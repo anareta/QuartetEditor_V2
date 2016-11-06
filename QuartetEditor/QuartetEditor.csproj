@@ -61,10 +61,11 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>E516091100D6B81A42A0EA3A4F42F0EDCD33D663</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>02CB0CAB6C6E2AA307BAF5DEEBAC4E129DC5C5ED</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>QuartetEditor_一時キー.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
