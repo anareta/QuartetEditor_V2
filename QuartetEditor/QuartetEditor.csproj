@@ -382,6 +382,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Assets\ExportHTMLStyle.css" />
     <Content Include="icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

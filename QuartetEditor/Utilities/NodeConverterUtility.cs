@@ -198,6 +198,20 @@ namespace QuartetEditor.Utilities
             export.AppendLine("<html lang=\"ja\">");
             export.AppendLine(@"<head>");
             export.AppendLine("<meta charset=\"utf-8\">");
+            export.AppendLine("<style type=\"text/css\" media=\"screen\">");
+            {
+                string css;
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                using (var resourceStream = assembly.GetManifestResourceStream("QuartetEditor.Assets.ExportHTMLStyle.css"))
+                {
+                    using (var resourceReader = new System.IO.StreamReader(resourceStream))
+                    {
+                        css = resourceReader.ReadToEnd();
+                    }
+                }
+                export.AppendLine(css);
+            }
+            export.AppendLine("</style>");
             export.AppendLine(string.Format(@"<title>{0}</title>", HttpUtility.HtmlEncode(title)));
             export.AppendLine(@"</head>");
             export.AppendLine(@"<body>");
@@ -266,7 +280,7 @@ namespace QuartetEditor.Utilities
 
             // コンテンツ変換
             result.AppendLine(string.Format("<p class=\"Level{0}\">", level));
-            System.IO.StringReader rs = new System.IO.StringReader(item.Content);
+            System.IO.StringReader rs = new System.IO.StringReader(item.Content.TrimEnd());
             while (rs.Peek() > -1)
             {
                 result.AppendLine(string.Format(@"{0}<br>", HttpUtility.HtmlEncode(rs.ReadLine())));
