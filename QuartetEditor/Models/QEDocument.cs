@@ -74,7 +74,7 @@ namespace QuartetEditor.Models
         }
 
 
-        #region File
+#region File
 
         /// <summary>
         /// ViewへのSavePath処理要求
@@ -96,6 +96,11 @@ namespace QuartetEditor.Models
             get { return this._IsEdited; }
             set { this.SetProperty(ref this._IsEdited, value); }
         }
+
+        /// <summary>
+        /// 開いているファイルのタイプ
+        /// </summary>
+        private FileType? Type { get; set; }
 
         /// <summary>
         /// ファイル名のフルパス
@@ -147,9 +152,10 @@ namespace QuartetEditor.Models
             {
                 if (path != null && !string.IsNullOrWhiteSpace(path))
                 {
-                    if (this.Save(path))
+                    if (this.Save(path, FileType.QEDocument))
                     {
                         this.FilePath = path;
+                        this.Type = FileType.QEDocument;
                         this.Content.OffEditFlag();
                         this.IsEdited = false;
                         result = true;
@@ -168,23 +174,46 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool Save(string path)
         {
+            return this.Save(path, this.Type ?? FileType.QEDocument);
+        }
+        /// <summary>
+        /// ファイルを保存する
+        /// </summary>
+        private bool Save(string path, FileType type)
+        {
             try
             {
                 bool overwrite = File.Exists(path);
+                bool result = false;
                 string overwiteSuffix = Path.GetRandomFileName().Substring(0, 5);
                 if (overwrite)
                 {
                     File.Move(path, path + "." + overwiteSuffix);
                 }
 
-                var data = new QuartetEditorDescription(this.Content.Tree);
-                FileUtility.SaveJsonObject(path, data);
+                switch (type)
+                {
+                    case FileType.QEDocument:
+                        {
+                            var data = new QuartetEditorDescription(this.Content.Tree);
+                            result = FileUtility.SaveJsonObject(path, data);
+                        }
+                        break;
+                    case FileType.TreeText:
+                        {
+                            var data = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree));
+                            result = FileUtility.SaveText(path, data, Encoding.UTF8);
+                        }
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
 
-                if (overwrite)
+                if (result && overwrite)
                 {
                     File.Delete(path + "." + overwiteSuffix);
                 }
-                return true;
+                return result;
             }
             catch
             {
@@ -219,39 +248,43 @@ namespace QuartetEditor.Models
                     return;
                 }
 
-                bool fail = false;
-                bool fromTextFile = false;
+                FileType? fileType = null;
                 try
                 {
                     QuartetEditorDescription model;
-                    if (FileUtility.LoadJsonObject(path, out model) == false)
+                    if (FileUtility.LoadJsonObject(path, out model) == true)
                     {
-                        string treeText;
-                        if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == false ||
-                            NodeConverterUtility.FromTreeText(treeText, out model) == false)
-                        {
-                            fail = true;
-                        }
-                        else
-                        {
-                            fromTextFile = true;
-                        }
+                        // QEDファイルとして読み込み成功
+                        fileType = FileType.QEDocument;
                     }
 
-                    if (!fail)
+                    if (!fileType.HasValue)
+                    {
+                        string treeText;
+                        if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == true &&
+                            NodeConverterUtility.FromTreeText(treeText, out model) == true)
+                        {
+                            // 階層付きテキストファイルとして読み込み成功
+                            fileType = FileType.TreeText;
+                        }
+
+                    }
+
+                    if (fileType.HasValue)
                     {
                         // 失敗していない場合、QuartetEditorDescriptionをNodeとして設定
                         this.Content.Load(model);
                         this.IsEdited = false;
-                        this.FilePath = fromTextFile ? null : path;
+                        this.FilePath = path;
+                        this.Type = fileType.Value;
                     }
                 }
                 catch
                 {
-                    fail = true;
+
                 }
 
-                if (fail)
+                if (!fileType.HasValue)
                 {
                     this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
                 }
@@ -305,7 +338,7 @@ namespace QuartetEditor.Models
                         filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                         break;
                     default:
-                        break;
+                        throw new NotImplementedException();
                 }
 
                 // 保存する
@@ -339,5 +372,24 @@ namespace QuartetEditor.Models
             this.Disposable.Dispose();
             this.Content.Dispose();
         }
+
+#region Enum
+
+        /// <summary>
+        /// ファイルの種別
+        /// </summary>
+        enum FileType
+        {
+            /// <summary>
+            /// QuartetEditorDocument形式
+            /// </summary>
+            QEDocument,
+
+            /// <summary>
+            /// 階層付きテキスト形式
+            /// </summary>
+            TreeText,
+        }
+#endregion
     }
 }
