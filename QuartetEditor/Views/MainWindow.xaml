@@ -1,0 +1,666 @@
+﻿<metro:MetroWindow x:Class="QuartetEditor.Views.MainWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:behavior="clr-namespace:QuartetEditor.Views.Behaviors"
+                   xmlns:controls="clr-namespace:QuartetEditor.Views.Controls"
+                   xmlns:converters="clr-namespace:QuartetEditor.Views.Converters"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
+                   xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+                   xmlns:enum="clr-namespace:QuartetEditor.Enums"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:local="clr-namespace:QuartetEditor.Views"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
+                   xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+                   xmlns:prism="http://prismlibrary.com/"
+                   Title="{Binding WindowTitle.Value}"
+                   Width="800"
+                   Height="600"
+                   MinWidth="300"
+                   MinHeight="200"
+                   BorderBrush="{DynamicResource AccentColorBrush}"
+                   BorderThickness="0"
+                   EnableDWMDropShadow="True"
+                   ResizeMode="CanResizeWithGrip"
+                   SaveWindowPosition="True"
+                   TitleCaps="False"
+                   WindowTransitionsEnabled="False"
+                   prism:ViewModelLocator.AutoWireViewModel="True"
+                   mc:Ignorable="d">
+
+    <metro:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <ContextMenu x:Key="TreeViewContextMenu" FontSize="12">
+                <MenuItem Command="{Binding NameEditCommand}" Header="名前を変更(F2)" />
+                <MenuItem Header="移動">
+                    <MenuItem Command="{Binding MoveUpCommand}" Header="上に移動(Ctrl+↑)" />
+                    <MenuItem Command="{Binding MoveDownCommand}" Header="下に移動(Ctrl+↓)" />
+                </MenuItem>
+                <MenuItem Header="追加">
+                    <MenuItem Command="{Binding AddNodeSameCommand}" Header="同階層に追加(Ctrl+I)" />
+                    <MenuItem Command="{Binding AddNodeLowerCommand}" Header="下階層に追加(Ctrl+E)" />
+                    <MenuItem Command="{Binding ReproduceCommand}" Header="ノードを複製(Ctrl+D)" />
+                    <MenuItem Command="{Binding AddNodeFromHeaderCommand}" Header="見出しから自動生成" />
+                </MenuItem>
+                <MenuItem Command="{Binding DeleteNodeCommand}" Header="削除（Del）" />
+                <Separator />
+                <MenuItem Command="{Binding UndoCommand}" Header="元に戻す(Ctrl+Z)" />
+                <MenuItem Command="{Binding RedoCommand}" Header="やり直し(Ctrl+Y)" />
+            </ContextMenu>
+            <Style BasedOn="{StaticResource {x:Type TreeView}}" TargetType="{x:Type TreeView}">
+                <Setter Property="ContextMenu" Value="{StaticResource TreeViewContextMenu}" />
+                <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush10}" />
+            </Style>
+
+            <Style TargetType="{x:Type GridSplitter}">
+                <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush10}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="IsTabStop" Value="False" />
+            </Style>
+
+            <ContextMenu x:Key="EditorContextMenu">
+                <MenuItem Command="ApplicationCommands.Copy" />
+                <MenuItem Command="ApplicationCommands.Cut" />
+                <MenuItem Command="ApplicationCommands.Paste" />
+            </ContextMenu>
+
+            <ContextMenu x:Key="ViewerContextMenu">
+                <MenuItem Command="ApplicationCommands.Copy" />
+            </ContextMenu>
+
+            <Style TargetType="{x:Type controls:BindableTextEditor}">
+                <Setter Property="ContextMenu" Value="{StaticResource EditorContextMenu}" />
+                <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush9}" />
+                <Setter Property="Foreground" Value="{StaticResource ResourceKey=TextBrush}" />
+                <Style.Triggers>
+                    <Trigger Property="IsReadOnly" Value="true">
+                        <Setter Property="Background" Value="{StaticResource ResourceKey=GrayBrush8}" />
+                        <Setter Property="ContextMenu" Value="{StaticResource ViewerContextMenu}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+            <converters:Boolean2TextWrapping x:Key="Boolean2TextWrapping" />
+        </ResourceDictionary>
+    </metro:MetroWindow.Resources>
+
+    <metro:MetroWindow.InputBindings>
+        <KeyBinding Key="N"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="C"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_CenterTextEditor,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="T"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_TopTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="L"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_LeftTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="B"
+                    Command="{Binding SetFocusCommand}"
+                    CommandParameter="{Binding ElementName=_BottomTextBox,
+                                               Path=Name}"
+                    Modifiers="Alt"/>
+        <KeyBinding Key="S"
+                    Command="{Binding SaveCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="L"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Left}"
+                    Modifiers="Control" />
+        <KeyBinding Key="T"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Top}"
+                    Modifiers="Control" />
+        <KeyBinding Key="B"
+                    Command="{Binding PanelChangeCommand}"
+                    CommandParameter="{x:Static enum:PanelKindEnum.Bottom}"
+                    Modifiers="Control" />
+        <KeyBinding Key="F"
+                    Command="{Binding OpenFindDialogCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="R"
+                    Command="{Binding OpenReplaceDialogCommand}"
+                    Modifiers="Control" />
+        <KeyBinding Key="F3"
+                    Command="{Binding FindNextCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}" />
+        <KeyBinding Key="F3"
+                    Command="{Binding FindPrevCommand}"
+                    CommandParameter="{Binding ElementName=_NodeView,
+                                               Path=Name}"
+                    Modifiers="Shift"/>
+    </metro:MetroWindow.InputBindings>
+
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding MessageDialogRequest}">
+            <messenger:MessageDialogAction />
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
+            <messenger:PanelOpenAction />
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding SetFocusRequest}">
+            <messenger:SetFocusAction />
+        </prism:InteractionRequestTrigger>
+
+        <prism:InteractionRequestTrigger SourceObject="{Binding FindReplaceDialogRequest}">
+            <messenger:FindReplaceDialogRequestAction />
+        </prism:InteractionRequestTrigger>
+
+        <i:EventTrigger EventName="ContentRendered">
+            <ei:CallMethodAction MethodName="Initialize" TargetObject="{Binding}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <metro:MetroWindow.Flyouts>
+        <metro:FlyoutsControl>
+            <metro:Flyout x:Name="About"
+                          Width="500"
+                          Header="このアプリケーションについて"
+                          IsOpen="{Binding IsAboutOpen,
+                                           Mode=TwoWay}"
+                          IsPinned="False"
+                          Position="Right">
+                <local:AboutFlyout />
+            </metro:Flyout>
+
+            <local:ConfigFlyout x:Name="ConfigFlyout"
+                                Width="300"
+                                DataContext="{Binding ConfigFlyoutViewModel}"
+                                Header="設定"
+                                IsPinned="False"
+                                Position="Right" />
+
+        </metro:FlyoutsControl>
+    </metro:MetroWindow.Flyouts>
+
+    <DockPanel AllowDrop="True">
+        <Rectangle Height="15" DockPanel.Dock="Bottom" />
+        <Grid Margin="0,0,0,0" DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button x:Name="_OpenButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding OpenCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="ファイルを開く">
+                    <Rectangle Width="20"
+                               Height="16"
+                               Margin="3,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_folder_open}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_SaveButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding SaveCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="上書き保存（Ctrl+S）">
+                    <Rectangle Width="17"
+                               Height="20"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_page_bold}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_RenameButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding RenameSaveCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="別名で保存">
+                    <Rectangle Width="17"
+                               Height="20"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_page_multiple}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_ExportButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding OpenExportDialogCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="エクスポート">
+                    <Rectangle Width="17"
+                               Height="20"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_page_arrow}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_FindReplaceButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding OpenFindDialogCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="検索（Ctrl+F）">
+                    <Rectangle Width="17"
+                               Height="17"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_magnify}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_ConfigButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding ConfigFlyoutViewModel.OpenCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="設定">
+                    <Rectangle Width="17"
+                               Height="17"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+
+                <Button x:Name="_AboutButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0, 3, 0, 0"
+                        Command="{Binding OpenAboutCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        ToolTip="このアプリケーションについて">
+                    <Rectangle Width="17"
+                               Height="17"
+                               Margin="0,0,0,0"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_question}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        VerticalAlignment="Bottom"
+                        Orientation="Horizontal">
+                <ToggleButton x:Name="_LeftPanelSwitch"
+                              Width="35"
+                              Height="35"
+                              Margin="0, 0, 0, 0"
+                              VerticalAlignment="Bottom"
+                              IsChecked="{Binding LeftPanelOpen.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Style="{DynamicResource MetroCircleToggleButtonStyle}"
+                              ToolTip="左パネル（Ctrl＋L）">
+                    <Rectangle Width="15"
+                               Height="15"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </ToggleButton>
+                <ToggleButton x:Name="_TopPanelSwitch"
+                              Width="35"
+                              Height="35"
+                              Margin="0, 0, 0, 0"
+                              VerticalAlignment="Bottom"
+                              IsChecked="{Binding TopPanelOpen.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Style="{DynamicResource MetroCircleToggleButtonStyle}"
+                              ToolTip="上パネル（Ctrl＋T）">
+                    <Rectangle Width="15"
+                               Height="15"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}">
+                                <VisualBrush.RelativeTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90" CenterX="0.5" CenterY="0.5" />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </VisualBrush.RelativeTransform>
+                            </VisualBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </ToggleButton>
+                <ToggleButton x:Name="_BottomPanelSwitch"
+                              Width="35"
+                              Height="35"
+                              Margin="0, 0, 0, 0"
+                              VerticalAlignment="Bottom"
+                              IsChecked="{Binding BottomPanelOpen.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}"
+                              Style="{DynamicResource MetroCircleToggleButtonStyle}"
+                              ToolTip="下参照パネル（Ctrl+B）">
+                    <Rectangle Width="15"
+                               Height="15"
+                               Fill="{DynamicResource BlackBrush}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}">
+                                <VisualBrush.RelativeTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="270" CenterX="0.5" CenterY="0.5" />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </VisualBrush.RelativeTransform>
+                            </VisualBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </ToggleButton>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="_MainGrid"
+              Margin="0,5,0,0"
+              DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="50"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="4*" MinWidth="100"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"
+                    BorderThickness="2"
+                    Focusable="False">
+                <i:Interaction.Behaviors>
+                    <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush10}" />
+                </i:Interaction.Behaviors>
+                <TreeView x:Name="_NodeView"
+                          Grid.Column="0"
+                          Margin="0"
+                          AllowDrop="True"
+                          ItemsSource="{Binding Tree}"
+                          KeyboardNavigation.IsTabStop="True"
+                          KeyboardNavigation.TabNavigation="Once"
+                          Padding="0"
+                          FocusVisualStyle="{x:Null}">
+                    <i:Interaction.Behaviors>
+                        <dragdrop:DragAcceptBehavior Description="{Binding DragAcceptDescription}" />
+                        <behavior:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}" />
+                        <behavior:CursorKeyBindingBehavior DownCtrlCommand="{Binding MoveDownCommand}"
+                                                           LeftCtrlCommand="{Binding MoveParentCommand}"
+                                                           RightCtrlCommand="{Binding MoveChildCommand}"
+                                                           UpCtrlCommand="{Binding MoveUpCommand}" />
+                        <behavior:ClickToFocusBehavior />
+                    </i:Interaction.Behaviors>
+
+                    <TreeView.InputBindings>
+                        <KeyBinding Key="F2" Command="{Binding NameEditCommand}" />
+                        <KeyBinding Key="Delete" Command="{Binding DeleteNodeCommand}" />
+                        <KeyBinding Key="E"
+                                    Command="{Binding AddNodeLowerCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="I"
+                                    Command="{Binding AddNodeSameCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="D"
+                                    Command="{Binding ReproduceCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="Z"
+                                    Command="{Binding UndoCommand}"
+                                    Modifiers="Ctrl" />
+                        <KeyBinding Key="Y"
+                                    Command="{Binding RedoCommand}"
+                                    Modifiers="Ctrl" />
+                    </TreeView.InputBindings>
+
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
+                            <Border>
+                                <i:Interaction.Behaviors>
+                                    <dragdrop:DragStartBehavior AllowedEffects="All" DragDropData="{Binding}" />
+                                </i:Interaction.Behaviors>
+                                <controls:EditBox Margin="3"
+                                                  CanEdit="{Binding IsNameEditMode.Value,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                  DropPosition="{Binding DropPosition.Value,
+                                                                         Mode=TwoWay,
+                                                                         UpdateSourceTrigger=PropertyChanged}"
+                                                  FontFamily="Meiryo UI"
+                                                  FontSize="13"
+                                                  IsDragOver="{Binding IsDragOver.Value,
+                                                                       Mode=TwoWay,
+                                                                       UpdateSourceTrigger=PropertyChanged}"
+                                                  IsMarked="{Binding IsEdited.Value,
+                                                                     Mode=TwoWay,
+                                                                     UpdateSourceTrigger=PropertyChanged}"
+                                                  IsReferred="{Binding IsReferred.Value,
+                                                                       Mode=TwoWay,
+                                                                       UpdateSourceTrigger=PropertyChanged}"
+                                                  Text="{Binding Name.Value,
+                                                                 Mode=TwoWay,
+                                                                 UpdateSourceTrigger=PropertyChanged}" />
+                            </Border>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                    <TreeView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource MetroTreeViewItem}" TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded.Value, Mode=TwoWay}" />
+                            <Setter Property="Background" Value="{Binding Background, ElementName=_NodeView}" />
+                            <Setter Property="ItemsPanel">
+                                <Setter.Value>
+                                    <ItemsPanelTemplate>
+                                        <!--  ※マージンを変える場合はここ  -->
+                                        <StackPanel Margin="0,0,0,0" IsItemsHost="True" />
+                                    </ItemsPanelTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </Border>
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"
+                          BorderThickness="0" />
+            <Grid x:Name="_EditorGrid"
+                  Grid.Column="2"
+                  DockPanel.Dock="Bottom"
+                  AllowDrop="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" MinHeight="20"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="5*" MinHeight="20"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" MinHeight="20"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" MinWidth="20"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="3*" MinWidth="20"/>
+                </Grid.ColumnDefinitions>
+
+                <i:Interaction.Behaviors>
+                    <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
+                </i:Interaction.Behaviors>
+
+                <Border Grid.Row="0"
+                        Grid.RowSpan="5"
+                        Grid.Column="0"
+                        BorderThickness="2"
+                        Focusable="False">
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_LeftTextBox"
+                                                 BindableText="{Binding Path=ParentTextContent.Value,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.LeftTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.LeftTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <GridSplitter x:Name="_LeftSplitter"
+                              Grid.Row="0"
+                              Grid.RowSpan="5"
+                              Grid.Column="1"
+                              Width="5"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Stretch"
+                              BorderThickness="0" />
+                <Border Grid.Row="0"
+                        Grid.Column="2"
+                        BorderThickness="2"
+                        Focusable="False">
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_TopTextBox"
+                                                 BindableText="{Binding Path=PrevTextContent.Value,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+                <GridSplitter x:Name="_TopSplitter"
+                              Grid.Row="1"
+                              Grid.Column="2"
+                              Height="5"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              BorderThickness="0" />
+                <Border Grid.Row="2"
+                        Grid.Column="2"
+                        BorderThickness="2"
+                        Focusable="False">
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush9}" />
+                    </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_CenterTextEditor"
+                                                 Document="{Binding Path=TextContent.Value,
+                                                                    Mode=OneWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.CenterTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.CenterTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 HeaderCharactors="{Binding Path=Config.HeaderCharactors,
+                                                                            Mode=TwoWay,
+                                                                            UpdateSourceTrigger=PropertyChanged}"
+                                                 HighlightCurrentLine="{Binding Path=Config.HighlightCurrentLine,
+                                                                                Mode=TwoWay,
+                                                                                UpdateSourceTrigger=PropertyChanged}"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 LineHeight="{Binding Path=Config.CenterTextEditorLineHeight,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
+                                                 Padding="10,8,2,2"
+                                                 ShowLineNumbers="{Binding Path=Config.ShowLineNumbers,
+                                                                           Mode=TwoWay,
+                                                                           UpdateSourceTrigger=PropertyChanged}"
+                                                 SyntaxHighlighting="Custom HighlightingRules"
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 TextOptions.TextHintingMode="Fixed"
+                                                 TextOptions.TextRenderingMode="ClearType"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+
+                <GridSplitter x:Name="_BottomSplitter"
+                              Grid.Row="3"
+                              Grid.Column="2"
+                              Height="5"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Center"
+                              BorderThickness="0" />
+                <Border Grid.Row="4"
+                        Grid.Column="2"
+                        BorderThickness="2"
+                        Focusable="False">
+                    <i:Interaction.Behaviors>
+                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
+                    </i:Interaction.Behaviors>
+                    <controls:BindableTextEditor x:Name="_BottomTextBox"
+                                                 BindableText="{Binding Path=NextTextContent.Value,
+                                                                        Mode=OneWay,
+                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                 FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily,
+                                                                      Mode=TwoWay,
+                                                                      UpdateSourceTrigger=PropertyChanged}"
+                                                 FontSize="{Binding Path=Config.TopBottomTextEditorFontSize,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                 HorizontalScrollBarVisibility="Auto"
+                                                 IsReadOnly="True"
+                                                 TextOptions.TextFormattingMode="Display"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</metro:MetroWindow>

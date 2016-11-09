@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="QuartetEditor.Views.Controls.EditBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:QuartetEditor.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             MinWidth="40"
+             PreviewDragOver="UserControl_PreviewDragOver"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <Grid>
+        <Border Name="_TextBlockBorder"
+                Width="{Binding ActualWidth,
+                                ElementName=_TextBlock}"
+                Height="{Binding ActualHeight,
+                                 ElementName=_TextBlock}"
+                HorizontalAlignment="Left"
+                BorderBrush="{StaticResource ResourceKey=HighlightBrush}"
+                BorderThickness="1.5"
+                Visibility="Hidden" />
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Name="_TextBlockReferred"
+                       Width="Auto"
+                       MinWidth="{Binding MinWidth,
+                                          ElementName=_TextBlock}"
+                       Margin="0,0,0,0"
+                       HorizontalAlignment="Left"
+                       Foreground="{StaticResource ResourceKey=AccentColorBrush}"
+                       Text="{Binding Text,
+                                      ElementName=_TextBlock}"
+                       Visibility="Collapsed" />
+            <TextBlock Name="_TextBlock"
+                       Width="Auto"
+                       Height="Auto"
+                       MinWidth="40"
+                       Margin="0,0,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center" />
+            <Ellipse Name="_Mark"
+                     Width="5"
+                     Height="5"
+                     Margin="0,0,-10,0"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Center"
+                     Fill="{StaticResource ResourceKey=AccentColorBrush}"
+                     Visibility="Collapsed" />
+        </StackPanel>
+
+        <TextBox Name="_TextEditor"
+                 Margin="-2"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Center"
+                 BorderThickness="0"
+                 KeyDown="TextEditor_KeyDown"
+                 LostFocus="TextEditor_LostFocus"
+                 LostKeyboardFocus="TextEditor_LostKeyboardFocus"
+                 TextBlock.FontSize="{Binding FontSize,
+                                              ElementName=_TextBlock}"
+                 Visibility="Collapsed" />
+
+    </Grid>
+</UserControl>

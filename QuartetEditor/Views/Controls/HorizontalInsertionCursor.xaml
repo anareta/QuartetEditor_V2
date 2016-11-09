@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="QuartetEditor.Views.Controls.HorizontalInsertionCursor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:QuartetEditor.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             MinWidth="40"
+             Margin="0,-3,0,-3"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <Grid x:Name="LayoutRoot">
+        <Grid Margin="0,-5,0,-5">
+            <Polygon HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Fill="{StaticResource ResourceKey=HighlightBrush}"
+                     Points="0,0 0,8 8,4" />
+            <Rectangle Height="1"
+                       Margin="0,0"
+                       VerticalAlignment="Center"
+                       Fill="{StaticResource ResourceKey=HighlightBrush}"
+                       Stroke="{StaticResource ResourceKey=HighlightBrush}"
+                       StrokeThickness="0" />
+            <Polygon HorizontalAlignment="Right"
+                     VerticalAlignment="Center"
+                     Fill="{StaticResource ResourceKey=HighlightBrush}"
+                     Points="0,0 -8,4 0,8" />
+        </Grid>
+    </Grid>
+</UserControl>
