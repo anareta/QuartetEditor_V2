@@ -88,16 +88,19 @@
                                 Margin="5"
                                 HorizontalAlignment="Right"
                                 Command="{Binding FindNextCommand}"
+                                ToolTip="次へ（F3）"
                                 Content="次へ" />
                         <Button Width="80"
                                 Margin="5"
                                 HorizontalAlignment="Right"
                                 Command="{Binding ReplaceCommand}"
+                                ToolTip="置換"
                                 Content="置換" />
                         <Button Width="80"
                                 Margin="5"
                                 HorizontalAlignment="Right"
                                 Command="{Binding ReplaceAllCommand}"
+                                ToolTip="すべて置換"
                                 Content="すべて置換" />
                     </StackPanel>
                 </StackPanel>
