@@ -3,6 +3,7 @@ using QuartetEditor.Models;
 using QuartetEditor.Utilities.ConverterExtensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -168,12 +169,20 @@ namespace QuartetEditor.Utilities
 
             // コンテンツ変換
             string content = "";
-            if (item.Content.StartsWith("."))
+            using (var sr = new StringReader(item.Content))
             {
-                // 本文がピリオドで始まる場合は半角空白を先頭に入れる
-                content += " ";
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line.StartsWith("."))
+                    {
+                        // 各行がピリオドで始まる場合は半角空白を先頭に入れる
+                        content += " ";
+                    }
+                    content += line + Environment.NewLine;
+                }
             }
-            content += item.Content.ToString();
+
             result.AppendLine(content);
 
             foreach (var child in item.Children)
@@ -382,16 +391,26 @@ namespace QuartetEditor.Utilities
                         contentEndPos = treeText.Length;
                     }
 
-                    content = treeText.SubstringByIndex(contentStartPos, contentEndPos);
-                    if (content.StartsWith(" ."))
+                    using (var sr = new StringReader(treeText.SubstringByIndex(contentStartPos, contentEndPos)))
                     {
-                        // コンテンツが"."から始まるとき、空白でエスケープされているため空白を削除
-                        content = content.SafeSubstring(1);
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            if (line.StartsWith(" ."))
+                            {
+                                // コンテンツの各行が"."から始まるとき、空白でエスケープされているため空白を削除
+                                content += line.SafeSubstring(1) + Environment.NewLine;
+                            }
+                            else
+                            {
+                                content += line + Environment.NewLine;
+                            }
+                        }
                     }
                     index = contentEndPos + lineFeed.Length;
                 }
 
-                var node = new QuartetEditorDescriptionItem() { Name = title, Content = content.Replace(lineFeed, Environment.NewLine) };
+                var node = new QuartetEditorDescriptionItem() { Name = title, Content = content };
 
                 if (treeText.Length > index)
                 {
