@@ -633,13 +633,13 @@ namespace QuartetEditor.ViewModels
 
             this.NameEditCommand.Subscribe(_ => this.Model.Content.CallNameEditMode()).AddTo(this.Disposable);
 
-            this.UndoCommand = new ReactiveCommand(this.Model.Content.CanUndo, false);
+            this.UndoCommand = new ReactiveCommand(this.Model.Content.ChangedCanUndo, false);
             this.UndoCommand.Subscribe(_ =>
             {
                 this.Model.Content.Undo();
             }).AddTo(this.Disposable);
 
-            this.RedoCommand = new ReactiveCommand(this.Model.Content.CanRedo, false);
+            this.RedoCommand = new ReactiveCommand(this.Model.Content.ChangedCanRedo, false);
             this.RedoCommand.Subscribe(_ => this.Model.Content.Redo()).AddTo(this.Disposable);
 
             this.DeleteNodeCommand.Subscribe(_ => this.Model.Content.DeleteNode()).AddTo(this.Disposable);
@@ -652,16 +652,16 @@ namespace QuartetEditor.ViewModels
 
             this.AddNodeFromHeaderCommand.Subscribe(_ => this.Model.Content.AddNodeFromHeader()).AddTo(this.Disposable);
 
-            this.MoveUpCommand = new ReactiveCommand(this.Model.Content.CanMoveUp, false);
+            this.MoveUpCommand = new ReactiveCommand(this.Model.Content.ChangedCanMoveUp, false);
             this.MoveUpCommand.Subscribe(_ => this.Model.Content.MoveUp()).AddTo(this.Disposable);
 
-            this.MoveDownCommand = new ReactiveCommand(this.Model.Content.CanMoveDown, false);
+            this.MoveDownCommand = new ReactiveCommand(this.Model.Content.ChangedCanMoveDown, false);
             this.MoveDownCommand.Subscribe(_ => this.Model.Content.MoveDown()).AddTo(this.Disposable);
 
-            this.MoveChildCommand = new ReactiveCommand(this.Model.Content.CanMoveChild, false);
+            this.MoveChildCommand = new ReactiveCommand(this.Model.Content.ChangedCanMoveChild, false);
             this.MoveChildCommand.Subscribe(_ => this.Model.Content.MoveChild()).AddTo(this.Disposable);
 
-            this.MoveParentCommand = new ReactiveCommand(this.Model.Content.CanMoveParent, false);
+            this.MoveParentCommand = new ReactiveCommand(this.Model.Content.ChangedCanMoveParent, false);
             this.MoveParentCommand.Subscribe(_ => this.Model.Content.MoveParent()).AddTo(this.Disposable);
 
             #endregion NodeManipulation

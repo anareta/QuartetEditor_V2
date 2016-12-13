@@ -26,7 +26,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ユーザーへのエラー通知要求
         /// </summary>
-        public Subject<string> ShowErrorMessageRequest { get; } = new Subject<string>();
+        public IObservable<string> ShowErrorMessageRequest => _ShowErrorMessageRequest;
+
+        private Subject<string> _ShowErrorMessageRequest = new Subject<string>();
 
         /// <summary>
         /// システムのデータ
@@ -79,12 +81,16 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ViewへのSavePath処理要求
         /// </summary>
-        public Subject<Action<string>> SavePathRequest { get; } = new Subject<Action<string>>();
+        public IObservable<Action<string>> SavePathRequest => _SavePathRequest;
+
+        private Subject<Action<string>> _SavePathRequest = new Subject<Action<string>>();
 
         /// <summary>
         /// ViewへのOpenPath処理要求
         /// </summary>
-        public Subject<Action<string>> OpenPathRequest { get; } = new Subject<Action<string>>();
+        public IObservable<Action<string>> OpenPathRequest => _OpenPathRequest;
+
+        private Subject<Action<string>> _OpenPathRequest = new Subject<Action<string>>();
 
         /// <summary>
         /// 編集されたか
@@ -135,7 +141,7 @@ namespace QuartetEditor.Models
             }
             else
             {
-                this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。\n別の場所に保存してください。");
+                this._ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。\n別の場所に保存してください。");
             }
 
             return false;
@@ -148,7 +154,7 @@ namespace QuartetEditor.Models
         public bool SaveAs()
         {
             bool result = false;
-            this.SavePathRequest.OnNext(path =>
+            this._SavePathRequest.OnNext(path =>
             {
                 if (path != null && !string.IsNullOrWhiteSpace(path))
                 {
@@ -162,7 +168,7 @@ namespace QuartetEditor.Models
                     }
                     else
                     {
-                        this.ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
+                        this._ShowErrorMessageRequest.OnNext("ファイルの保存に失敗しました。");
                     }
                 }
             });
@@ -228,7 +234,7 @@ namespace QuartetEditor.Models
         /// <returns></returns>
         public void OpenQED()
         {
-            this.OpenPathRequest.OnNext(path =>
+            this._OpenPathRequest.OnNext(path =>
             {
                 this.Load(path);
             });
@@ -286,7 +292,7 @@ namespace QuartetEditor.Models
 
                 if (!fileType.HasValue)
                 {
-                    this.ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
+                    this._ShowErrorMessageRequest.OnNext("ファイルの読み込みに失敗しました。");
                 }
             }
         }
@@ -307,7 +313,10 @@ namespace QuartetEditor.Models
         /// <summary>
         /// Viewへのエクスポート先SavePath処理要求
         /// </summary>
-        public Subject<Tuple<string, string, Action<string>>> ExportSavePathRequest { get; } = new Subject<Tuple<string, string, Action<string>>>();
+        public IObservable<Tuple<string, string, Action<string>>> ExportSavePathRequest => _ExportSavePathRequest;
+
+        private Subject<Tuple<string, string, Action<string>>> _ExportSavePathRequest = new Subject<Tuple<string, string, Action<string>>>();
+
 
         /// <summary>
         /// エクスポート
@@ -342,7 +351,7 @@ namespace QuartetEditor.Models
                 }
 
                 // 保存する
-                this.ExportSavePathRequest.OnNext(new Tuple<string, string, Action<string>>(filter, ext, (path) =>
+                this._ExportSavePathRequest.OnNext(new Tuple<string, string, Action<string>>(filter, ext, (path) =>
                 {
                     if (!string.IsNullOrWhiteSpace(path))
                     {
@@ -358,7 +367,7 @@ namespace QuartetEditor.Models
 
             if (fail)
             {
-                this.ShowErrorMessageRequest.OnNext("エクスポートに失敗しました…");
+                this._ShowErrorMessageRequest.OnNext("エクスポートに失敗しました…");
             }
         }
 

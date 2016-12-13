@@ -34,7 +34,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ノードの変更状態を通知
         /// </summary>
-        public Subject<bool> NodeEdited = new Subject<bool>();
+        public IObservable<bool> NodeEdited => _NodeEdited;
+
+        private Subject<bool> _NodeEdited = new Subject<bool>();
 
         /// <summary>
         /// 内部データクラス
@@ -190,11 +192,11 @@ namespace QuartetEditor.Models
                 .Merge(this.TreeSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
                 .Subscribe(x =>
                 {
-                    this.NodeEdited.OnNext(true);
+                    this._NodeEdited.OnNext(true);
                 }).AddTo(this.Disposable);
 
             this.TreeSource.CollectionChangedAsObservable()
-                .Subscribe(x => this.NodeEdited.OnNext(true) )
+                .Subscribe(x => this._NodeEdited.OnNext(true) )
                 .AddTo(this.Disposable);
 
             #region ViewState
@@ -208,17 +210,17 @@ namespace QuartetEditor.Models
                 this.ParentNode = this.GetParent(this.SelectedNode);
                 this.UpdatePanelReffer();
 
-                this.CanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
-                this.CanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);
-                this.CanMoveChild.OnNext(this.GetOlder(this.SelectedNode) != null);
-                this.CanMoveParent.OnNext(this.GetParent(this.SelectedNode) != null);
+                this._ChangedCanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
+                this._ChangedCanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);
+                this._ChangedCanMoveChild.OnNext(this.GetOlder(this.SelectedNode) != null);
+                this._ChangedCanMoveParent.OnNext(this.GetParent(this.SelectedNode) != null);
             }).AddTo(this.Disposable);
 
             #endregion ViewState
 
             #region UndoRedo
-            this.UndoRedoModel.CanRedoChange.Subscribe(b => this.CanRedo.OnNext(b));
-            this.UndoRedoModel.CanUndoChange.Subscribe(b => this.CanUndo.OnNext(b));
+            this.UndoRedoModel.ChangedCanRedo.Subscribe(b => this._ChangedCanRedo.OnNext(b));
+            this.UndoRedoModel.ChangedCanUndo.Subscribe(b => this._ChangedCanUndo.OnNext(b));
             #endregion UndoRedo
 
             // 空の場合は初期化
@@ -490,7 +492,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「ノードを下に移動する」実行可否
         /// </summary>
-        public Subject<bool> CanMoveDown { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanMoveDown => _ChangedCanMoveDown;
+
+        private Subject<bool> _ChangedCanMoveDown = new Subject<bool>();
 
         /// <summary>
         /// ノードを上に移動する
@@ -516,7 +520,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「ノードを上に移動する」実行可否
         /// </summary>
-        public Subject<bool> CanMoveUp { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanMoveUp => _ChangedCanMoveUp;
+
+        private Subject<bool> _ChangedCanMoveUp = new Subject<bool>();
 
         /// <summary>
         /// ノードを右に移動する
@@ -548,7 +554,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「ノードを右に移動する」実行可否
         /// </summary>
-        public Subject<bool> CanMoveChild { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanMoveChild => _ChangedCanMoveChild;
+
+        private Subject<bool> _ChangedCanMoveChild = new Subject<bool>();
 
         /// <summary>
         /// ノードを左に移動する
@@ -586,7 +594,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「ノードを左に移動する」実行可否
         /// </summary>
-        public Subject<bool> CanMoveParent { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanMoveParent => _ChangedCanMoveParent;
+
+        private Subject<bool> _ChangedCanMoveParent = new Subject<bool>();
 
         /// <summary>
         /// ノードの移動処理
@@ -1457,7 +1467,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「元に戻す」実行可否
         /// </summary>
-        public Subject<bool> CanUndo { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanUndo => _ChangedCanUndo;
+
+        private Subject<bool> _ChangedCanUndo = new Subject<bool>();
 
         /// <summary>
         /// やり直す
@@ -1470,7 +1482,9 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 「やり直す」実行可否
         /// </summary>
-        public Subject<bool> CanRedo { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanRedo => _ChangedCanRedo;
+
+        private Subject<bool> _ChangedCanRedo = new Subject<bool>();
 
         #endregion UndoRedo
 

@@ -156,9 +156,9 @@ namespace QuartetEditor.Models.Undo
                 {
                     this._CanUndo = value;
 
-                    if (this.CanUndoChange != null)
+                    if (this.ChangedCanUndo != null)
                     {
-                        this.CanUndoChange.OnNext(value);
+                        this._ChangedCanUndo.OnNext(value);
                     }
                 }
             }
@@ -179,9 +179,9 @@ namespace QuartetEditor.Models.Undo
                 {
                     this._CanRedo = value;
 
-                    if (this.CanRedoChange != null)
+                    if (this.ChangedCanRedo != null)
                     {
-                        this.CanRedoChange.OnNext(value);
+                        this._ChangedCanRedo.OnNext(value);
                     }
                 }
             }
@@ -194,12 +194,16 @@ namespace QuartetEditor.Models.Undo
         /// <summary>
         /// Undo出来るかどうかの状態が変化すると発生します。
         /// </summary>
-        public Subject<bool> CanUndoChange { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanUndo => _ChangedCanUndo;
+
+        private Subject<bool> _ChangedCanUndo = new Subject<bool>();
 
         /// <summary>
         /// Redo出来るかどうかの状態が変化すると発生します。
         /// </summary>
-        public Subject<bool> CanRedoChange { get; } = new Subject<bool>();
+        public IObservable<bool> ChangedCanRedo => _ChangedCanRedo;
+
+        private Subject<bool> _ChangedCanRedo = new Subject<bool>();
 
         /// <summary>
         /// 操作

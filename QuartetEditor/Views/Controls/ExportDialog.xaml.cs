@@ -28,7 +28,9 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// エクスポートの実行通知
         /// </summary>
-        public Subject<ExportSettingModel> Excute { get; } = new Subject<ExportSettingModel>();
+        public IObservable<ExportSettingModel> Excute => _Excute;
+
+        private Subject<ExportSettingModel> _Excute = new Subject<ExportSettingModel>();
 
         /// <summary>
         /// コンストラクタ
@@ -46,7 +48,7 @@ namespace QuartetEditor.Views.Controls
             var vm = this.DataContext as ExportDialogViewModel;
             if (vm?.CanExcute == true)
             {
-                this.Excute.OnNext(vm?.Model);
+                this._Excute.OnNext(vm?.Model);
             }
         }
     }

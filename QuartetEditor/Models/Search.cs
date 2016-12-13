@@ -19,17 +19,23 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 検索結果の通知
         /// </summary>
-        public Subject<SearchResult> Found { get; } = new Subject<SearchResult>();
+        public IObservable<SearchResult> Found => _Found;
+
+        private Subject<SearchResult> _Found = new Subject<SearchResult>();
 
         /// <summary>
         /// 検索結果（すべて）の通知
         /// </summary>
-        public Subject<IEnumerable<SearchResult>> FoundAll { get; } = new Subject<IEnumerable<SearchResult>>();
+        public IObservable<IEnumerable<SearchResult>> FoundAll => _FoundAll;
+
+        private Subject<IEnumerable<SearchResult>> _FoundAll = new Subject<IEnumerable<SearchResult>>();
 
         /// <summary>
         /// 確認要求
         /// </summary>
-        public Subject<Tuple<string, Action<bool>>> Confirmation { get; } = new Subject<Tuple<string, Action<bool>>>();
+        public IObservable<Tuple<string, Action<bool>>> Confirmation => _Confirmation;
+
+        private Subject<Tuple<string, Action<bool>>> _Confirmation = new Subject<Tuple<string, Action<bool>>>();
 
         /// <summary>
         /// 検索対象のドキュメント
@@ -256,7 +262,7 @@ namespace QuartetEditor.Models
                     result.Node.IsSelected = true;
                 }
             }
-            this.Found.OnNext(result);
+            this._Found.OnNext(result);
         }
 
         /// <summary>
@@ -267,7 +273,7 @@ namespace QuartetEditor.Models
             if (!this.HilightText)
             {
                 // ハイライトを消去
-                this.FoundAll.OnNext(new List<SearchResult>());
+                this._FoundAll.OnNext(new List<SearchResult>());
                 return;
             }
 
@@ -279,7 +285,7 @@ namespace QuartetEditor.Models
 
             var find = this.Document.SelectedNode.FindAll(regex);
 
-            this.FoundAll.OnNext(find);
+            this._FoundAll.OnNext(find);
 
             return;
         }
@@ -311,7 +317,7 @@ namespace QuartetEditor.Models
                 result.Node.Replace(result, this.TextToReplace);
             }
 
-            this.Found.OnNext(result);
+            this._Found.OnNext(result);
         }
 
         /// <summary>
@@ -319,7 +325,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public void ReplaceAll()
         {
-            this.Confirmation.OnNext(new Tuple<string, Action<bool>>("本当にすべて置換しますか？", (OK) =>
+            this._Confirmation.OnNext(new Tuple<string, Action<bool>>("本当にすべて置換しますか？", (OK) =>
             {
                 if (!OK)
                 {
