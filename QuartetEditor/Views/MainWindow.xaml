@@ -540,6 +540,7 @@
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
+                                                 ScrollingIncrement="0.4"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping,
@@ -573,6 +574,7 @@
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
+                                                 ScrollingIncrement="0.4"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
@@ -615,6 +617,7 @@
                                                                       UpdateSourceTrigger=PropertyChanged}"
                                                  LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
                                                  Padding="10,8,2,2"
+                                                 ScrollingIncrement="0.4"
                                                  ShowLineNumbers="{Binding Path=Config.ShowLineNumbers,
                                                                            Mode=TwoWay,
                                                                            UpdateSourceTrigger=PropertyChanged}"
@@ -654,6 +657,7 @@
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                  HorizontalScrollBarVisibility="Auto"
                                                  IsReadOnly="True"
+                                                 ScrollingIncrement="0.4"
                                                  TextOptions.TextFormattingMode="Display"
                                                  VerticalScrollBarVisibility="Auto"
                                                  WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping,
