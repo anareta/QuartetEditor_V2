@@ -85,7 +85,7 @@ namespace QuartetEditor.Views.Messengers
         /// <param name="e"></param>
         private void Editor_TextChanged(object sender, EventArgs e)
         {
-            this.AssociatedObject.UpdateHighlight();
+            this.ClearHighlight();
         }
 
         /// <summary>
