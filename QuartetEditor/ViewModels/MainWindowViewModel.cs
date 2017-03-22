@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using QuartetEditor.Entities;
-using QuartetEditor.Enums;
 using QuartetEditor.Extensions;
 using QuartetEditor.Models;
 using QuartetEditor.Views.DraggableTreeView.Description;
@@ -20,6 +19,7 @@ using System.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using QuartetEditor.Utilities;
 using System.Deployment.Application;
+using QuartetEditor.Views;
 
 namespace QuartetEditor.ViewModels
 {
@@ -174,7 +174,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// Panel開閉コマンド
         /// </summary>
-        public ReactiveCommand<PanelKindEnum> PanelChangeCommand { get; private set; } = new ReactiveCommand<PanelKindEnum>();
+        public ReactiveCommand<PanelKind> PanelChangeCommand { get; private set; } = new ReactiveCommand<PanelKind>();
 
         #endregion PanelOpen
 
@@ -496,13 +496,13 @@ namespace QuartetEditor.ViewModels
             {
                 switch (kind)
                 {
-                    case PanelKindEnum.Left:
+                    case PanelKind.Left:
                         this.LeftPanelOpen.Value = !this.LeftPanelOpen.Value;
                         return;
-                    case PanelKindEnum.Top:
+                    case PanelKind.Top:
                         this.TopPanelOpen.Value = !this.TopPanelOpen.Value;
                         return;
-                    case PanelKindEnum.Bottom:
+                    case PanelKind.Bottom:
                         this.BottomPanelOpen.Value = !this.BottomPanelOpen.Value;
                         return;
                     default:

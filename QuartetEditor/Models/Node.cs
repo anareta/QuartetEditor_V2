@@ -2,7 +2,6 @@
 using Prism.Mvvm;
 using QuartetEditor.Attributes;
 using QuartetEditor.Entities;
-using QuartetEditor.Enums;
 using QuartetEditor.Extensions;
 using Reactive.Bindings.Extensions;
 using System;

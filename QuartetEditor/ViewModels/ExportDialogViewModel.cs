@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using QuartetEditor.Enums;
 using QuartetEditor.Models;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;

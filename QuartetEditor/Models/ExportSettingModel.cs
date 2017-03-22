@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using QuartetEditor.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuartetEditor.Enums
+namespace QuartetEditor.Views
 {
     /// <summary>
     /// パネル
     /// </summary>
-    public enum PanelKindEnum
+    public enum PanelKind
     {
         /// <summary>
         /// 左参照パネル

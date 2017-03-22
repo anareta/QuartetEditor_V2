@@ -13,7 +13,6 @@ using System.Reactive.Subjects;
 using ICSharpCode.AvalonEdit.Document;
 using System.Reactive.Disposables;
 using QuartetEditor.Models.Undo;
-using QuartetEditor.Enums;
 using System.IO;
 using QuartetEditor.Entities;
 using QuartetEditor.Utilities;

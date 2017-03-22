@@ -7,7 +7,6 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:dragdrop="clr-namespace:QuartetEditor.Views.DraggableTreeView"
                    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-                   xmlns:enum="clr-namespace:QuartetEditor.Enums"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:local="clr-namespace:QuartetEditor.Views"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -121,15 +120,15 @@
                     Modifiers="Control" />
         <KeyBinding Key="L"
                     Command="{Binding PanelChangeCommand}"
-                    CommandParameter="{x:Static enum:PanelKindEnum.Left}"
+                    CommandParameter="{x:Static local:PanelKind.Left}"
                     Modifiers="Control" />
         <KeyBinding Key="T"
                     Command="{Binding PanelChangeCommand}"
-                    CommandParameter="{x:Static enum:PanelKindEnum.Top}"
+                    CommandParameter="{x:Static local:PanelKind.Top}"
                     Modifiers="Control" />
         <KeyBinding Key="B"
                     Command="{Binding PanelChangeCommand}"
-                    CommandParameter="{x:Static enum:PanelKindEnum.Bottom}"
+                    CommandParameter="{x:Static local:PanelKind.Bottom}"
                     Modifiers="Control" />
         <KeyBinding Key="F"
                     Command="{Binding OpenFindDialogCommand}"
