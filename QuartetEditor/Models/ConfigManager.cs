@@ -34,7 +34,11 @@ namespace QuartetEditor.Models
         /// </summary>
         private ConfigManager()
         {
+#if DEBUG
             this.ConfigFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Config.cnf");
+#else
+            this.ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetEntryAssembly().GetName().Name, "Config.cnf");
+#endif
         }
 
         /// <summary>
@@ -55,6 +59,11 @@ namespace QuartetEditor.Models
         /// </summary>
         public void SaveConfig()
         {
+            if (!Directory.Exists(Path.GetDirectoryName(this.ConfigFilePath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(this.ConfigFilePath));
+            }
+
             FileUtility.SaveJsonObject(this.ConfigFilePath, this.Config);
         }
 
