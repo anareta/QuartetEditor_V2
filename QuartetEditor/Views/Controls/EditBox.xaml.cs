@@ -1,4 +1,5 @@
 ﻿using QuartetEditor.Enums;
+using QuartetEditor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -201,11 +202,11 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// ドラッグオーバーしている位置
         /// </summary>
-        public DropPositionEnum DropPosition
+        public InsertPosition DropPosition
         {
             get
             {
-                return (DropPositionEnum)GetValue(DropPositionProperty);
+                return (InsertPosition)GetValue(DropPositionProperty);
             }
             set
             {
@@ -218,8 +219,8 @@ namespace QuartetEditor.Views.Controls
         /// DropPositionプロパティ
         /// </summary>
         public static readonly DependencyProperty DropPositionProperty =
-            DependencyProperty.RegisterAttached("DropPosition", typeof(DropPositionEnum), typeof(EditBox),
-            new PropertyMetadata(DropPositionEnum.NONE, DropPositionPropertyChanged));
+            DependencyProperty.RegisterAttached("DropPosition", typeof(InsertPosition), typeof(EditBox),
+            new PropertyMetadata(InsertPosition.NONE, DropPositionPropertyChanged));
 
 
         /// <summary>
@@ -230,7 +231,7 @@ namespace QuartetEditor.Views.Controls
         private static void DropPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var thisInstance = d as EditBox;
-            var flg = e.NewValue as DropPositionEnum?;
+            var flg = e.NewValue as InsertPosition?;
             if (flg.HasValue)
             {
                 thisInstance.DropPosition = flg.Value;
@@ -360,16 +361,16 @@ namespace QuartetEditor.Views.Controls
             {
                 if (this.IsPositionTop(e))
                 {
-                    this.DropPosition = DropPositionEnum.Prev;
+                    this.DropPosition = InsertPosition.Prev;
                 }
                 else
                 {
-                    this.DropPosition = DropPositionEnum.Next;
+                    this.DropPosition = InsertPosition.Next;
                 }
             }
             else
             {
-                this.DropPosition = DropPositionEnum.Child;
+                this.DropPosition = InsertPosition.Child;
             }
         }
 
@@ -449,15 +450,15 @@ namespace QuartetEditor.Views.Controls
             {
                 switch (this.DropPosition)
                 {
-                    case DropPositionEnum.NONE:
+                    case InsertPosition.NONE:
                         break;
-                    case DropPositionEnum.Prev:
+                    case InsertPosition.Prev:
                         this.ShowAdorner(VerticalAlignment.Top);
                         break;
-                    case DropPositionEnum.Next:
+                    case InsertPosition.Next:
                         this.ShowAdorner(VerticalAlignment.Bottom);
                         break;
-                    case DropPositionEnum.Child:
+                    case InsertPosition.Child:
                         this._TextBlockBorder.Visibility = Visibility.Visible;
                         break;
                     default:

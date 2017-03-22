@@ -320,7 +320,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\PanelOpenStateEntity.cs" />
-    <Compile Include="Enums\DropPositionEnum.cs" />
+    <Compile Include="Models\DropPositionEnum.cs" />
     <Compile Include="Extensions\IEnumerableExtension.cs" />
     <Compile Include="Extensions\DependencyObjectExtension.cs" />
     <Compile Include="Models\Node.cs" />

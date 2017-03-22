@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuartetEditor.Enums
+namespace QuartetEditor.Models
 {
-    public enum DropPositionEnum
+    public enum InsertPosition
     {
         /// <summary>
         /// 未設定

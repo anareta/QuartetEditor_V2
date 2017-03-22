@@ -82,7 +82,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// ドロップする位置
         /// </summary>
-        public ReactiveProperty<DropPositionEnum> DropPosition { get; }
+        public ReactiveProperty<InsertPosition> DropPosition { get; }
 
         /// <summary>
         /// コンストラクタ

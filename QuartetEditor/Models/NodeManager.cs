@@ -793,7 +793,7 @@ namespace QuartetEditor.Models
         {
             if (target == null)
             {
-                this.Tree.Last().DropPosition = Enums.DropPositionEnum.Next;
+                this.Tree.Last().DropPosition = InsertPosition.Next;
                 this.Tree.Last().IsDragOver = true;
             }
         }
@@ -832,7 +832,7 @@ namespace QuartetEditor.Models
             }
             else
             {
-                this.Tree.Last().DropPosition = Enums.DropPositionEnum.Next;
+                this.Tree.Last().DropPosition = InsertPosition.Next;
                 this.Tree.Last().IsDragOver = true;
             }
         }
@@ -963,20 +963,20 @@ namespace QuartetEditor.Models
             {
                 switch (target.DropPosition)
                 {
-                    case Enums.DropPositionEnum.Prev:
-                    case Enums.DropPositionEnum.Next:
+                    case InsertPosition.Prev:
+                    case InsertPosition.Next:
                         toTree = this.GetParent(target)?.ChildrenSource;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
                         }
                         toIndex = toTree.IndexOf(target);
-                        if (target.DropPosition == Enums.DropPositionEnum.Next)
+                        if (target.DropPosition == InsertPosition.Next)
                         {
                             ++toIndex;
                         }
                         break;
-                    case Enums.DropPositionEnum.Child:
+                    case InsertPosition.Child:
                         toTree = target.ChildrenSource;
                         toIndex = target.ChildrenSource.Count();
                         break;
@@ -998,20 +998,20 @@ namespace QuartetEditor.Models
             {
                 switch (target.DropPosition)
                 {
-                    case Enums.DropPositionEnum.Prev:
-                    case Enums.DropPositionEnum.Next:
+                    case InsertPosition.Prev:
+                    case InsertPosition.Next:
                         toTree = this.GetParent(target)?.ChildrenSource;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
                         }
                         toIndex = toTree.IndexOf(target);
-                        if (target.DropPosition == Enums.DropPositionEnum.Next)
+                        if (target.DropPosition == InsertPosition.Next)
                         {
                             ++toIndex;
                         }
                         break;
-                    case Enums.DropPositionEnum.Child:
+                    case InsertPosition.Child:
                         toTree = target.ChildrenSource;
                         toIndex = target.ChildrenSource.Count();
                         break;

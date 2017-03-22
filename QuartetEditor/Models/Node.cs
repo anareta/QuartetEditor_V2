@@ -156,10 +156,10 @@ namespace QuartetEditor.Models
         /// <summary>
         /// ドロップする位置
         /// </summary>
-        public DropPositionEnum _DropPosition;
+        public InsertPosition _DropPosition;
 
         [Unique]
-        public DropPositionEnum DropPosition
+        public InsertPosition DropPosition
         {
             get { return this._DropPosition; }
             set
