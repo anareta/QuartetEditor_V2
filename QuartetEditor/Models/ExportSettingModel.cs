@@ -18,14 +18,14 @@ namespace QuartetEditor.Models
         /// <summary>
         /// エクスポート種別
         /// </summary>
-        public ObservableCollection<Tuple<ExportKindEnum, string>> ComboBoxItemSource { get; } = new ObservableCollection<Tuple<ExportKindEnum, string>>();
+        public ObservableCollection<Tuple<ExportKind, string>> ComboBoxItemSource { get; } = new ObservableCollection<Tuple<ExportKind, string>>();
 
         /// <summary>
         /// エクスポートの種別
         /// </summary>
-        private ExportKindEnum _Kind;
+        private ExportKind _Kind;
 
-        public ExportKindEnum Kind
+        public ExportKind Kind
         {
             get
             {
@@ -78,9 +78,9 @@ namespace QuartetEditor.Models
         /// </summary>
         public ExportSettingModel()
         {
-            this.ComboBoxItemSource.Add(new Tuple<ExportKindEnum, string>(ExportKindEnum.Text, "テキストファイル"));
-            this.ComboBoxItemSource.Add(new Tuple<ExportKindEnum, string>(ExportKindEnum.HTML, "HTMLファイル"));
-            this.ComboBoxItemSource.Add(new Tuple<ExportKindEnum, string>(ExportKindEnum.TreeText, "階層付きテキストファイル"));
+            this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.Text, "テキストファイル"));
+            this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.HTML, "HTMLファイル"));
+            this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.TreeText, "階層付きテキストファイル"));
 
         }
 

@@ -331,17 +331,17 @@ namespace QuartetEditor.Models
             {
                 switch (model.Kind)
                 {
-                    case ExportKindEnum.Text:
+                    case ExportKind.Text:
                         exportstr = NodeConverterUtility.ToText(new QuartetEditorDescription(this.Content.Tree), model);
                         ext = "txt";
                         filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                         break;
-                    case ExportKindEnum.HTML:
+                    case ExportKind.HTML:
                         exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.Content.Tree), Path.GetFileNameWithoutExtension(this.FilePath));
                         ext = "html";
                         filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
                         break;
-                    case ExportKindEnum.TreeText:
+                    case ExportKind.TreeText:
                         exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree));
                         ext = "txt";
                         filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";

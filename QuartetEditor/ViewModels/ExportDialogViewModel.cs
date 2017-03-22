@@ -47,12 +47,12 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// エクスポート種別
         /// </summary>
-        public ReadOnlyReactiveCollection<Tuple<ExportKindEnum, string>> ComboBoxItemSource { get; }
+        public ReadOnlyReactiveCollection<Tuple<ExportKind, string>> ComboBoxItemSource { get; }
 
         /// <summary>
         /// 選択されたエクスポート種別
         /// </summary>
-        public ReactiveProperty<ExportKindEnum> SelectedValue { get; }
+        public ReactiveProperty<ExportKind> SelectedValue { get; }
 
         #region Text
 
@@ -107,7 +107,7 @@ namespace QuartetEditor.ViewModels
                                      .AddTo(this.Disposable);
 
             this.TextSettingVisibility = this.SelectedValue
-                                 .Select(x => x == ExportKindEnum.Text ? Visibility.Visible : Visibility.Hidden)
+                                 .Select(x => x == ExportKind.Text ? Visibility.Visible : Visibility.Hidden)
                                  .ToReactiveProperty()
                                  .AddTo(this.Disposable);
 

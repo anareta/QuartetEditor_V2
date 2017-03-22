@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuartetEditor.Enums
+namespace QuartetEditor.Models
 {
     /// <summary>
     /// エクスポート種別
     /// </summary>
-    public enum ExportKindEnum
+    public enum ExportKind
     {
         /// <summary>
         /// テキストファイル

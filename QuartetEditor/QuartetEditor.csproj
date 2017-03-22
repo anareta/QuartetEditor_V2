@@ -236,7 +236,7 @@
     <Compile Include="Entities\FindReplaceEntity.cs" />
     <Compile Include="Entities\QuartetEditorDescription.cs" />
     <Compile Include="Entities\SearchResult.cs" />
-    <Compile Include="Enums\ExportKindEnum.cs" />
+    <Compile Include="Models\ExportKind.cs" />
     <Compile Include="Enums\PanelKindEnum.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />
@@ -320,7 +320,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\PanelOpenStateEntity.cs" />
-    <Compile Include="Models\DropPositionEnum.cs" />
+    <Compile Include="Models\InsertPosition.cs" />
     <Compile Include="Extensions\IEnumerableExtension.cs" />
     <Compile Include="Extensions\DependencyObjectExtension.cs" />
     <Compile Include="Models\Node.cs" />
