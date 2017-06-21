@@ -206,7 +206,8 @@ namespace QuartetEditor.Models
                         break;
                     case FileType.TreeText:
                         {
-                            var data = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree));
+                            var header = ConfigManager.Current.Config.TreeTextCharacters;
+                            var data = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree), header.First());
                             result = FileUtility.SaveText(path, data, Encoding.UTF8);
                         }
                         break;
@@ -266,8 +267,9 @@ namespace QuartetEditor.Models
                     if (!fileType.HasValue)
                     {
                         string treeText;
+                        var header = ConfigManager.Current.Config.TreeTextCharacters;
                         if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == true &&
-                            NodeConverterUtility.FromTreeText(treeText, out model) == true)
+                            NodeConverterUtility.FromTreeText(treeText, header.First(), out model) == true)
                         {
                             // 階層付きテキストファイルとして読み込み成功
                             fileType = FileType.TreeText;
@@ -341,7 +343,8 @@ namespace QuartetEditor.Models
                         filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
                         break;
                     case ExportKind.TreeText:
-                        exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree));
+                        var header = ConfigManager.Current.Config.TreeTextCharacters;
+                        exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree), header.First());
                         ext = "txt";
                         filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                         break;

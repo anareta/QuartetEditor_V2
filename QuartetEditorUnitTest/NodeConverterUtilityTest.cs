@@ -18,7 +18,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文" + lineFeed + "ノード２の本文" + lineFeed + lineFeed;
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -39,7 +39,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文" + lineFeed + "ノード２の本文" + lineFeed + lineFeed;
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -61,7 +61,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文" + lineFeed + "ノード２の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -81,7 +81,7 @@ namespace QuartetEditorUnitTest
                        ".ノード１のタイトル" + lineFeed +
                        "ノード1の本文" + lineFeed + "ノード１の本文" + lineFeed;
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(1, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -96,7 +96,7 @@ namespace QuartetEditorUnitTest
             var text = lineFeed + lineFeed +
                        ".ノード１のタイトル" + lineFeed;
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(1, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -110,7 +110,7 @@ namespace QuartetEditorUnitTest
             string lineFeed = Environment.NewLine;
             var text = ".ノード１のタイトル";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(1, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -132,7 +132,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文" + lineFeed + "ノード２の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -167,7 +167,7 @@ namespace QuartetEditorUnitTest
                        "ノード1-1-1の本文" + lineFeed + "ノード1-1-1の本文";
 
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(1, result.Node.Count);
 
@@ -206,7 +206,7 @@ namespace QuartetEditorUnitTest
                        "ノード2-1の本文";
 
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
 
@@ -250,7 +250,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文" + lineFeed + "ノード２の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -271,7 +271,7 @@ namespace QuartetEditorUnitTest
                        ".ノード２のタイトル" + lineFeed +
                        "ノード２の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
             Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
@@ -290,17 +290,23 @@ namespace QuartetEditorUnitTest
             var text = lineFeed + lineFeed +
                        ". .ノード1のタイトル" + lineFeed +
                        " .ノード1の本文" + lineFeed +
+                       "ノード1の本文" + lineFeed +
+                       " .ノード1の本文" + lineFeed +
                        ".. .ノード1-1のタイトル" + lineFeed +
                        " .ノード1-1の本文" + lineFeed +
                        ". ..ノード2のタイトル" + lineFeed +
                        " ..ノード2の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(2, result.Node.Count);
 
             Assert.AreEqual(".ノード1のタイトル", result.Node[0].Name);
-            Assert.AreEqual(".ノード1の本文", result.Node[0].Content);
+            Assert.AreEqual(
+                ".ノード1の本文" + lineFeed +
+                "ノード1の本文" + lineFeed +
+                ".ノード1の本文", 
+                result.Node[0].Content);
             Assert.AreEqual(1, result.Node[0].Children.Count);
 
             Assert.AreEqual(".ノード1-1のタイトル", result.Node[0].Children[0].Name);
@@ -313,6 +319,38 @@ namespace QuartetEditorUnitTest
         }
 
         [TestMethod]
+        public void FromTreeText_本文の文中にピリオド()
+        {
+            string lineFeed = Environment.NewLine;
+            var text = ". .ノード1のタイトル" + lineFeed +
+                       "ノード1の本文 .ノード1の本文";
+            QuartetEditorDescription result;
+            NodeConverterUtility.FromTreeText(text, '.', out result);
+
+            Assert.AreEqual(1, result.Node.Count);
+
+            Assert.AreEqual(".ノード1のタイトル", result.Node[0].Name);
+            Assert.AreEqual("ノード1の本文 .ノード1の本文", result.Node[0].Content);
+            Assert.AreEqual(0, result.Node[0].Children.Count);
+        }
+
+        [TestMethod]
+        public void FromTreeText_本文に空行あり()
+        {
+            string lineFeed = Environment.NewLine;
+            var text = lineFeed + lineFeed +
+                       ".ノード１のタイトル" + lineFeed +
+                       "ノード1の本文" + lineFeed + lineFeed + lineFeed + "ノード１の本文" + lineFeed;
+            QuartetEditorDescription result;
+            NodeConverterUtility.FromTreeText(text, '.', out result);
+
+            Assert.AreEqual(1, result.Node.Count);
+            Assert.AreEqual("ノード１のタイトル", result.Node[0].Name);
+            Assert.AreEqual("ノード1の本文" + lineFeed + lineFeed + lineFeed + "ノード１の本文" + lineFeed, result.Node[0].Content);
+            Assert.AreEqual(0, result.Node[0].Children.Count);
+        }
+
+        [TestMethod]
         public void FromTreeText_行頭が空白()
         {
             string lineFeed = Environment.NewLine;
@@ -320,7 +358,7 @@ namespace QuartetEditorUnitTest
                        ". ノード1のタイトル" + lineFeed +
                        " ノード1の本文";
             QuartetEditorDescription result;
-            NodeConverterUtility.FromTreeText(text, out result);
+            NodeConverterUtility.FromTreeText(text, '.', out result);
 
             Assert.AreEqual(1, result.Node.Count);
 

@@ -692,7 +692,7 @@ namespace QuartetEditor.Models
             }
 
             string text = this.SelectedNode.Content.Text;
-            char[] headerChars = ConfigManager.Current.Config.HeaderCharactors.ToCharArray();
+            char[] headerChars = ConfigManager.Current.Config.HeaderCharacters.ToCharArray();
             if (text.IndexOfAny(headerChars) == -1)
             {
                 // そもそも見出し文字がない場合は何もせず復帰

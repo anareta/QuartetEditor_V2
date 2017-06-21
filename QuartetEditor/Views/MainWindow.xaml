@@ -604,7 +604,7 @@
                                                  FontSize="{Binding Path=Config.CenterTextEditorFontSize,
                                                                     Mode=TwoWay,
                                                                     UpdateSourceTrigger=PropertyChanged}"
-                                                 HeaderCharactors="{Binding Path=Config.HeaderCharactors,
+                                                 HeaderCharacters="{Binding Path=Config.HeaderCharacters,
                                                                             Mode=TwoWay,
                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                  HighlightCurrentLine="{Binding Path=Config.HighlightCurrentLine,

@@ -43,6 +43,15 @@ namespace QuartetEditor.ViewModels
             }
         }
 
+        #region General
+
+        /// <summary>
+        /// 階層付きテキストの見出し文字
+        /// </summary>
+        public ReactiveProperty<string> TreeTextCharacters { get; }
+
+        #endregion General
+
         #region CenterTextEditor
         /// <summary>
         /// 編集パネルのフォントサイズ
@@ -77,7 +86,7 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// 編集パネルでヘッダー文字列
         /// </summary>
-        public ReactiveProperty<string> HeaderCharactors { get; }
+        public ReactiveProperty<string> HeaderCharacters { get; }
 
         #endregion CenterTextEditor
 
@@ -140,6 +149,14 @@ namespace QuartetEditor.ViewModels
         {
             this.Model = ConfigManager.Current.Config;
 
+            #region General
+
+            this.TreeTextCharacters = this.Model
+                .ToReactivePropertyAsSynchronized(x => x.TreeTextCharacters)
+                .AddTo(this.Disposable);
+
+            #endregion General
+
             #region CenterTextEditor
 
             this.CenterTextEditorFontSize = this.Model
@@ -166,8 +183,8 @@ namespace QuartetEditor.ViewModels
                .ToReactivePropertyAsSynchronized(x => x.ShowLineNumbers)
                .AddTo(this.Disposable);
 
-            this.HeaderCharactors = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.HeaderCharactors)
+            this.HeaderCharacters = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.HeaderCharacters)
                .AddTo(this.Disposable);
 
             #endregion CenterTextEditor

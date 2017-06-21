@@ -110,15 +110,15 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// 見出し行の文字
         /// </summary>
-        public string HeaderCharactors
+        public string HeaderCharacters
         {
             get
             {
-                return (string)GetValue(HeaderCharactorsProperty);
+                return (string)GetValue(HeaderCharactersProperty);
             }
             set
             {
-                SetValue(HeaderCharactorsProperty, value);
+                SetValue(HeaderCharactersProperty, value);
                 this.UpdateHightlightSetting();
             }
         }
@@ -126,18 +126,18 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// 見出し行の文字
         /// </summary>
-        public static readonly DependencyProperty HeaderCharactorsProperty =
-            DependencyProperty.Register("HeaderCharactors", typeof(string), typeof(BindableTextEditor), new PropertyMetadata("", OnHeaderCharactorsChanged));
+        public static readonly DependencyProperty HeaderCharactersProperty =
+            DependencyProperty.Register("HeaderCharacters", typeof(string), typeof(BindableTextEditor), new PropertyMetadata("", OnHeaderCharactersChanged));
 
         /// <summary>
         /// 見出し行の文字の変更時処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void OnHeaderCharactorsChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHeaderCharactersChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var control = (BindableTextEditor)sender;
-            control.HeaderCharactors = (string)e.NewValue;
+            control.HeaderCharacters = (string)e.NewValue;
             control.UpdateHightlightSetting();
         }
 
@@ -146,7 +146,7 @@ namespace QuartetEditor.Views.Controls
         /// </summary>
         private void UpdateHightlightSetting()
         {
-            if (string.IsNullOrWhiteSpace(this.HeaderCharactors))
+            if (string.IsNullOrWhiteSpace(this.HeaderCharacters))
             {
                 return;
             }
@@ -163,7 +163,7 @@ namespace QuartetEditor.Views.Controls
                     using (StreamReader resourceReader = new StreamReader(s))
                     {
                         string headers = default(string);
-                        foreach (var c in this.HeaderCharactors.Trim())
+                        foreach (var c in this.HeaderCharacters.Trim())
                         {
                             headers += "|" + Regex.Escape(new string(new char[1] { c }));
                         }

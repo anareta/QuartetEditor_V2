@@ -1,19 +1,9 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
-using QuartetEditor.Enums;
 using QuartetEditor.Models;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reactive;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuartetEditor.ViewModels
 {

@@ -28,6 +28,21 @@ namespace QuartetEditor.Views
         {
             base.Language = XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.Name);
             InitializeComponent();
+
+            this.IsOpenChanged += (_, e) => 
+            {
+                try
+                {
+                    if (this.IsOpen)
+                    {
+                        // フォーカスの初期設定
+                        this.ApplyButton.Focus();
+                    }
+                }
+                catch
+                {
+                }
+            };
         }
     }
 }

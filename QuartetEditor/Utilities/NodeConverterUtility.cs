@@ -134,19 +134,20 @@ namespace QuartetEditor.Utilities
         }
         #endregion Text
 
-        #region TreeText
+        #region ToTreeText
 
         /// <summary>
         /// 階層付きテキストデータに変換する
         /// </summary>
         /// <returns></returns>
-        static public string ToTreeText(QuartetEditorDescription data)
+        static public string ToTreeText(QuartetEditorDescription data, char headerChar)
         {
             StringBuilder export = new StringBuilder();
             int level = 1;
+
             foreach (var item in data.Node)
             {
-                ToTreeText(item, export, level);
+                ToTreeText(item, export, headerChar, level);
             }
             return export.ToString();
         }
@@ -155,42 +156,48 @@ namespace QuartetEditor.Utilities
         /// ノードを階層付きテキストデータに変換する
         /// </summary>
         /// <returns></returns>
-        static private void ToTreeText(QuartetEditorDescriptionItem item, StringBuilder result, int level)
+        static private void ToTreeText(QuartetEditorDescriptionItem item, StringBuilder result, char headerChar, int level)
         {
             // タイトルを変換
-            string title = new string('.', level);
-            if (item.Name.StartsWith("."))
+            string title = new string(headerChar, level);
+            if (result.Length > 0)
             {
-                // タイトルがピリオドで始まる場合は半角空白を先頭に入れる
+                // 先頭以降は改行後にタイトルを追加する
+                title = Environment.NewLine + title;
+            }
+
+            if (item.Name.StartsWith(headerChar.ToString()))
+            {
+                // タイトルが制御文字で始まる場合は半角空白を先頭に入れる
                 title += " ";
             }
             title += item.Name;
-            result.AppendLine(title);
+            result.Append(title);
 
             // コンテンツ変換
-            string content = "";
+            string content = Environment.NewLine;
             using (var sr = new StringReader(item.Content))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    if (line.StartsWith("."))
+                    if (line.StartsWith(headerChar.ToString()))
                     {
-                        // 各行がピリオドで始まる場合は半角空白を先頭に入れる
+                        // 各行が制御文字で始まる場合は半角空白を先頭に入れる
                         content += " ";
                     }
                     content += line + Environment.NewLine;
                 }
             }
 
-            result.AppendLine(content);
+            result.Append(content);
 
             foreach (var child in item.Children)
             {
-                ToTreeText(child, result, level + 1);
+                ToTreeText(child, result, headerChar, level + 1);
             }
         }
-        #endregion TreeText
+        #endregion ToTreeText
 
         #region HTML
 
@@ -309,20 +316,18 @@ namespace QuartetEditor.Utilities
         /// <summary>
         /// 階層付きテキストファイルをノードに変換する
         /// </summary>
-        /// <param name="treeText"></param>
-        /// <param name="model"></param>
         /// <returns></returns>
-        static public bool FromTreeText(string treeText, out QuartetEditorDescription QED)
+        static public bool FromTreeText(string treeText, char headerChar, out QuartetEditorDescription QED)
         {
             QED = new QuartetEditorDescription();
             var nodes = new List<QuartetEditorDescriptionItem>();
             string lineFeed = FileUtility.GetLineFeedCode(treeText);
 
-            // 行頭の"."がない場合はエラー
+            // 行頭の制御文字がない場合はエラー
             int index = 0;
-            if (!treeText.StartsWith("."))
+            if (!treeText.StartsWith(headerChar.ToString()))
             {
-                index = treeText.IndexOf(lineFeed + ".");
+                index = treeText.IndexOf(lineFeed + headerChar.ToString());
                 if (index == -1)
                 {
                     return false;
@@ -332,6 +337,7 @@ namespace QuartetEditor.Utilities
 
             treeText = treeText.SafeSubstring(index);
             FromTreeText(ref treeText,
+                         headerChar,
                          lineFeed,
                          nodes,
                          1);
@@ -347,13 +353,9 @@ namespace QuartetEditor.Utilities
         /// <summary>
         /// 階層付きテキストを分解します
         /// </summary>
-        /// <param name="treeText"></param>
-        /// <param name="lineFeed"></param>
-        /// <param name="Nodes"></param>
-        /// <param name="level"></param>
-        static private void FromTreeText(ref string treeText, string lineFeed, List<QuartetEditorDescriptionItem> Nodes, int level)
+        static private void FromTreeText(ref string treeText, char headerChar, string lineFeed, List<QuartetEditorDescriptionItem> Nodes, int level)
         {
-            var headerMark = new string('.', level);
+            var headerMark = new string(headerChar, level);
 
             // 最初に行頭のマークが現れるまで読み飛ばし
             int index = 0;
@@ -367,46 +369,34 @@ namespace QuartetEditor.Utilities
                     titleEndPos = treeText.Length;
                 }
                 var title = treeText.SubstringByIndex(titleStartPos, titleEndPos);
-                if (title.StartsWith(" ."))
+                if (title.StartsWith(" " + headerChar.ToString()))
                 {
-                    // タイトルが"."から始まるとき、空白でエスケープされている
+                    // タイトルが制御文字から始まるとき、空白でエスケープされている
                     title = title.SafeSubstring(1);
                 }
                 index = titleEndPos + lineFeed.Length;
 
                 var content = "";
                 var contentStartPos = index;
-                if (treeText.SafeSubstring(contentStartPos).StartsWith(".") ||
+                if (treeText.SafeSubstring(contentStartPos).StartsWith(headerChar.ToString()) ||
                     treeText.Length <= contentStartPos)
                 {
                     // コンテンツがなく、次のタイトルが現れている場合は何もしない
                 }
                 else
                 {
-                    // コンテンツは次に見つかる行頭の"."までの間
-                    var contentEndPos = treeText.IndexOf(lineFeed + ".", contentStartPos);
+                    // コンテンツは次に見つかる行頭の制御文字までの間
+                    var contentEndPos = treeText.IndexOf(lineFeed + headerChar.ToString(), contentStartPos);
                     if (contentEndPos == -1)
                     {
                         // 次のタイトルが見つからないときは残りの文字列全部がコンテンツ
                         contentEndPos = treeText.Length;
                     }
 
-                    using (var sr = new StringReader(treeText.SubstringByIndex(contentStartPos, contentEndPos)))
-                    {
-                        string line;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            if (line.StartsWith(" ."))
-                            {
-                                // コンテンツの各行が"."から始まるとき、空白でエスケープされているため空白を削除
-                                content += line.SafeSubstring(1) + Environment.NewLine;
-                            }
-                            else
-                            {
-                                content += line + Environment.NewLine;
-                            }
-                        }
-                    }
+                    content = treeText.SubstringByIndex(contentStartPos, contentEndPos);
+                    content = content.Replace(lineFeed, Environment.NewLine);
+                    content = DeleteEscapeSpace(content, headerChar);
+
                     index = contentEndPos + lineFeed.Length;
                 }
 
@@ -424,12 +414,13 @@ namespace QuartetEditor.Utilities
                 index = 0;
 
                 // 子ノードの探索
-                int nextChildTitleIndex = treeText.IndexOf(headerMark + ".", index);
+                int nextChildTitleIndex = treeText.IndexOf(headerMark + headerChar.ToString(), index);
                 if (nextChildTitleIndex != -1 &&
-                    !treeText.SafeSubstring(0, nextChildTitleIndex).Contains(lineFeed + "."))
+                    !treeText.SafeSubstring(0, nextChildTitleIndex).Contains(lineFeed + headerChar.ToString()))
                 {
                     // 子階層のタイトルまでの間に別の階層のタイトルが見つからない場合
                     FromTreeText(ref treeText,
+                                 headerChar,
                                  lineFeed,
                                  node.Children,
                                  level + 1);
@@ -438,6 +429,44 @@ namespace QuartetEditor.Utilities
                 Nodes.Add(node);
             }
 
+        }
+
+        /// <summary>
+        /// 行頭エスケープ用の空白を削除します
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="headerChar"></param>
+        /// <returns></returns>
+        private static string DeleteEscapeSpace(string content, char headerChar)
+        {
+            string result = "";
+
+            while (content.Length > 0)
+            {
+                // 1行分（改行文字を含む）を取り出す
+                var lineEnd = content.IndexOf(Environment.NewLine);
+                if (lineEnd == -1)
+                {
+                    // 改行コードが見つからない場合は残り全部が行
+                    lineEnd = content.Length;
+                }
+                lineEnd += Environment.NewLine.Length;
+
+                // １行分を取り出し
+                var line = content.SubstringByIndex(0, lineEnd);
+
+                // コンテンツ全体から１行分を削除
+                content = content.SafeSubstring(lineEnd);
+
+                // １行の先頭がエスケープされていたら空白を削除
+                if (line.StartsWith(" " + headerChar.ToString()))
+                {
+                    line = line.SafeSubstring(1);
+                }
+                result += line;
+            }
+
+            return result;
         }
 
         #endregion FromTreeText

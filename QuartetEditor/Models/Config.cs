@@ -21,13 +21,15 @@ namespace QuartetEditor.Models
         /// </summary>
         public Config()
         {
+            this.TreeTextCharacters = ".";
+
             this.CenterTextEditorFontSize = 14;
             this.CenterTextEditorFontFamily = new System.Windows.Media.FontFamily("メイリオ");
             this.CenterTextEditorLineHeight = 5;
             this.CenterTextEditorTextWrapping = true;
             this.HighlightCurrentLine = false;
             this.ShowLineNumbers = false;
-            this.HeaderCharactors = "□■◇◆";
+            this.HeaderCharacters = "□■◇◆";
 
             this.LeftTextEditorFontSize = 10;
             this.LeftTextEditorFontFamily = new System.Windows.Media.FontFamily("メイリオ");
@@ -50,6 +52,29 @@ namespace QuartetEditor.Models
             this.MainPanelHeight = 5;
             this.MainPanelWidth = 3;
         }
+
+        #region General
+
+        /// <summary>
+        /// 階層付きテキストの見出し文字
+        /// </summary>
+        [JsonProperty]
+        public string TreeTextCharacters
+        {
+            get { return this._TreeTextCharacters; }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    this.SetProperty(ref this._TreeTextCharacters, value);
+                }
+            }
+        }
+
+        public string _TreeTextCharacters;
+
+        #endregion General
+
 
         #region CenterTextEditor
         /// <summary>
@@ -128,13 +153,13 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 編集パネルでヘッダー文字列
         /// </summary>
-        public string _HeaderCharactors;
+        public string _HeaderCharacters;
 
         [JsonProperty]
-        public string HeaderCharactors
+        public string HeaderCharacters
         {
-            get { return this._HeaderCharactors; }
-            set { this.SetProperty(ref this._HeaderCharactors, value); }
+            get { return this._HeaderCharacters; }
+            set { this.SetProperty(ref this._HeaderCharacters, value); }
         }
 
         #endregion CenterTextEditor
