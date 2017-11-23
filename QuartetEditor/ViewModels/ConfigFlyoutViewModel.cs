@@ -43,6 +43,21 @@ namespace QuartetEditor.ViewModels
             }
         }
 
+        /// <summary>
+        /// 階層付きテキストの制御文字のリスト
+        /// </summary>
+        public List<KeyValuePair<string, string>> TreeTextCharactersList
+        {
+            get
+            {
+                return new List<KeyValuePair<string, string>>()
+                {
+                    new KeyValuePair<string, string>(".（ドット）", "."),
+                    new KeyValuePair<string, string>("#（シャープ）", "#")
+                };
+            }
+        }
+
         #region General
 
         /// <summary>

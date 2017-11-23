@@ -93,15 +93,16 @@
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"
                            Text="見出し文字：" />
-                <TextBox Grid.Row="1"
-                         Grid.Column="1"
-                         Margin="0,5,0,0"
-                         VerticalAlignment="Center"
-                         MaxLength="1"
-                         Text="{Binding Path=TreeTextCharacters.Value,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}"
-                         TextAlignment="Center" />
+                <ComboBox Grid.Row="1"
+                          Grid.Column="1"
+                          Margin="0,5,0,0"
+                          HorizontalContentAlignment="Center"
+                          ItemsSource="{Binding Path=TreeTextCharactersList}"
+                          DisplayMemberPath="Key"
+                          SelectedValuePath="Value"
+                          SelectedValue="{Binding Path=TreeTextCharacters.Value,
+                                                  Mode=TwoWay,
+                                                  UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock Grid.Row="12"
                            Grid.ColumnSpan="2"
