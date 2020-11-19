@@ -75,6 +75,11 @@ namespace QuartetEditor.ViewModels
         public ReactiveProperty<InsertPosition> DropPosition { get; }
 
         /// <summary>
+        /// 設定情報
+        /// </summary>
+        public IReadOnlyReactiveProperty<Config> Config { get; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="model"></param>
@@ -123,6 +128,8 @@ namespace QuartetEditor.ViewModels
             this.Children = this.Model
                 .Children
                 .ToReadOnlyReactiveCollection(x => new NodeViewModel(x));
+
+            this.Config = new ReactiveProperty<Config>(ConfigManager.Current.Config);
         }
 
 

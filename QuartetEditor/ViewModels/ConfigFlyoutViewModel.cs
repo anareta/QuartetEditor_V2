@@ -65,6 +65,11 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<string> TreeTextCharacters { get; }
 
+        /// <summary>
+        /// ノードパネルのフォント
+        /// </summary>
+        public ReactiveProperty<System.Windows.Media.FontFamily> NodePanelFontFamily { get; }
+
         #endregion General
 
         #region CenterTextEditor
@@ -169,6 +174,10 @@ namespace QuartetEditor.ViewModels
             this.TreeTextCharacters = this.Model
                 .ToReactivePropertyAsSynchronized(x => x.TreeTextCharacters)
                 .AddTo(this.Disposable);
+
+            this.NodePanelFontFamily = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.NodePanelFontFamily)
+               .AddTo(this.Disposable);
 
             #endregion General
 

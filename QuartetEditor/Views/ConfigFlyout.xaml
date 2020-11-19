@@ -1,18 +1,18 @@
-﻿<metro:Flyout x:Class="QuartetEditor.Views.ConfigFlyout"
-              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:converter="clr-namespace:QuartetEditor.Views.Converters"
-              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-              xmlns:local="clr-namespace:QuartetEditor.Views"
-              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-              IsOpen="{Binding IsOpen,
-                               Mode=TwoWay}"
-              d:DesignHeight="300"
-              d:DesignWidth="300"
-              mc:Ignorable="d">
+﻿<metro:Flyout
+    x:Class="QuartetEditor.Views.ConfigFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:QuartetEditor.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:QuartetEditor.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    IsOpen="{Binding IsOpen, Mode=TwoWay}"
+    mc:Ignorable="d">
     <metro:Flyout.Resources>
         <converter:FontFamilyToNameConverter x:Key="FontFamilyToNameConverter" />
     </metro:Flyout.Resources>
@@ -83,162 +83,183 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"
-                           Grid.ColumnSpan="2"
-                           FontSize="15"
-                           Text="階層付きテキスト" />
-                <TextBlock Grid.Row="1"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="見出し文字：" />
-                <ComboBox Grid.Row="1"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalContentAlignment="Center"
-                          ItemsSource="{Binding Path=TreeTextCharactersList}"
-                          DisplayMemberPath="Key"
-                          SelectedValuePath="Value"
-                          SelectedValue="{Binding Path=TreeTextCharacters.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    FontSize="15"
+                    Text="階層付きテキスト" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="見出し文字：" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalContentAlignment="Center"
+                    DisplayMemberPath="Key"
+                    ItemsSource="{Binding Path=TreeTextCharactersList}"
+                    SelectedValue="{Binding Path=TreeTextCharacters.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="Value" />
 
-                <TextBlock Grid.Row="12"
-                           Grid.ColumnSpan="2"
-                           Margin="0,20,0,0"
-                           FontSize="15"
-                           Text="編集パネル" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0,20,0,0"
+                    FontSize="15"
+                    Text="ノードパネル" />
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォント：" />
+                <ComboBox
+                    Name="NodeFontComboBox"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    ItemsSource="{Binding Path=FontList}"
+                    SelectedValue="{Binding Path=NodePanelFontFamily.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Grid.Row="13"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォントサイズ：" />
-                <metro:NumericUpDown Grid.Row="13"
-                                     Grid.Column="1"
-                                     Margin="0,5,0,0"
-                                     VerticalAlignment="Center"
-                                     Maximum="50"
-                                     Minimum="5"
-                                     StringFormat="F1"
-                                     Value="{Binding Path=CenterTextEditorFontSize.Value,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="12"
+                    Grid.ColumnSpan="2"
+                    Margin="0,20,0,0"
+                    FontSize="15"
+                    Text="編集パネル" />
 
-                <TextBlock Grid.Row="14"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォント：" />
-                <ComboBox Name="CenterFontComboBox"
-                          Grid.Row="14"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          ItemsSource="{Binding Path=FontList}"
-                          SelectedValue="{Binding Path=CenterTextEditorFontFamily.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="13"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォントサイズ：" />
+                <metro:NumericUpDown
+                    Grid.Row="13"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Maximum="50"
+                    Minimum="5"
+                    StringFormat="F1"
+                    Value="{Binding Path=CenterTextEditorFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Grid.Row="15"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="行間：" />
-                <metro:NumericUpDown Grid.Row="15"
-                                     Grid.Column="1"
-                                     Margin="0,5,0,0"
-                                     VerticalAlignment="Center"
-                                     Maximum="50"
-                                     Minimum="0"
-                                     StringFormat="F1"
-                                     Value="{Binding Path=CenterTextEditorLineHeight.Value,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="14"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォント：" />
+                <ComboBox
+                    Name="CenterFontComboBox"
+                    Grid.Row="14"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    ItemsSource="{Binding Path=FontList}"
+                    SelectedValue="{Binding Path=CenterTextEditorFontFamily.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Grid.Row="16"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="見出し行の記号：" />
-                <TextBox Grid.Row="16"
-                         Grid.Column="1"
-                         Margin="0,5,0,0"
-                         VerticalAlignment="Center"
-                         MaxLength="20"
-                         Text="{Binding Path=HeaderCharacters.Value,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="15"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="行間：" />
+                <metro:NumericUpDown
+                    Grid.Row="15"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Maximum="50"
+                    Minimum="0"
+                    StringFormat="F1"
+                    Value="{Binding Path=CenterTextEditorLineHeight.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox Grid.Row="17"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Center"
-                          Content="右端で折り返す"
-                          IsChecked="{Binding Path=CenterTextEditorTextWrapping.Value,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}" />
-                <CheckBox Grid.Row="18"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Center"
-                          Content="編集中の行をハイライト"
-                          IsChecked="{Binding Path=HighlightCurrentLine.Value,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}" />
-                <CheckBox Grid.Row="19"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Center"
-                          Content="行番号を表示する"
-                          IsChecked="{Binding Path=ShowLineNumbers.Value,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="16"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="見出し行の記号：" />
+                <TextBox
+                    Grid.Row="16"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    MaxLength="20"
+                    Text="{Binding Path=HeaderCharacters.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <CheckBox
+                    Grid.Row="17"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="右端で折り返す"
+                    IsChecked="{Binding Path=CenterTextEditorTextWrapping.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox
+                    Grid.Row="18"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="編集中の行をハイライト"
+                    IsChecked="{Binding Path=HighlightCurrentLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox
+                    Grid.Row="19"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="行番号を表示する"
+                    IsChecked="{Binding Path=ShowLineNumbers.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-                <TextBlock Grid.Row="20"
-                           Grid.ColumnSpan="2"
-                           Margin="0,20,0,0"
-                           FontSize="15"
-                           Text="左参照パネル" />
+                <TextBlock
+                    Grid.Row="20"
+                    Grid.ColumnSpan="2"
+                    Margin="0,20,0,0"
+                    FontSize="15"
+                    Text="左参照パネル" />
 
-                <TextBlock Grid.Row="21"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォントサイズ：" />
-                <metro:NumericUpDown Grid.Row="21"
-                                     Grid.Column="1"
-                                     Margin="0,5,0,0"
-                                     VerticalAlignment="Center"
-                                     Maximum="50"
-                                     Minimum="5"
-                                     StringFormat="F1"
-                                     Value="{Binding Path=LeftTextEditorFontSize.Value,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="21"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォントサイズ：" />
+                <metro:NumericUpDown
+                    Grid.Row="21"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Maximum="50"
+                    Minimum="5"
+                    StringFormat="F1"
+                    Value="{Binding Path=LeftTextEditorFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Grid.Row="22"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォント：" />
-                <ComboBox Grid.Row="22"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          ItemsSource="{Binding Path=FontList}"
-                          SelectedValue="{Binding Path=LeftTextEditorFontFamily.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="22"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォント：" />
+                <ComboBox
+                    Grid.Row="22"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    ItemsSource="{Binding Path=FontList}"
+                    SelectedValue="{Binding Path=LeftTextEditorFontFamily.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--<TextBlock Text="行間："
                             Margin="0,5,0,0"
@@ -259,53 +280,53 @@
                                      Grid.Row="13"
                                      />-->
 
-                <CheckBox Grid.Row="23"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Center"
-                          Content="右端で折り返す"
-                          IsChecked="{Binding Path=LeftTextEditorTextWrapping.Value,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox
+                    Grid.Row="23"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="右端で折り返す"
+                    IsChecked="{Binding Path=LeftTextEditorTextWrapping.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-                <TextBlock Grid.Row="30"
-                           Grid.ColumnSpan="2"
-                           Margin="0,20,0,0"
-                           FontSize="15"
-                           Text="上下参照パネル" />
+                <TextBlock
+                    Grid.Row="30"
+                    Grid.ColumnSpan="2"
+                    Margin="0,20,0,0"
+                    FontSize="15"
+                    Text="上下参照パネル" />
 
-                <TextBlock Grid.Row="31"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォントサイズ：" />
-                <metro:NumericUpDown Grid.Row="31"
-                                     Grid.Column="1"
-                                     Margin="0,5,0,0"
-                                     VerticalAlignment="Center"
-                                     Maximum="50"
-                                     Minimum="5"
-                                     StringFormat="F1"
-                                     Value="{Binding Path=TopBottomTextEditorFontSize.Value,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="31"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォントサイズ：" />
+                <metro:NumericUpDown
+                    Grid.Row="31"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Maximum="50"
+                    Minimum="5"
+                    StringFormat="F1"
+                    Value="{Binding Path=TopBottomTextEditorFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Grid.Row="32"
-                           Grid.Column="0"
-                           Margin="0,5,0,0"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           Text="フォント：" />
-                <ComboBox Grid.Row="32"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          ItemsSource="{Binding Path=FontList}"
-                          SelectedValue="{Binding Path=TopBottomTextEditorFontFamily.Value,
-                                                  Mode=TwoWay,
-                                                  UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="32"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="フォント：" />
+                <ComboBox
+                    Grid.Row="32"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    ItemsSource="{Binding Path=FontList}"
+                    SelectedValue="{Binding Path=TopBottomTextEditorFontFamily.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--<TextBlock Text="行間："
                             Margin="0,5,0,0"
@@ -326,30 +347,32 @@
                                         Grid.Row="23"
                                         />-->
 
-                <CheckBox Grid.Row="34"
-                          Grid.Column="1"
-                          Margin="0,5,0,0"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Center"
-                          Content="右端で折り返す"
-                          IsChecked="{Binding Path=TopBottomTextEditorTextWrapping.Value,
-                                              Mode=TwoWay,
-                                              UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox
+                    Grid.Row="34"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="右端で折り返す"
+                    IsChecked="{Binding Path=TopBottomTextEditorTextWrapping.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </ScrollViewer>
 
-        <UniformGrid Grid.Row="42"
-                     Margin="10"
-                     Columns="2">
-            <Button Margin="10"
-                    Command="{Binding Path=ResetCommand}"
-                    Content="リセット"
-                    Style="{DynamicResource SquareButtonStyle}" />
-            <Button Name="ApplyButton"
-                    Margin="10"
-                    Command="{Binding Path=ApplyCommand}"
-                    Content="適用"
-                    Style="{DynamicResource SquareButtonStyle}" />
+        <UniformGrid
+            Grid.Row="42"
+            Margin="10"
+            Columns="2">
+            <Button
+                Margin="10"
+                Command="{Binding Path=ResetCommand}"
+                Content="リセット"
+                Style="{DynamicResource SquareButtonStyle}" />
+            <Button
+                Name="ApplyButton"
+                Margin="10"
+                Command="{Binding Path=ApplyCommand}"
+                Content="適用"
+                Style="{DynamicResource SquareButtonStyle}" />
         </UniformGrid>
     </Grid>
 </metro:Flyout>

@@ -22,6 +22,7 @@ namespace QuartetEditor.Models
         public Config()
         {
             this.TreeTextCharacters = ".";
+            this.NodePanelFontFamily = new System.Windows.Media.FontFamily("メイリオ");
 
             this.CenterTextEditorFontSize = 14;
             this.CenterTextEditorFontFamily = new System.Windows.Media.FontFamily("メイリオ");
@@ -72,6 +73,18 @@ namespace QuartetEditor.Models
         }
 
         public string _TreeTextCharacters;
+
+        /// <summary>
+        /// ノードパネルのフォント
+        /// </summary>
+        [JsonProperty]
+        public System.Windows.Media.FontFamily NodePanelFontFamily
+        {
+            get { return this._NodePanelFontFamily; }
+            set { this.SetProperty(ref this._NodePanelFontFamily, value); }
+        }
+
+        public System.Windows.Media.FontFamily _NodePanelFontFamily;
 
         #endregion General
 
