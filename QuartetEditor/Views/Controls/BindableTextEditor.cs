@@ -98,14 +98,50 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// 選択行のハイライト設定が変更された場合
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private static void OnHighlightCurrentLineChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var control = (BindableTextEditor)sender;
             control.HighlightCurrentLine = (bool)e.NewValue;
         }
 
+
+        /// <summary>
+        /// 選択行のハイライト設定
+        /// </summary>
+        public static readonly DependencyProperty ShowEndOfLineProperty = DependencyProperty.Register(
+            nameof(ShowEndOfLine), typeof(bool), typeof(BindableTextEditor), new PropertyMetadata(false, OnShowEndOfLineChanged));
+
+        /// <summary>
+        /// 改行文字の表示
+        /// </summary>
+        public bool ShowEndOfLine
+        {
+            get
+            {
+                if (this.Options == null)
+                {
+                    this.Options = new TextEditorOptions();
+                }
+                return this.Options.ShowEndOfLine;
+            }
+            set
+            {
+                if (this.Options == null)
+                {
+                    this.Options = new TextEditorOptions();
+                }
+                this.Options.ShowEndOfLine = value;
+            }
+        }
+
+        /// <summary>
+        /// 改行文字の表示が変更された場合
+        /// </summary>
+        private static void OnShowEndOfLineChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (BindableTextEditor)sender;
+            control.ShowEndOfLine = (bool)e.NewValue;
+        }
 
         /// <summary>
         /// 見出し行の文字
@@ -197,13 +233,15 @@ namespace QuartetEditor.Views.Controls
             h => (s, e) => h(e),
             h => this.GotFocus += h,
             h => this.GotFocus -= h)
-            .Subscribe( _ => this.IsSelected = true);
+            .Subscribe(_ => this.IsSelected = true);
 
             Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>(
             h => (s, e) => h(e),
             h => this.LostFocus += h,
             h => this.LostFocus -= h)
             .Subscribe(_ => this.IsSelected = false);
+
+            this.Options = new TextEditorOptions();
         }
     }
 }

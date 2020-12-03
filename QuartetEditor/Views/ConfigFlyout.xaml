@@ -80,6 +80,17 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <!--  40  -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <!--  50  -->
                     <RowDefinition Height="30" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -221,24 +232,31 @@
                     VerticalAlignment="Center"
                     Content="行番号を表示する"
                     IsChecked="{Binding Path=ShowLineNumbers.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+                <CheckBox
+                    Grid.Row="20"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="改行文字の表示"
+                    IsChecked="{Binding Path=ShowEndOfLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock
-                    Grid.Row="20"
+                    Grid.Row="30"
                     Grid.ColumnSpan="2"
                     Margin="0,20,0,0"
                     FontSize="15"
                     Text="左参照パネル" />
 
                 <TextBlock
-                    Grid.Row="21"
+                    Grid.Row="31"
                     Grid.Column="0"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Text="フォントサイズ：" />
                 <metro:NumericUpDown
-                    Grid.Row="21"
+                    Grid.Row="31"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     VerticalAlignment="Center"
@@ -248,14 +266,14 @@
                     Value="{Binding Path=LeftTextEditorFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock
-                    Grid.Row="22"
+                    Grid.Row="32"
                     Grid.Column="0"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Text="フォント：" />
                 <ComboBox
-                    Grid.Row="22"
+                    Grid.Row="32"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     ItemsSource="{Binding Path=FontList}"
@@ -281,7 +299,7 @@
                                      />-->
 
                 <CheckBox
-                    Grid.Row="23"
+                    Grid.Row="33"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Left"
@@ -291,21 +309,21 @@
 
 
                 <TextBlock
-                    Grid.Row="30"
+                    Grid.Row="40"
                     Grid.ColumnSpan="2"
                     Margin="0,20,0,0"
                     FontSize="15"
                     Text="上下参照パネル" />
 
                 <TextBlock
-                    Grid.Row="31"
+                    Grid.Row="41"
                     Grid.Column="0"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Text="フォントサイズ：" />
                 <metro:NumericUpDown
-                    Grid.Row="31"
+                    Grid.Row="41"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     VerticalAlignment="Center"
@@ -315,14 +333,14 @@
                     Value="{Binding Path=TopBottomTextEditorFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock
-                    Grid.Row="32"
+                    Grid.Row="42"
                     Grid.Column="0"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Text="フォント：" />
                 <ComboBox
-                    Grid.Row="32"
+                    Grid.Row="42"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     ItemsSource="{Binding Path=FontList}"
@@ -348,7 +366,7 @@
                                         />-->
 
                 <CheckBox
-                    Grid.Row="34"
+                    Grid.Row="44"
                     Grid.Column="1"
                     Margin="0,5,0,0"
                     HorizontalAlignment="Left"
@@ -359,7 +377,7 @@
         </ScrollViewer>
 
         <UniformGrid
-            Grid.Row="42"
+            Grid.Row="52"
             Margin="10"
             Columns="2">
             <Button

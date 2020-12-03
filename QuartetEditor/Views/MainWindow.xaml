@@ -620,6 +620,7 @@
                         LineHeight="{Binding Path=Config.CenterTextEditorLineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
                         ScrollingIncrement="0.4"
+                        ShowEndOfLine="{Binding Path=Config.ShowEndOfLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ShowLineNumbers="{Binding Path=Config.ShowLineNumbers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SyntaxHighlighting="Custom HighlightingRules"
                         TextOptions.TextFormattingMode="Display"

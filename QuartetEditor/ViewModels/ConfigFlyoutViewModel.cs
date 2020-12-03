@@ -108,6 +108,11 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<string> HeaderCharacters { get; }
 
+        /// <summary>
+        /// 編集パネルで改行文字の表示
+        /// </summary>
+        public ReactiveProperty<bool> ShowEndOfLine { get; }
+
         #endregion CenterTextEditor
 
 
@@ -201,6 +206,10 @@ namespace QuartetEditor.ViewModels
 
             this.HighlightCurrentLine = this.Model
                .ToReactivePropertyAsSynchronized(x => x.HighlightCurrentLine)
+               .AddTo(this.Disposable);
+
+            this.ShowEndOfLine = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.ShowEndOfLine)
                .AddTo(this.Disposable);
 
             this.ShowLineNumbers = this.Model

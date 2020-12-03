@@ -175,6 +175,18 @@ namespace QuartetEditor.Models
             set { this.SetProperty(ref this._HeaderCharacters, value); }
         }
 
+        /// <summary>
+        /// 編集パネルで改行の表示
+        /// </summary>
+        public bool _ShowEndOfLine;
+
+        [JsonProperty]
+        public bool ShowEndOfLine
+        {
+            get { return this._ShowEndOfLine; }
+            set { this.SetProperty(ref this._ShowEndOfLine, value); }
+        }
+
         #endregion CenterTextEditor
 
 
