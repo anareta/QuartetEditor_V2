@@ -66,7 +66,6 @@ namespace QuartetEditor.Entities
         /// <summary>
         /// デフォルトコンストラクタ
         /// </summary>
-        /// <param name="node"></param>
         public QuartetEditorDescriptionItem()
         {
 
@@ -75,12 +74,11 @@ namespace QuartetEditor.Entities
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="node"></param>
         public QuartetEditorDescriptionItem(Node node)
         {
             this.Name = node.Name;
             this.Content = node.Content.Text;
-            foreach (var child in node.ChildrenSource)
+            foreach (var child in node.Children)
             {
                 this.Children.Add(new QuartetEditorDescriptionItem(child));
             }

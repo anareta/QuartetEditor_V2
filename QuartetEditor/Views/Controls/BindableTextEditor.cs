@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Xml;
 
 namespace QuartetEditor.Views.Controls
@@ -26,8 +27,6 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// テキスト変更処理
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private static void OnBindableTextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var control = (BindableTextEditor)sender;
@@ -57,7 +56,6 @@ namespace QuartetEditor.Views.Controls
         /// 基底クラスのテキストが変更した場合の処理をオーバーライド
         /// バインド先にも通知する
         /// </summary>
-        /// <param name="e"></param>
         protected override void OnTextChanged(EventArgs e)
         {
             SetCurrentValue(BindableTextProperty, this.Text);
@@ -168,8 +166,6 @@ namespace QuartetEditor.Views.Controls
         /// <summary>
         /// 見出し行の文字の変更時処理
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private static void OnHeaderCharactersChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var control = (BindableTextEditor)sender;
@@ -243,5 +239,71 @@ namespace QuartetEditor.Views.Controls
 
             this.Options = new TextEditorOptions();
         }
+
+        /// <summary>
+        /// テンプレート適用
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            var scrollViewer = this.GetTemplateChild("PART_ScrollViewer") as ScrollViewer;
+
+            scrollViewer.ScrollChanged += (_, __) =>
+            {
+                try
+                {
+                    var line = this.TextArea.TextView.GetDocumentLineByVisualTop(this.VerticalOffset + (this.ActualHeight/2));
+                    this.ScrolledLine = line.LineNumber;
+                }
+                catch (Exception)
+                {
+
+                } 
+            };
+        }
+
+        /// <summary>
+        /// 指定行までスクロールする
+        /// </summary>
+        public void ScrollTo(int line)
+        {
+            this.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                base.ScrollToLine(line);
+
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+
+        /// <summary>
+        /// 最後に表示された行数
+        /// </summary>
+        public int? ScrolledLine
+        {
+            get
+            {
+                return (int?)GetValue(ScrolledLineProperty);
+            }
+            set
+            {
+                SetValue(ScrolledLineProperty, value);
+                this.UpdateHightlightSetting();
+            }
+        }
+
+        /// <summary>
+        /// 最後に表示された行数
+        /// </summary>
+        public static readonly DependencyProperty ScrolledLineProperty =
+            DependencyProperty.Register(nameof(ScrolledLine), typeof(int?), typeof(BindableTextEditor), new PropertyMetadata(null, OnLastLineChanged));
+
+        private static void OnLastLineChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (BindableTextEditor)sender;
+            control.ScrolledLine = (int?)e.NewValue;
+        }
+
     }
+
+
 }

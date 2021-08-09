@@ -113,6 +113,11 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<bool> ShowEndOfLine { get; }
 
+        /// <summary>
+        /// 最後にスクロールした行を復元する
+        /// </summary>
+        public ReactiveProperty<bool> RestoreLastScrollLine { get; }
+
         #endregion CenterTextEditor
 
 
@@ -169,7 +174,6 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="model"></param>
         public ConfigFlyoutViewModel()
         {
             this.Model = ConfigManager.Current.Config;
@@ -218,6 +222,10 @@ namespace QuartetEditor.ViewModels
 
             this.HeaderCharacters = this.Model
                .ToReactivePropertyAsSynchronized(x => x.HeaderCharacters)
+               .AddTo(this.Disposable);
+
+            this.RestoreLastScrollLine = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.RestoreLastScrollLine)
                .AddTo(this.Disposable);
 
             #endregion CenterTextEditor

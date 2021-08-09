@@ -240,7 +240,15 @@
                     VerticalAlignment="Center"
                     Content="改行文字の表示"
                     IsChecked="{Binding Path=ShowEndOfLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+                <CheckBox
+                    Grid.Row="21"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="スクロールの状態を復元(試験的)"
+                    IsChecked="{Binding Path=RestoreLastScrollLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                
                 <TextBlock
                     Grid.Row="30"
                     Grid.ColumnSpan="2"

@@ -171,6 +171,10 @@
             <messenger:FindReplaceDialogRequestAction />
         </prism:InteractionRequestTrigger>
 
+        <prism:InteractionRequestTrigger SourceObject="{Binding SetScrollRequest}">
+            <messenger:SetScrollAction />
+        </prism:InteractionRequestTrigger>
+
         <i:EventTrigger EventName="ContentRendered">
             <ei:CallMethodAction MethodName="Initialize" TargetObject="{Binding}" />
         </i:EventTrigger>
@@ -627,6 +631,7 @@
                         TextOptions.TextHintingMode="Fixed"
                         TextOptions.TextRenderingMode="ClearType"
                         VerticalScrollBarVisibility="Auto"
+                        ScrolledLine="{Binding Path=CenterScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 

@@ -237,6 +237,7 @@
     <Compile Include="Entities\QuartetEditorDescription.cs" />
     <Compile Include="Entities\SearchResult.cs" />
     <Compile Include="Models\ExportKind.cs" />
+    <Compile Include="Views\Messengers\SetScrollAction.cs" />
     <Compile Include="Views\PanelKind.cs" />
     <Compile Include="ItemSources\FontFamilyItemSource.cs" />
     <Compile Include="Models\Config.cs" />

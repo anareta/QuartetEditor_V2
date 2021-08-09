@@ -23,6 +23,7 @@ namespace QuartetEditor.Models
         {
             this.TreeTextCharacters = ".";
             this.NodePanelFontFamily = new System.Windows.Media.FontFamily("メイリオ");
+            this.RestoreLastScrollLine = false;
 
             this.CenterTextEditorFontSize = 14;
             this.CenterTextEditorFontFamily = new System.Windows.Media.FontFamily("メイリオ");
@@ -85,6 +86,18 @@ namespace QuartetEditor.Models
         }
 
         public System.Windows.Media.FontFamily _NodePanelFontFamily;
+
+        /// <summary>
+        /// 最後にスクロールした行を復元する
+        /// </summary>
+        [JsonProperty]
+        public bool RestoreLastScrollLine
+        {
+            get { return this._RestoreLastScrollLine; }
+            set { this.SetProperty(ref this._RestoreLastScrollLine, value); }
+        }
+
+        public bool _RestoreLastScrollLine;
 
         #endregion General
 

@@ -82,7 +82,6 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="model"></param>
         public NodeViewModel(Node model)
         {
             this.Model = model;

@@ -270,7 +270,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -324,7 +324,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -344,7 +344,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.SelectedNode.ChildrenSource;
+            IList<Node> tree = this.SelectedNode.Children;
             int index = tree.Count();
 
             this.AddNode(tree, index);
@@ -421,7 +421,7 @@ namespace QuartetEditor.Models
             }
 
             var newItem = new Node(this.SelectedNode);
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -476,7 +476,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -505,7 +505,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -533,7 +533,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -541,7 +541,7 @@ namespace QuartetEditor.Models
 
             int fromIndex = fromTree.IndexOf(this.SelectedNode);
 
-            IList<Node> toTree = this.GetOlder(this.SelectedNode)?.ChildrenSource;
+            IList<Node> toTree = this.GetOlder(this.SelectedNode)?.Children;
             if (toTree == null)
             {
                 return;
@@ -567,7 +567,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.ChildrenSource;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -581,7 +581,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> toTree = this.GetParent(parent)?.ChildrenSource;
+            IList<Node> toTree = this.GetParent(parent)?.Children;
             if (toTree == null)
             {
                 toTree = this.TreeSource;
@@ -622,7 +622,7 @@ namespace QuartetEditor.Models
                     _toTree, _toIndex,
                     _item);
 
-                if (_target?.ChildrenSource == _toTree)
+                if (_target?.Children == _toTree)
                 {
                     _target.IsExpanded = true;
                 }
@@ -748,7 +748,7 @@ namespace QuartetEditor.Models
                 }
             }
 
-            this.AddNodes(this.SelectedNode.ChildrenSource, this.SelectedNode.Children.Count, addItems);
+            this.AddNodes(this.SelectedNode.Children, this.SelectedNode.Children.Count, addItems);
         }
 
         /// <summary>
@@ -950,7 +950,7 @@ namespace QuartetEditor.Models
 
             // 移動元
             {
-                fromTree = this.GetParent(dropped)?.ChildrenSource;
+                fromTree = this.GetParent(dropped)?.Children;
                 if (fromTree == null)
                 {
                     fromTree = this.TreeSource;
@@ -964,7 +964,7 @@ namespace QuartetEditor.Models
                 {
                     case InsertPosition.Prev:
                     case InsertPosition.Next:
-                        toTree = this.GetParent(target)?.ChildrenSource;
+                        toTree = this.GetParent(target)?.Children;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
@@ -976,8 +976,8 @@ namespace QuartetEditor.Models
                         }
                         break;
                     case InsertPosition.Child:
-                        toTree = target.ChildrenSource;
-                        toIndex = target.ChildrenSource.Count();
+                        toTree = target.Children;
+                        toIndex = target.Children.Count();
                         break;
                     default:
                         return false;
@@ -999,7 +999,7 @@ namespace QuartetEditor.Models
                 {
                     case InsertPosition.Prev:
                     case InsertPosition.Next:
-                        toTree = this.GetParent(target)?.ChildrenSource;
+                        toTree = this.GetParent(target)?.Children;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
@@ -1011,8 +1011,8 @@ namespace QuartetEditor.Models
                         }
                         break;
                     case InsertPosition.Child:
-                        toTree = target.ChildrenSource;
-                        toIndex = target.ChildrenSource.Count();
+                        toTree = target.Children;
+                        toIndex = target.Children.Count();
                         break;
                     default:
                         return;

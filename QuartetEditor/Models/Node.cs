@@ -28,22 +28,13 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 識別番号
         /// </summary>
-        private string _ID = Guid.NewGuid().ToString();
-
-        /// <summary>
-        /// 識別番号
-        /// </summary>
         [Unique]
         public string ID
         {
             get { return this._ID; }
             set { this.SetProperty(ref this._ID, value); }
         }
-
-        /// <summary>
-        /// ノード名
-        /// </summary>
-        private string _Name = "新しいノード";
+        private string _ID = Guid.NewGuid().ToString();
 
         /// <summary>
         /// ノード名
@@ -61,102 +52,87 @@ namespace QuartetEditor.Models
                 this.SetProperty(ref this._Name, value.Replace("\n", "").Replace("\r", ""));
             }
         }
+        private string _Name = "新しいノード";
 
         /// <summary>
         /// ノードのコンテンツ
         /// </summary>
-
         [Unique]
         public TextDocument Content { get; } = new TextDocument();
 
         /// <summary>
-        /// 内部データクラス
+        /// 子要素の内部データ
         /// </summary>
-        private ObservableCollection<Node> _ChildrenSource = new ObservableCollection<Node>();
-
-        [Unique]
-        public ObservableCollection<Node> ChildrenSource
-        {
-            get { return this._ChildrenSource; }
-            set { this.SetProperty(ref this._ChildrenSource, value); }
-        }
+        private readonly ObservableCollection<Node> _ChildrenSource = new ObservableCollection<Node>();
 
         /// <summary>
-        /// 読み取り専用データツリー
+        /// 子要素
         /// </summary>
-        public ReadOnlyObservableCollection<Node> _Children;
-
         [Unique]
         public ReadOnlyObservableCollection<Node> Children
         {
             get { return this._Children; }
-            set { this.SetProperty(ref this._Children, value); }
+            private set { this.SetProperty(ref this._Children, value); }
         }
+        public ReadOnlyObservableCollection<Node> _Children;
 
         /// <summary>
         /// 展開状態
         /// </summary>
-        public bool _IsExpanded = true;
-
         public bool IsExpanded
         {
             get { return this._IsExpanded; }
             set { this.SetProperty(ref this._IsExpanded, value); }
         }
+        public bool _IsExpanded = true;
 
         /// <summary>
         /// 選択状態
         /// </summary>
-        public bool _IsSelected;
-
         [Unique]
         public bool IsSelected
         {
             get { return this._IsSelected; }
             set { this.SetProperty(ref this._IsSelected, value); }
         }
+        public bool _IsSelected;
 
         /// <summary>
         /// ノード名編集モード
         /// </summary>
-        public bool _IsNameEditMode;
-
         [Unique]
         public bool IsNameEditMode
         {
             get { return this._IsNameEditMode; }
             set { this.SetProperty(ref this._IsNameEditMode, value); }
         }
+        public bool _IsNameEditMode;
 
         /// <summary>
         /// 参照状態
         /// </summary>
-        public bool _IsReferred;
-
         [Unique]
         public bool IsReferred
         {
             get { return this._IsReferred; }
             set { this.SetProperty(ref this._IsReferred, value); }
         }
+        public bool _IsReferred;
 
         /// <summary>
         /// ドラッグオーバーしているか
         /// </summary>
-        public bool _IsDragOver;
-
         [Unique]
         public bool IsDragOver
         {
             get { return this._IsDragOver; }
             set { this.SetProperty(ref this._IsDragOver, value); }
         }
+        public bool _IsDragOver;
 
         /// <summary>
         /// ドロップする位置
         /// </summary>
-        public InsertPosition _DropPosition;
-
         [Unique]
         public InsertPosition DropPosition
         {
@@ -167,30 +143,40 @@ namespace QuartetEditor.Models
                 this.OnPropertyChanged(() => this.DropPosition);
             }
         }
+        public InsertPosition _DropPosition;
 
         /// <summary>
         /// 編集されたか
         /// </summary>
-        public bool _IsEdited = false;
-
         [Unique]
         public bool IsEdited
         {
             get { return this._IsEdited; }
             set { this.SetProperty(ref this._IsEdited, value); }
         }
+        public bool _IsEdited = false;
 
         /// <summary>
         /// 子ノードが編集された
         /// </summary>
-        public bool _ChildrenEdited = false;
-
         [Unique]
         public bool ChildrenEdited
         {
             get { return this._ChildrenEdited; }
             set { this.SetProperty(ref this._ChildrenEdited, value); }
         }
+        public bool _ChildrenEdited = false;
+
+        /// <summary>
+        /// 最後にスクロールした行
+        /// </summary>
+        [Unique]
+        public int? LastScrolledLine
+        {
+            get { return this._LastScrolledLine; }
+            set { this.SetProperty(ref this._LastScrolledLine, value); }
+        }
+        public int? _LastScrolledLine = null;
 
         /// <summary>
         /// コンストラクタ
@@ -198,7 +184,7 @@ namespace QuartetEditor.Models
         public Node()
         {
             // 接続
-            this.Children = new ReadOnlyObservableCollection<Node>(this.ChildrenSource);
+            this.Children = new ReadOnlyObservableCollection<Node>(this._ChildrenSource);
 
             // プロパティの変更を監視する
             this.ObserveProperty(x => x.Name)
@@ -210,15 +196,15 @@ namespace QuartetEditor.Models
                       .Subscribe(_ => this.IsEdited = true).AddTo(this.Disposable);
 
             // 子ノードの変更検出
-            this.ChildrenSource.ObserveElementProperty(x => x.IsEdited).Where(x => x.Value)
-                .Merge(this.ChildrenSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
+            this._ChildrenSource.ObserveElementProperty(x => x.IsEdited).Where(x => x.Value)
+                .Merge(this._ChildrenSource.ObserveElementProperty(x => x.ChildrenEdited).Where(x => x.Value))
                 .Subscribe(x =>
                 {
                     this.ChildrenEdited = true;
                 })
                 .AddTo(this.Disposable);
 
-            this.ChildrenSource.CollectionChangedAsObservable()
+            this._ChildrenSource.CollectionChangedAsObservable()
                 .Subscribe(x => this.ChildrenEdited = true)
                 .AddTo(this.Disposable);
         }
@@ -245,14 +231,13 @@ namespace QuartetEditor.Models
             this.Content.UndoStack.ClearAll();
             foreach (var item in QEDItem.Children)
             {
-                this.ChildrenSource.Add(new Node(item));
+                this._ChildrenSource.Add(new Node(item));
             }
         }
 
         /// <summary>
         /// コピーコンストラクタ
         /// </summary>
-        /// <param name="item"></param>
         public Node(Node item) : this()
         {
             foreach (PropertyInfo property in item.GetType().GetProperties())
@@ -267,9 +252,9 @@ namespace QuartetEditor.Models
             this.Content.Text = item.Content.Text;
             this.Content.UndoStack.ClearAll();
 
-            foreach (var child in item.ChildrenSource)
+            foreach (var child in item._ChildrenSource)
             {
-                this.ChildrenSource.Add(new Node(child));
+                this._ChildrenSource.Add(new Node(child));
             }
         }
 
@@ -281,7 +266,7 @@ namespace QuartetEditor.Models
         public Node AddChild()
         {
             var item = new Node();
-            this.ChildrenSource.Add(item);
+            this._ChildrenSource.Add(item);
             return item;
         }
 
@@ -467,7 +452,7 @@ namespace QuartetEditor.Models
             }
 
             this.Disposable.Dispose();
-            foreach (var item in this.ChildrenSource)
+            foreach (var item in this._ChildrenSource)
             {
                 item.Dispose();
             }

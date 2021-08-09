@@ -221,9 +221,6 @@ namespace QuartetEditor.ViewModels
         /// <summary>
         /// ノードの検索
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         private NodeViewModel Find(IList<NodeViewModel> list, Predicate<NodeViewModel> predicate)
         {
             foreach (var item in list)
@@ -398,6 +395,18 @@ namespace QuartetEditor.ViewModels
         #endregion ExportFindAndReplace
 
         /// <summary>
+        /// スクロールの設定要求
+        /// </summary>
+        private InteractionRequest<Confirmation> setScrollRequest = new InteractionRequest<Confirmation>();
+
+        public IInteractionRequest SetScrollRequest { get { return this.setScrollRequest; } }
+
+        /// <summary>
+        /// 中央パネルのスクロールで表示した行
+        /// </summary>
+        public ReactiveProperty<int?> CenterScrolledLine { get; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public MainWindowViewModel()
@@ -448,6 +457,34 @@ namespace QuartetEditor.ViewModels
             this.TextContent = this.Model.Content
                 .ObserveProperty(x => x.TextContent)
                 .ToReactiveProperty()
+                .AddTo(this.Disposable);
+
+            this.CenterScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
+            this.CenterScrolledLine.Subscribe(t =>
+            {
+                if (this.Model?.Content?.SelectedNode != null)
+                {
+                    if (this.Config.RestoreLastScrollLine)
+                    {
+                        this.Model.Content.SelectedNode.LastScrolledLine = t;
+                    }
+                    else
+                    {
+                        this.Model.Content.SelectedNode.LastScrolledLine = null;
+                    }
+                }
+            }).AddTo(this.Disposable);
+
+            this.SelectedNode.Subscribe(_ =>
+                    {
+                        if (this.Model?.Content?.SelectedNode?.LastScrolledLine.HasValue == true && this.Config.RestoreLastScrollLine)
+                        {
+                            this.setScrollRequest.Raise(new Confirmation 
+                            { 
+                                Content = this.Model.Content.SelectedNode.LastScrolledLine.Value 
+                            });
+                        }
+                    })
                 .AddTo(this.Disposable);
 
             this.ParentTextContent = this.Model.Content
