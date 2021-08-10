@@ -114,9 +114,9 @@ namespace QuartetEditor.ViewModels
         public ReactiveProperty<bool> ShowEndOfLine { get; }
 
         /// <summary>
-        /// 最後にスクロールした行を復元する
+        /// 編集パネルで最後にスクロールした位置を復元する
         /// </summary>
-        public ReactiveProperty<bool> RestoreLastScrollLine { get; }
+        public ReactiveProperty<bool> RestoreCenterScrolledLine { get; }
 
         #endregion CenterTextEditor
 
@@ -143,6 +143,11 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<bool> LeftTextEditorTextWrapping { get; }
 
+        /// <summary>
+        /// 左参照パネルで最後にスクロールした位置を復元する
+        /// </summary>
+        public ReactiveProperty<bool> RestoreLeftScrolledLine { get; }
+
         #endregion LeftTextEditor
 
 
@@ -167,6 +172,11 @@ namespace QuartetEditor.ViewModels
         /// 上下参照パネルの折り返し
         /// </summary>
         public ReactiveProperty<bool> TopBottomTextEditorTextWrapping { get; }
+
+        /// <summary>
+        /// 上下参照パネルで最後にスクロールした位置を復元する
+        /// </summary>
+        public ReactiveProperty<bool> RestoreTopBottomScrolledLine { get; }
 
         #endregion TopBottomTextEditor
 
@@ -224,8 +234,8 @@ namespace QuartetEditor.ViewModels
                .ToReactivePropertyAsSynchronized(x => x.HeaderCharacters)
                .AddTo(this.Disposable);
 
-            this.RestoreLastScrollLine = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.RestoreLastScrollLine)
+            this.RestoreCenterScrolledLine = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.RestoreCenterScrolledLine)
                .AddTo(this.Disposable);
 
             #endregion CenterTextEditor
@@ -248,6 +258,10 @@ namespace QuartetEditor.ViewModels
                .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorTextWrapping)
                .AddTo(this.Disposable);
 
+            this.RestoreLeftScrolledLine = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.RestoreLeftScrolledLine)
+               .AddTo(this.Disposable);
+
             #endregion LeftTextEditor
 
             #region TopBottomTextEditor
@@ -266,6 +280,10 @@ namespace QuartetEditor.ViewModels
 
             this.TopBottomTextEditorTextWrapping = this.Model
                .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorTextWrapping)
+               .AddTo(this.Disposable);
+
+            this.RestoreTopBottomScrolledLine = this.Model
+               .ToReactivePropertyAsSynchronized(x => x.RestoreTopBottomScrolledLine)
                .AddTo(this.Disposable);
 
             #endregion TopBottomTextEditor

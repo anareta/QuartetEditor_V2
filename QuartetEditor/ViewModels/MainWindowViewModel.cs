@@ -119,7 +119,6 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public ReactiveProperty<string> ParentTextContent { get; }
 
-
         /// <summary>
         /// 上参照パネルのコンテンツ
         /// </summary>
@@ -394,6 +393,8 @@ namespace QuartetEditor.ViewModels
 
         #endregion ExportFindAndReplace
 
+        #region ScrolledLine
+
         /// <summary>
         /// スクロールの設定要求
         /// </summary>
@@ -402,9 +403,26 @@ namespace QuartetEditor.ViewModels
         public IInteractionRequest SetScrollRequest { get { return this.setScrollRequest; } }
 
         /// <summary>
-        /// 中央パネルのスクロールで表示した行
+        /// 編集パネルのスクロールで表示した行
         /// </summary>
         public ReactiveProperty<int?> CenterScrolledLine { get; }
+
+        /// <summary>
+        /// 左参照パネルのスクロールで表示した行
+        /// </summary>
+        public ReactiveProperty<int?> ParentScrolledLine { get; }
+
+        /// <summary>
+        /// 上参照パネルのスクロールで表示した行
+        /// </summary>
+        public ReactiveProperty<int?> PrevScrolledLine { get; }
+
+        /// <summary>
+        /// 下参照パネルのスクロールで表示した行
+        /// </summary>
+        public ReactiveProperty<int?> NextScrolledLine { get; }
+
+        #endregion ScrolledLine
 
         /// <summary>
         /// コンストラクタ
@@ -459,34 +477,6 @@ namespace QuartetEditor.ViewModels
                 .ToReactiveProperty()
                 .AddTo(this.Disposable);
 
-            this.CenterScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
-            this.CenterScrolledLine.Subscribe(t =>
-            {
-                if (this.Model?.Content?.SelectedNode != null)
-                {
-                    if (this.Config.RestoreLastScrollLine)
-                    {
-                        this.Model.Content.SelectedNode.LastScrolledLine = t;
-                    }
-                    else
-                    {
-                        this.Model.Content.SelectedNode.LastScrolledLine = null;
-                    }
-                }
-            }).AddTo(this.Disposable);
-
-            this.SelectedNode.Subscribe(_ =>
-                    {
-                        if (this.Model?.Content?.SelectedNode?.LastScrolledLine.HasValue == true && this.Config.RestoreLastScrollLine)
-                        {
-                            this.setScrollRequest.Raise(new Confirmation 
-                            { 
-                                Content = this.Model.Content.SelectedNode.LastScrolledLine.Value 
-                            });
-                        }
-                    })
-                .AddTo(this.Disposable);
-
             this.ParentTextContent = this.Model.Content
                 .ObserveProperty(x => x.ParentTextContent)
                 .ToReactiveProperty()
@@ -525,7 +515,8 @@ namespace QuartetEditor.ViewModels
             .Subscribe(_ =>
             {
                 this.RisePanelState();
-                this.Model.Content.UpdatePanelReffer(); // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
+                this.Model.Content.UpdatePanelReffer();
+                // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
             })
             .AddTo(this.Disposable);
 
@@ -839,6 +830,81 @@ namespace QuartetEditor.ViewModels
             }).AddTo(this.Disposable);
 
             #endregion FindAndReplace
+
+            #region ScrolledLine
+
+            this.CenterScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
+            this.CenterScrolledLine.Subscribe(t =>
+            {
+                if (this.Model?.Content?.SelectedNode != null && this.Config.RestoreCenterScrolledLine)
+                {
+                    this.Model.Content.SelectedNode.LastScrolledLine = t;
+                }
+            }).AddTo(this.Disposable);
+
+            this.ParentScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
+            this.ParentScrolledLine.Subscribe(t =>
+            {
+                if (this.Model?.Content?.ParentNode != null && this.Config.RestoreLeftScrolledLine)
+                {
+                    this.Model.Content.ParentNode.LastScrolledLine = t;
+                }
+            }).AddTo(this.Disposable);
+
+            this.PrevScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
+            this.PrevScrolledLine.Subscribe(t =>
+            {
+                if (this.Model?.Content?.PrevNode != null && this.Config.RestoreTopBottomScrolledLine)
+                {
+                    this.Model.Content.PrevNode.LastScrolledLine = t;
+                }
+            }).AddTo(this.Disposable);
+
+            this.NextScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
+            this.NextScrolledLine.Subscribe(t =>
+            {
+                if (this.Model?.Content?.NextNode != null && this.Config.RestoreTopBottomScrolledLine)
+                {
+                    this.Model.Content.NextNode.LastScrolledLine = t;
+                }
+            }).AddTo(this.Disposable);
+
+            this.SelectedNode.Subscribe(_ =>
+            {
+                // { [編集パネル], [左パネル], [上パネル], [下パネル] }
+                var val = new int?[4];
+                if (this.Model?.Content?.SelectedNode?.LastScrolledLine.HasValue == true
+                && this.Config.RestoreCenterScrolledLine)
+                {
+                    val[0] = this.Model.Content.SelectedNode.LastScrolledLine.Value;
+                }
+
+                if (this.Model?.Content?.ParentNode?.LastScrolledLine.HasValue == true
+                && this.Config.RestoreLeftScrolledLine)
+                {
+                    val[1] = this.Model.Content.ParentNode.LastScrolledLine.Value;
+                }
+
+                if (this.Model?.Content?.PrevNode?.LastScrolledLine.HasValue == true
+                && this.Config.RestoreTopBottomScrolledLine)
+                {
+                    val[2] = this.Model.Content.PrevNode.LastScrolledLine.Value;
+                }
+
+                if (this.Model?.Content?.NextNode?.LastScrolledLine.HasValue == true
+                && this.Config.RestoreTopBottomScrolledLine)
+                {
+                    val[3] = this.Model.Content.NextNode.LastScrolledLine.Value;
+                }
+
+                this.setScrollRequest.Raise(new Confirmation
+                {
+                    Content = val
+                });
+            })
+            .AddTo(this.Disposable);
+
+            #endregion ScrolledLine
 
         }
 

@@ -562,6 +562,7 @@
                         FontSize="{Binding Path=Config.LeftTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         HorizontalScrollBarVisibility="Auto"
                         IsReadOnly="True"
+                        ScrolledLine="{Binding Path=ParentScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         ScrollingIncrement="0.4"
                         TextOptions.TextFormattingMode="Display"
                         VerticalScrollBarVisibility="Auto"
@@ -591,6 +592,7 @@
                         FontSize="{Binding Path=Config.TopBottomTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         HorizontalScrollBarVisibility="Auto"
                         IsReadOnly="True"
+                        ScrolledLine="{Binding Path=PrevScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         ScrollingIncrement="0.4"
                         TextOptions.TextFormattingMode="Display"
                         VerticalScrollBarVisibility="Auto"
@@ -623,6 +625,7 @@
                         HorizontalScrollBarVisibility="Auto"
                         LineHeight="{Binding Path=Config.CenterTextEditorLineHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         LineNumbersForeground="{StaticResource ResourceKey=AccentColorBrush}"
+                        ScrolledLine="{Binding Path=CenterScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         ScrollingIncrement="0.4"
                         ShowEndOfLine="{Binding Path=Config.ShowEndOfLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         ShowLineNumbers="{Binding Path=Config.ShowLineNumbers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -631,7 +634,6 @@
                         TextOptions.TextHintingMode="Fixed"
                         TextOptions.TextRenderingMode="ClearType"
                         VerticalScrollBarVisibility="Auto"
-                        ScrolledLine="{Binding Path=CenterScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 
@@ -658,6 +660,7 @@
                         FontSize="{Binding Path=Config.TopBottomTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         HorizontalScrollBarVisibility="Auto"
                         IsReadOnly="True"
+                        ScrolledLine="{Binding Path=NextScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                         ScrollingIncrement="0.4"
                         TextOptions.TextFormattingMode="Display"
                         VerticalScrollBarVisibility="Auto"

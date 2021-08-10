@@ -247,7 +247,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Content="スクロールの状態を復元(試験的)"
-                    IsChecked="{Binding Path=RestoreLastScrollLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    IsChecked="{Binding Path=RestoreCenterScrolledLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 
                 <TextBlock
                     Grid.Row="30"
@@ -315,6 +315,14 @@
                     Content="右端で折り返す"
                     IsChecked="{Binding Path=LeftTextEditorTextWrapping.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+                <CheckBox
+                    Grid.Row="34"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="スクロールの状態を復元(試験的)"
+                    IsChecked="{Binding Path=RestoreLeftScrolledLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock
                     Grid.Row="40"
@@ -381,6 +389,15 @@
                     VerticalAlignment="Center"
                     Content="右端で折り返す"
                     IsChecked="{Binding Path=TopBottomTextEditorTextWrapping.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <CheckBox
+                    Grid.Row="45"
+                    Grid.Column="1"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="スクロールの状態を復元(試験的)"
+                    IsChecked="{Binding Path=RestoreTopBottomScrolledLine.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </ScrollViewer>
 

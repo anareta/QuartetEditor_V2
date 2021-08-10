@@ -52,13 +52,12 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 選択されているノード
         /// </summary>
-        private Node _SelectedNode;
-
         public Node SelectedNode
         {
             get { return this._SelectedNode; }
             set { this.SetProperty(ref this._SelectedNode, value); }
         }
+        private Node _SelectedNode;
 
         /// <summary>
         /// 編集パネルのコンテンツ
@@ -74,9 +73,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 左参照パネルのノード
         /// </summary>
-        private Node _ParentNode;
-
-        private Node ParentNode
+        public Node ParentNode
         {
             get { return this._ParentNode; }
             set
@@ -85,6 +82,7 @@ namespace QuartetEditor.Models
                 this.OnPropertyChanged(nameof(this.ParentTextContent));
             }
         }
+        private Node _ParentNode;
 
         /// <summary>
         /// 左参照パネルのコンテンツ
@@ -100,9 +98,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 上参照パネルのノード
         /// </summary>
-        private Node _PrevNode;
-
-        private Node PrevNode
+        public Node PrevNode
         {
             get { return this._PrevNode; }
             set
@@ -111,6 +107,7 @@ namespace QuartetEditor.Models
                 this.OnPropertyChanged(nameof(this.PrevTextContent));
             }
         }
+        private Node _PrevNode;
 
         /// <summary>
         /// 上参照パネルのコンテンツ
@@ -126,9 +123,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 下参照パネルのノード
         /// </summary>
-        private Node _NextNode;
-
-        private Node NextNode
+        public Node NextNode
         {
             get { return this._NextNode; }
             set
@@ -137,6 +132,7 @@ namespace QuartetEditor.Models
                 this.OnPropertyChanged(nameof(this.NextTextContent));
             }
         }
+        private Node _NextNode;
 
         /// <summary>
         /// 下参照パネルのコンテンツ
