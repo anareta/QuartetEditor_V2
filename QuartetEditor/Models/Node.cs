@@ -63,7 +63,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// 子要素の内部データ
         /// </summary>
-        private readonly ObservableCollection<Node> _ChildrenSource = new ObservableCollection<Node>();
+        public readonly ObservableCollection<Node> _ChildrenSource = new ObservableCollection<Node>();
 
         /// <summary>
         /// 子要素

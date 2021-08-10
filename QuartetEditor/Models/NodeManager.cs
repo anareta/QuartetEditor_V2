@@ -266,7 +266,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -320,7 +320,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -340,7 +340,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> tree = this.SelectedNode.Children;
+            IList<Node> tree = this.SelectedNode._ChildrenSource;
             int index = tree.Count();
 
             this.AddNode(tree, index);
@@ -417,7 +417,7 @@ namespace QuartetEditor.Models
             }
 
             var newItem = new Node(this.SelectedNode);
-            IList<Node> tree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> tree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (tree == null)
             {
                 tree = this.TreeSource;
@@ -472,7 +472,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -501,7 +501,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -529,7 +529,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -537,7 +537,7 @@ namespace QuartetEditor.Models
 
             int fromIndex = fromTree.IndexOf(this.SelectedNode);
 
-            IList<Node> toTree = this.GetOlder(this.SelectedNode)?.Children;
+            IList<Node> toTree = this.GetOlder(this.SelectedNode)?._ChildrenSource;
             if (toTree == null)
             {
                 return;
@@ -563,7 +563,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> fromTree = this.GetParent(this.SelectedNode)?.Children;
+            IList<Node> fromTree = this.GetParent(this.SelectedNode)?._ChildrenSource;
             if (fromTree == null)
             {
                 fromTree = this.TreeSource;
@@ -577,7 +577,7 @@ namespace QuartetEditor.Models
                 return;
             }
 
-            IList<Node> toTree = this.GetParent(parent)?.Children;
+            IList<Node> toTree = this.GetParent(parent)?._ChildrenSource;
             if (toTree == null)
             {
                 toTree = this.TreeSource;
@@ -618,7 +618,7 @@ namespace QuartetEditor.Models
                     _toTree, _toIndex,
                     _item);
 
-                if (_target?.Children == _toTree)
+                if (_target?._ChildrenSource == _toTree)
                 {
                     _target.IsExpanded = true;
                 }
@@ -744,7 +744,7 @@ namespace QuartetEditor.Models
                 }
             }
 
-            this.AddNodes(this.SelectedNode.Children, this.SelectedNode.Children.Count, addItems);
+            this.AddNodes(this.SelectedNode._ChildrenSource, this.SelectedNode._ChildrenSource.Count, addItems);
         }
 
         /// <summary>
@@ -808,7 +808,7 @@ namespace QuartetEditor.Models
             }
 
             // 移動先が自分自身の子の場合は移動しない
-            if (dropped != null && this.Find(dropped.Children, c => c.ID == target?.ID) != null)
+            if (dropped != null && this.Find(dropped._ChildrenSource, c => c.ID == target?.ID) != null)
             {
                 return;
             }
@@ -946,7 +946,7 @@ namespace QuartetEditor.Models
 
             // 移動元
             {
-                fromTree = this.GetParent(dropped)?.Children;
+                fromTree = this.GetParent(dropped)?._ChildrenSource;
                 if (fromTree == null)
                 {
                     fromTree = this.TreeSource;
@@ -960,7 +960,7 @@ namespace QuartetEditor.Models
                 {
                     case InsertPosition.Prev:
                     case InsertPosition.Next:
-                        toTree = this.GetParent(target)?.Children;
+                        toTree = this.GetParent(target)?._ChildrenSource;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
@@ -972,8 +972,8 @@ namespace QuartetEditor.Models
                         }
                         break;
                     case InsertPosition.Child:
-                        toTree = target.Children;
-                        toIndex = target.Children.Count();
+                        toTree = target._ChildrenSource;
+                        toIndex = target._ChildrenSource.Count();
                         break;
                     default:
                         return false;
@@ -995,7 +995,7 @@ namespace QuartetEditor.Models
                 {
                     case InsertPosition.Prev:
                     case InsertPosition.Next:
-                        toTree = this.GetParent(target)?.Children;
+                        toTree = this.GetParent(target)?._ChildrenSource;
                         if (toTree == null)
                         {
                             toTree = this.TreeSource;
@@ -1007,8 +1007,8 @@ namespace QuartetEditor.Models
                         }
                         break;
                     case InsertPosition.Child:
-                        toTree = target.Children;
-                        toIndex = target.Children.Count();
+                        toTree = target._ChildrenSource;
+                        toIndex = target._ChildrenSource.Count();
                         break;
                     default:
                         return;
@@ -1100,9 +1100,9 @@ namespace QuartetEditor.Models
                 }
                 else
                 {
-                    if (item.Children.Count > 0)
+                    if (item._ChildrenSource.Count > 0)
                     {
-                        var ret = this.Find(item.Children, predicate);
+                        var ret = this.Find(item._ChildrenSource, predicate);
                         if (ret != null)
                         {
                             return ret;
