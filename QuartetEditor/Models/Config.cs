@@ -22,7 +22,7 @@ namespace QuartetEditor.Models
         public Config()
         {
             this.OpenFilePath = "";
-            this.TreeTextCharacters = ".";
+            this.TreeTextCharacters = "#";
             this.NodePanelFontFamily = new System.Windows.Media.FontFamily("メイリオ");
 
             this.CenterTextEditorFontSize = 14;

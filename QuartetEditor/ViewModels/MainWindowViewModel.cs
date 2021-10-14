@@ -640,10 +640,10 @@ namespace QuartetEditor.ViewModels
                 }
 
                 var dialog = new SaveFileDialog();
-                dialog.Title = "QEDファイルを保存";
-                dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
+                dialog.Title = "名前を付けて保存";
+                dialog.Filter = "階層付きテキスト(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                 dialog.AddExtension = true;
-                dialog.DefaultExt = "qed";
+                dialog.DefaultExt = "txt";
                 dialog.FileName = DateTime.Now.ToString("yyyyMMdd");
                 if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.Model.FilePath)))
                 {
@@ -661,8 +661,8 @@ namespace QuartetEditor.ViewModels
                 }
 
                 var dialog = new OpenFileDialog();
-                dialog.Title = "QEDファイルを開く";
-                dialog.Filter = "QEDファイル(*.qed)|*.qed|階層付きテキスト(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                dialog.Title = "階層付きテキストを開く";
+                dialog.Filter = "階層付きテキスト(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                 if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.Model.FilePath)))
                 {
                     dialog.InitialDirectory = System.IO.Path.GetDirectoryName(this.Model.FilePath);

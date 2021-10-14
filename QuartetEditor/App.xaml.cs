@@ -49,7 +49,7 @@ namespace QuartetEditor
                     {
                         // 重複しないファイル名が出るまでGetRandomFileNameを呼び続ける
                         tmpFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath),
-                                                   Path.GetFileNameWithoutExtension(model.FilePath) + "_" + Path.GetRandomFileName() + ".qed");
+                                                   Path.GetFileNameWithoutExtension(model.FilePath) + "_" + Path.GetRandomFileName() + ".txt");
                     }
 
                     model.Save(tmpFilePath);

@@ -157,10 +157,10 @@ namespace QuartetEditor.Models
             {
                 if (path != null && !string.IsNullOrWhiteSpace(path))
                 {
-                    if (this.Save(path, FileType.QEDocument))
+                    if (this.Save(path, FileType.TreeText))
                     {
                         this.FilePath = path;
-                        this.Type = FileType.QEDocument;
+                        this.Type = FileType.TreeText;
                         ConfigManager.Current.Config.OpenFilePath = path;
                         this.Content.OffEditFlag();
                         this.IsEdited = false;
@@ -180,7 +180,7 @@ namespace QuartetEditor.Models
         /// </summary>
         public bool Save(string path)
         {
-            return this.Save(path, this.Type ?? FileType.QEDocument);
+            return this.Save(path, this.Type ?? FileType.TreeText);
         }
         /// <summary>
         /// ファイルを保存する
@@ -199,12 +199,6 @@ namespace QuartetEditor.Models
 
                 switch (type)
                 {
-                    case FileType.QEDocument:
-                        {
-                            var data = new QuartetEditorDescription(this.Content.Tree);
-                            result = FileUtility.SaveJsonObject(path, data);
-                        }
-                        break;
                     case FileType.TreeText:
                         {
                             var header = ConfigManager.Current.Config.TreeTextCharacters;
@@ -258,24 +252,14 @@ namespace QuartetEditor.Models
                 FileType? fileType = null;
                 try
                 {
-                    QuartetEditorDescription model;
-                    if (FileUtility.LoadJsonObject(path, out model) == true)
+                    QuartetEditorDescription model = default;
+                    string treeText;
+                    var header = ConfigManager.Current.Config.TreeTextCharacters;
+                    if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == true &&
+                        NodeConverterUtility.FromTreeText(treeText, header.First(), out model) == true)
                     {
-                        // QEDファイルとして読み込み成功
-                        fileType = FileType.QEDocument;
-                    }
-
-                    if (!fileType.HasValue)
-                    {
-                        string treeText;
-                        var header = ConfigManager.Current.Config.TreeTextCharacters;
-                        if (FileUtility.LoadTextByAnyEncoding(path, out treeText) == true &&
-                            NodeConverterUtility.FromTreeText(treeText, header.First(), out model) == true)
-                        {
-                            // 階層付きテキストファイルとして読み込み成功
-                            fileType = FileType.TreeText;
-                        }
-
+                        // 階層付きテキストファイルとして読み込み成功
+                        fileType = FileType.TreeText;
                     }
 
                     if (fileType.HasValue)

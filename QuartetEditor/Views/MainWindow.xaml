@@ -215,7 +215,7 @@
                     Margin="0,3,0,0"
                     Command="{Binding RenameSaveCommand}"
                     Style="{DynamicResource MetroCircleButtonStyle}"
-                    ToolTip="別名で保存">
+                    ToolTip="名前を付けて保存">
                     <Rectangle
                         Width="17"
                         Height="20"
