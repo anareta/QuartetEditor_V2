@@ -14,6 +14,7 @@
     xmlns:messenger="clr-namespace:QuartetEditor.Views.Messengers"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:viewModels="clr-namespace:QuartetEditor.ViewModels"
     Title="{Binding WindowTitle.Value}"
     Width="800"
     Height="600"
@@ -102,38 +103,8 @@
             CommandParameter="{Binding ElementName=_CenterTextEditor, Path=Name}"
             Modifiers="Alt" />
         <KeyBinding
-            Key="T"
-            Command="{Binding SetFocusCommand}"
-            CommandParameter="{Binding ElementName=_TopTextBox, Path=Name}"
-            Modifiers="Alt" />
-        <KeyBinding
-            Key="L"
-            Command="{Binding SetFocusCommand}"
-            CommandParameter="{Binding ElementName=_LeftTextBox, Path=Name}"
-            Modifiers="Alt" />
-        <KeyBinding
-            Key="B"
-            Command="{Binding SetFocusCommand}"
-            CommandParameter="{Binding ElementName=_BottomTextBox, Path=Name}"
-            Modifiers="Alt" />
-        <KeyBinding
             Key="S"
             Command="{Binding SaveCommand}"
-            Modifiers="Control" />
-        <KeyBinding
-            Key="L"
-            Command="{Binding PanelChangeCommand}"
-            CommandParameter="{x:Static local:PanelKind.Left}"
-            Modifiers="Control" />
-        <KeyBinding
-            Key="T"
-            Command="{Binding PanelChangeCommand}"
-            CommandParameter="{x:Static local:PanelKind.Top}"
-            Modifiers="Control" />
-        <KeyBinding
-            Key="B"
-            Command="{Binding PanelChangeCommand}"
-            CommandParameter="{x:Static local:PanelKind.Bottom}"
             Modifiers="Control" />
         <KeyBinding
             Key="F"
@@ -159,10 +130,6 @@
             <messenger:MessageDialogAction />
         </prism:InteractionRequestTrigger>
 
-        <prism:InteractionRequestTrigger SourceObject="{Binding PanelOpenRequest}">
-            <messenger:PanelOpenAction />
-        </prism:InteractionRequestTrigger>
-
         <prism:InteractionRequestTrigger SourceObject="{Binding SetFocusRequest}">
             <messenger:SetFocusAction />
         </prism:InteractionRequestTrigger>
@@ -182,15 +149,6 @@
 
     <metro:MetroWindow.Flyouts>
         <metro:FlyoutsControl>
-            <metro:Flyout
-                x:Name="About"
-                Width="500"
-                Header="このアプリケーションについて"
-                IsOpen="{Binding IsAboutOpen, Mode=TwoWay}"
-                IsPinned="False"
-                Position="Right">
-                <local:AboutFlyout />
-            </metro:Flyout>
 
             <local:ConfigFlyout
                 x:Name="ConfigFlyout"
@@ -326,108 +284,17 @@
                     </Rectangle>
                 </Button>
 
-                <Button
-                    x:Name="_AboutButton"
-                    Width="40"
-                    Height="40"
-                    Margin="0,3,0,0"
-                    Command="{Binding OpenAboutCommand}"
-                    Style="{DynamicResource MetroCircleButtonStyle}"
-                    ToolTip="このアプリケーションについて">
-                    <Rectangle
-                        Width="17"
-                        Height="17"
-                        Margin="0,0,0,0"
-                        Fill="{DynamicResource BlackBrush}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_question}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </Button>
             </StackPanel>
 
-            <StackPanel
-                Grid.Column="2"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal">
-                <ToggleButton
-                    x:Name="_LeftPanelSwitch"
-                    Width="35"
-                    Height="35"
-                    Margin="0,0,0,0"
-                    VerticalAlignment="Bottom"
-                    IsChecked="{Binding LeftPanelOpen.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{DynamicResource MetroCircleToggleButtonStyle}"
-                    ToolTip="左パネル（Ctrl＋L）">
-                    <Rectangle
-                        Width="15"
-                        Height="15"
-                        Fill="{DynamicResource BlackBrush}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </ToggleButton>
-                <ToggleButton
-                    x:Name="_TopPanelSwitch"
-                    Width="35"
-                    Height="35"
-                    Margin="0,0,0,0"
-                    VerticalAlignment="Bottom"
-                    IsChecked="{Binding TopPanelOpen.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{DynamicResource MetroCircleToggleButtonStyle}"
-                    ToolTip="上パネル（Ctrl＋T）">
-                    <Rectangle
-                        Width="15"
-                        Height="15"
-                        Fill="{DynamicResource BlackBrush}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}">
-                                <VisualBrush.RelativeTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="90" CenterX="0.5" CenterY="0.5" />
-                                        <TranslateTransform />
-                                    </TransformGroup>
-                                </VisualBrush.RelativeTransform>
-                            </VisualBrush>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </ToggleButton>
-                <ToggleButton
-                    x:Name="_BottomPanelSwitch"
-                    Width="35"
-                    Height="35"
-                    Margin="0,0,0,0"
-                    VerticalAlignment="Bottom"
-                    IsChecked="{Binding BottomPanelOpen.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{DynamicResource MetroCircleToggleButtonStyle}"
-                    ToolTip="下参照パネル（Ctrl+B）">
-                    <Rectangle
-                        Width="15"
-                        Height="15"
-                        Fill="{DynamicResource BlackBrush}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_layout_expand_right_variant}">
-                                <VisualBrush.RelativeTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="270" CenterX="0.5" CenterY="0.5" />
-                                        <TranslateTransform />
-                                    </TransformGroup>
-                                </VisualBrush.RelativeTransform>
-                            </VisualBrush>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </ToggleButton>
-            </StackPanel>
         </Grid>
         <Grid
             x:Name="_MainGrid"
             Margin="0,5,0,0"
             DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="50" />
+                <ColumnDefinition Width="2*" MinWidth="50" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="4*" MinWidth="100" />
+                <ColumnDefinition Width="3*" MinWidth="100" />
             </Grid.ColumnDefinitions>
             <Border
                 Grid.Column="0"
@@ -483,7 +350,7 @@
                     </TreeView.InputBindings>
 
                     <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="data:NodeViewModel" ItemsSource="{Binding Children}">
+                        <HierarchicalDataTemplate DataType="viewModels:NodeViewModel" ItemsSource="{Binding Children}">
                             <Border>
                                 <i:Interaction.Behaviors>
                                     <dragdrop:DragStartBehavior AllowedEffects="All" DragDropData="{Binding}" />
@@ -529,86 +396,12 @@
                 Grid.Column="2"
                 AllowDrop="True"
                 DockPanel.Dock="Bottom">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" MinHeight="20" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="5*" MinHeight="20" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="1*" MinHeight="20" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" MinWidth="20" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="3*" MinWidth="20" />
-                </Grid.ColumnDefinitions>
 
                 <i:Interaction.Behaviors>
                     <dragdrop:DragAcceptBehavior Description="{Binding DraggedFileAcceptDescription}" />
                 </i:Interaction.Behaviors>
 
                 <Border
-                    Grid.Row="0"
-                    Grid.RowSpan="5"
-                    Grid.Column="0"
-                    BorderThickness="2"
-                    Focusable="False">
-                    <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
-                    </i:Interaction.Behaviors>
-                    <controls:BindableTextEditor
-                        x:Name="_LeftTextBox"
-                        BindableText="{Binding Path=ParentTextContent.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontFamily="{Binding Path=Config.LeftTextEditorFontFamily, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontSize="{Binding Path=Config.LeftTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsReadOnly="True"
-                        ScrolledLine="{Binding Path=ParentScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
-                        ScrollingIncrement="0.4"
-                        TextOptions.TextFormattingMode="Display"
-                        VerticalScrollBarVisibility="Auto"
-                        WordWrap="{Binding Path=Config.LeftTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
-                <GridSplitter
-                    x:Name="_LeftSplitter"
-                    Grid.Row="0"
-                    Grid.RowSpan="5"
-                    Grid.Column="1"
-                    Width="5"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Stretch"
-                    BorderThickness="0" />
-                <Border
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    BorderThickness="2"
-                    Focusable="False">
-                    <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
-                    </i:Interaction.Behaviors>
-                    <controls:BindableTextEditor
-                        x:Name="_TopTextBox"
-                        BindableText="{Binding Path=PrevTextContent.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontSize="{Binding Path=Config.TopBottomTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsReadOnly="True"
-                        ScrolledLine="{Binding Path=PrevScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
-                        ScrollingIncrement="0.4"
-                        TextOptions.TextFormattingMode="Display"
-                        VerticalScrollBarVisibility="Auto"
-                        WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
-                <GridSplitter
-                    x:Name="_TopSplitter"
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Height="5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    BorderThickness="0" />
-                <Border
-                    Grid.Row="2"
-                    Grid.Column="2"
                     BorderThickness="2"
                     Focusable="False">
                     <i:Interaction.Behaviors>
@@ -637,35 +430,6 @@
                         WordWrap="{Binding Path=Config.CenterTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 
-                <GridSplitter
-                    x:Name="_BottomSplitter"
-                    Grid.Row="3"
-                    Grid.Column="2"
-                    Height="5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    BorderThickness="0" />
-                <Border
-                    Grid.Row="4"
-                    Grid.Column="2"
-                    BorderThickness="2"
-                    Focusable="False">
-                    <i:Interaction.Behaviors>
-                        <behavior:ContentBorderBehavior FocusedBrush="{DynamicResource AccentColorBrush}" NotFocusedBrush="{StaticResource ResourceKey=GrayBrush8}" />
-                    </i:Interaction.Behaviors>
-                    <controls:BindableTextEditor
-                        x:Name="_BottomTextBox"
-                        BindableText="{Binding Path=NextTextContent.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontFamily="{Binding Path=Config.TopBottomTextEditorFontFamily, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        FontSize="{Binding Path=Config.TopBottomTextEditorFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsReadOnly="True"
-                        ScrolledLine="{Binding Path=NextScrolledLine.Value, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
-                        ScrollingIncrement="0.4"
-                        TextOptions.TextFormattingMode="Display"
-                        VerticalScrollBarVisibility="Auto"
-                        WordWrap="{Binding Path=Config.TopBottomTextEditorTextWrapping, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
             </Grid>
         </Grid>
     </DockPanel>

@@ -25,21 +25,6 @@ namespace QuartetEditor.Views.Messengers
                 this.AssociatedObject._CenterTextEditor.ScrollTo(val1);
             }
 
-            if (target[1] is int val2)
-            {
-                this.AssociatedObject._LeftTextBox.ScrollTo(val2);
-            }
-
-            if (target[2] is int val3)
-            {
-                this.AssociatedObject._TopTextBox.ScrollTo(val3);
-            }
-
-            if (target[3] is int val4)
-            {
-                this.AssociatedObject._BottomTextBox.ScrollTo(val4);
-            }
-
             args.Callback();
         }
     }

@@ -53,7 +53,7 @@
 
         <TextBox
             Name="_TextEditor"
-            Margin="-2"
+            Margin="-6"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             BorderThickness="0"

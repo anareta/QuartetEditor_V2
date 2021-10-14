@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartetEditor", "QuartetEditor\QuartetEditor.csproj", "{151FE1FB-FCD4-4043-BB34-E733844BF700}"
 EndProject
@@ -11,66 +11,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.AvalonEdit", "A
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Net35 = Debug|Net35
-		Debug|Net40 = Debug|Net40
-		Debug|WithNRefactory = Debug|WithNRefactory
-		Release|Any CPU = Release|Any CPU
-		Release|Net35 = Release|Net35
-		Release|Net40 = Release|Net40
-		Release|WithNRefactory = Release|WithNRefactory
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Net35.ActiveCfg = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Net35.Build.0 = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Net40.ActiveCfg = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|Net40.Build.0 = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|WithNRefactory.ActiveCfg = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|WithNRefactory.Build.0 = Debug|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Any CPU.Build.0 = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Net35.ActiveCfg = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Net35.Build.0 = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Net40.ActiveCfg = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|Net40.Build.0 = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|WithNRefactory.ActiveCfg = Release|Any CPU
-		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|WithNRefactory.Build.0 = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Net35.ActiveCfg = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Net35.Build.0 = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Net40.ActiveCfg = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|Net40.Build.0 = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|WithNRefactory.ActiveCfg = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|WithNRefactory.Build.0 = Debug|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Net35.ActiveCfg = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Net35.Build.0 = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Net40.ActiveCfg = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|Net40.Build.0 = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|WithNRefactory.ActiveCfg = Release|Any CPU
-		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|WithNRefactory.Build.0 = Release|Any CPU
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Any CPU.ActiveCfg = Debug|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Any CPU.Build.0 = Debug|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Net35.ActiveCfg = Debug|Net35
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Net35.Build.0 = Debug|Net35
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Net40.ActiveCfg = Debug|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Net40.Build.0 = Debug|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|WithNRefactory.ActiveCfg = Debug|WithNRefactory
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|WithNRefactory.Build.0 = Debug|WithNRefactory
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Any CPU.ActiveCfg = Release|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Any CPU.Build.0 = Release|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Net35.ActiveCfg = Release|Net35
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Net35.Build.0 = Release|Net35
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Net40.ActiveCfg = Release|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|Net40.Build.0 = Release|Net40
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|WithNRefactory.ActiveCfg = Release|WithNRefactory
-		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|WithNRefactory.Build.0 = Release|WithNRefactory
+		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|x86.ActiveCfg = Debug|x86
+		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Debug|x86.Build.0 = Debug|x86
+		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|x86.ActiveCfg = Release|x86
+		{151FE1FB-FCD4-4043-BB34-E733844BF700}.Release|x86.Build.0 = Release|x86
+		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|x86.ActiveCfg = Debug|x86
+		{4F7A8EF1-8092-4286-913D-022420818DB0}.Debug|x86.Build.0 = Debug|x86
+		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|x86.ActiveCfg = Release|x86
+		{4F7A8EF1-8092-4286-913D-022420818DB0}.Release|x86.Build.0 = Release|x86
+		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|x86.ActiveCfg = Debug|x86
+		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|x86.Build.0 = Debug|x86
+		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|x86.ActiveCfg = Release|x86
+		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE2F05BA-CDB4-4C71-AB46-9281CCADB55F}
 	EndGlobalSection
 EndGlobal

@@ -109,76 +109,12 @@ namespace QuartetEditor.ViewModels
         public ReactiveProperty<string> HeaderCharacters { get; }
 
         /// <summary>
-        /// 編集パネルで改行文字の表示
-        /// </summary>
-        public ReactiveProperty<bool> ShowEndOfLine { get; }
-
-        /// <summary>
         /// 編集パネルで最後にスクロールした位置を復元する
         /// </summary>
         public ReactiveProperty<bool> RestoreCenterScrolledLine { get; }
 
         #endregion CenterTextEditor
 
-
-
-        #region LeftTextEditor
-        /// <summary>
-        /// 左参照パネルフォントサイズ
-        /// </summary>
-        public ReactiveProperty<double> LeftTextEditorFontSize { get; }
-
-        /// <summary>
-        /// 左参照パネルフォント
-        /// </summary>
-        public ReactiveProperty<System.Windows.Media.FontFamily> LeftTextEditorFontFamily { get; }
-
-        /// <summary>
-        /// 左参照パネルの行間
-        /// </summary>
-        public ReactiveProperty<double> LeftTextEditorLineHeight { get; }
-
-        /// <summary>
-        /// 左参照パネルの折り返し
-        /// </summary>
-        public ReactiveProperty<bool> LeftTextEditorTextWrapping { get; }
-
-        /// <summary>
-        /// 左参照パネルで最後にスクロールした位置を復元する
-        /// </summary>
-        public ReactiveProperty<bool> RestoreLeftScrolledLine { get; }
-
-        #endregion LeftTextEditor
-
-
-
-        #region TopBottomTextEditor
-        /// <summary>
-        /// 上下参照パネルのフォントサイズ
-        /// </summary>
-        public ReactiveProperty<double> TopBottomTextEditorFontSize { get; }
-
-        /// <summary>
-        /// 上下参照パネルのフォント
-        /// </summary>
-        public ReactiveProperty<System.Windows.Media.FontFamily> TopBottomTextEditorFontFamily { get; }
-
-        /// <summary>
-        /// 上下参照パネルの行間
-        /// </summary>
-        public ReactiveProperty<double> TopBottomTextEditorLineHeight { get; }
-
-        /// <summary>
-        /// 上下参照パネルの折り返し
-        /// </summary>
-        public ReactiveProperty<bool> TopBottomTextEditorTextWrapping { get; }
-
-        /// <summary>
-        /// 上下参照パネルで最後にスクロールした位置を復元する
-        /// </summary>
-        public ReactiveProperty<bool> RestoreTopBottomScrolledLine { get; }
-
-        #endregion TopBottomTextEditor
 
 
         /// <summary>
@@ -221,11 +157,6 @@ namespace QuartetEditor.ViewModels
             this.HighlightCurrentLine = this.Model
                .ToReactivePropertyAsSynchronized(x => x.HighlightCurrentLine)
                .AddTo(this.Disposable);
-
-            this.ShowEndOfLine = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.ShowEndOfLine)
-               .AddTo(this.Disposable);
-
             this.ShowLineNumbers = this.Model
                .ToReactivePropertyAsSynchronized(x => x.ShowLineNumbers)
                .AddTo(this.Disposable);
@@ -239,55 +170,6 @@ namespace QuartetEditor.ViewModels
                .AddTo(this.Disposable);
 
             #endregion CenterTextEditor
-
-            #region LeftTextEditor
-
-            this.LeftTextEditorFontSize = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorFontSize)
-               .AddTo(this.Disposable);
-
-            this.LeftTextEditorFontFamily = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorFontFamily)
-               .AddTo(this.Disposable);
-
-            this.LeftTextEditorLineHeight = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorLineHeight)
-               .AddTo(this.Disposable);
-
-            this.LeftTextEditorTextWrapping = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.LeftTextEditorTextWrapping)
-               .AddTo(this.Disposable);
-
-            this.RestoreLeftScrolledLine = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.RestoreLeftScrolledLine)
-               .AddTo(this.Disposable);
-
-            #endregion LeftTextEditor
-
-            #region TopBottomTextEditor
-
-            this.TopBottomTextEditorFontSize = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorFontSize)
-               .AddTo(this.Disposable);
-
-            this.TopBottomTextEditorFontFamily = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorFontFamily)
-               .AddTo(this.Disposable);
-
-            this.TopBottomTextEditorLineHeight = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorLineHeight)
-               .AddTo(this.Disposable);
-
-            this.TopBottomTextEditorTextWrapping = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.TopBottomTextEditorTextWrapping)
-               .AddTo(this.Disposable);
-
-            this.RestoreTopBottomScrolledLine = this.Model
-               .ToReactivePropertyAsSynchronized(x => x.RestoreTopBottomScrolledLine)
-               .AddTo(this.Disposable);
-
-            #endregion TopBottomTextEditor
-
 
             this.OpenCommand.Subscribe(_ => this.IsOpen = true);
             this.CloseCommand.Subscribe(_ => this.IsOpen = false);

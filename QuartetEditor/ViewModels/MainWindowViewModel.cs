@@ -131,52 +131,6 @@ namespace QuartetEditor.ViewModels
 
         #endregion Content
 
-        #region PanelOpen
-
-        /// <summary>
-        /// パネルの開閉要求
-        /// </summary>
-        private InteractionRequest<Confirmation> _PanelOpenRequest = new InteractionRequest<Confirmation>();
-
-        public IInteractionRequest PanelOpenRequest { get { return this._PanelOpenRequest; } }
-
-        /// <summary>
-        /// 左参照パネルの開閉状態
-        /// </summary>
-        public ReactiveProperty<bool> LeftPanelOpen { get; }
-
-        /// <summary>
-        /// 上参照パネルの開閉状態
-        /// </summary>
-        public ReactiveProperty<bool> TopPanelOpen { get; }
-
-        /// <summary>
-        /// 下参照パネルの開閉状態
-        /// </summary>
-        public ReactiveProperty<bool> BottomPanelOpen { get; }
-
-        /// <summary>
-        /// パネルの開閉リクエストをViewに投げる
-        /// </summary>
-        private void RisePanelState()
-        {
-            var state = new PanelStateEntity()
-            {
-                LeftPanelOpen = this.LeftPanelOpen.Value,
-                TopPanelOpen = this.TopPanelOpen.Value,
-                BottomPanelOpen = this.BottomPanelOpen.Value,
-            };
-            // Viewにリクエストを投げる
-            _PanelOpenRequest.Raise(new Confirmation { Content = state });
-        }
-
-        /// <summary>
-        /// Panel開閉コマンド
-        /// </summary>
-        public ReactiveCommand<PanelKind> PanelChangeCommand { get; private set; } = new ReactiveCommand<PanelKind>();
-
-        #endregion PanelOpen
-
         #region AboutFlyout
 
         /// <summary>
@@ -435,7 +389,7 @@ namespace QuartetEditor.ViewModels
 
             this.WindowTitle = this.Model.ObserveProperty(x => x.FilePath)
                                    .Select(x => string.IsNullOrWhiteSpace(x) ? "" : System.IO.Path.GetFileName(x))
-                                   .Select(x => "Quartet Editor" + (string.IsNullOrWhiteSpace(x) ? "" : $" - {x}"))
+                                   .Select(x => "Daily Tree" + (string.IsNullOrWhiteSpace(x) ? "" : $" - {x}"))
                                    .CombineLatest(this.Model.ObserveProperty(x => x.IsEdited), (title, flg) => title + (flg ? "（変更あり）" : ""))
                                    .ToReactiveProperty()
                                    .AddTo(this.Disposable);
@@ -493,52 +447,6 @@ namespace QuartetEditor.ViewModels
                 .AddTo(this.Disposable);
 
             #endregion Content
-
-            #region Panel
-
-            this.LeftPanelOpen = this.Config
-            .ToReactivePropertyAsSynchronized(x => x.LeftPanelOpen)
-            .AddTo(this.Disposable);
-
-            this.TopPanelOpen = this.Config
-            .ToReactivePropertyAsSynchronized(x => x.TopPanelOpen)
-            .AddTo(this.Disposable);
-
-            this.BottomPanelOpen = this.Config
-            .ToReactivePropertyAsSynchronized(x => x.BottomPanelOpen)
-            .AddTo(this.Disposable);
-
-            // パネルの開閉状態が変わったときはRisePanelStateを呼び出す
-            new[] { this.LeftPanelOpen, this.TopPanelOpen, this.BottomPanelOpen }
-            .Select(x => INotifyPropertyChangedExtensions.PropertyChangedAsObservable(x))
-            .Merge()
-            .Subscribe(_ =>
-            {
-                this.RisePanelState();
-                this.Model.Content.UpdatePanelReffer();
-                // ReleaseでビルドするとなぜかReactivePropertyが反応しないので…
-            })
-            .AddTo(this.Disposable);
-
-            this.PanelChangeCommand.Subscribe(kind =>
-            {
-                switch (kind)
-                {
-                    case PanelKind.Left:
-                        this.LeftPanelOpen.Value = !this.LeftPanelOpen.Value;
-                        return;
-                    case PanelKind.Top:
-                        this.TopPanelOpen.Value = !this.TopPanelOpen.Value;
-                        return;
-                    case PanelKind.Bottom:
-                        this.BottomPanelOpen.Value = !this.BottomPanelOpen.Value;
-                        return;
-                    default:
-                        return;
-                }
-            });
-
-            #endregion Panel
 
             #region DragDrop
 
@@ -736,7 +644,11 @@ namespace QuartetEditor.ViewModels
                 dialog.Filter = "QEDファイル(*.qed)|*.qed|全てのファイル(*.*)|*.*";
                 dialog.AddExtension = true;
                 dialog.DefaultExt = "qed";
-                dialog.FileName = "新規";
+                dialog.FileName = DateTime.Now.ToString("yyyyMMdd");
+                if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.Model.FilePath)))
+                {
+                    dialog.InitialDirectory = System.IO.Path.GetDirectoryName(this.Model.FilePath);
+                }
                 string path = this.SaveDialogViewAction(dialog);
                 act(path);
             }).AddTo(this.Disposable);
@@ -751,6 +663,10 @@ namespace QuartetEditor.ViewModels
                 var dialog = new OpenFileDialog();
                 dialog.Title = "QEDファイルを開く";
                 dialog.Filter = "QEDファイル(*.qed)|*.qed|階層付きテキスト(*.txt)|*.txt|全てのファイル(*.*)|*.*";
+                if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.Model.FilePath)))
+                {
+                    dialog.InitialDirectory = System.IO.Path.GetDirectoryName(this.Model.FilePath);
+                }
                 string path = this.OpenDialogViewAction(dialog);
                 act(path);
             }).AddTo(this.Disposable);
@@ -842,32 +758,6 @@ namespace QuartetEditor.ViewModels
                 }
             }).AddTo(this.Disposable);
 
-            this.ParentScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
-            this.ParentScrolledLine.Subscribe(t =>
-            {
-                if (this.Model?.Content?.ParentNode != null && this.Config.RestoreLeftScrolledLine)
-                {
-                    this.Model.Content.ParentNode.LastScrolledLine = t;
-                }
-            }).AddTo(this.Disposable);
-
-            this.PrevScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
-            this.PrevScrolledLine.Subscribe(t =>
-            {
-                if (this.Model?.Content?.PrevNode != null && this.Config.RestoreTopBottomScrolledLine)
-                {
-                    this.Model.Content.PrevNode.LastScrolledLine = t;
-                }
-            }).AddTo(this.Disposable);
-
-            this.NextScrolledLine = new ReactiveProperty<int?>().AddTo(this.Disposable);
-            this.NextScrolledLine.Subscribe(t =>
-            {
-                if (this.Model?.Content?.NextNode != null && this.Config.RestoreTopBottomScrolledLine)
-                {
-                    this.Model.Content.NextNode.LastScrolledLine = t;
-                }
-            }).AddTo(this.Disposable);
 
             this.SelectedNode.Subscribe(_ =>
             {
@@ -877,24 +767,6 @@ namespace QuartetEditor.ViewModels
                 && this.Config.RestoreCenterScrolledLine)
                 {
                     val[0] = this.Model.Content.SelectedNode.LastScrolledLine.Value;
-                }
-
-                if (this.Model?.Content?.ParentNode?.LastScrolledLine.HasValue == true
-                && this.Config.RestoreLeftScrolledLine)
-                {
-                    val[1] = this.Model.Content.ParentNode.LastScrolledLine.Value;
-                }
-
-                if (this.Model?.Content?.PrevNode?.LastScrolledLine.HasValue == true
-                && this.Config.RestoreTopBottomScrolledLine)
-                {
-                    val[2] = this.Model.Content.PrevNode.LastScrolledLine.Value;
-                }
-
-                if (this.Model?.Content?.NextNode?.LastScrolledLine.HasValue == true
-                && this.Config.RestoreTopBottomScrolledLine)
-                {
-                    val[3] = this.Model.Content.NextNode.LastScrolledLine.Value;
                 }
 
                 this.setScrollRequest.Raise(new Confirmation
@@ -913,9 +785,6 @@ namespace QuartetEditor.ViewModels
         /// </summary>
         public void Initialize()
         {
-            // パネルの初期状態をViewへリクエストする
-            this.RisePanelState();
-
             // 引数で指定されたファイルの読み込み
             if (Environment.GetCommandLineArgs().Count() == 2 && !string.IsNullOrWhiteSpace(Environment.GetCommandLineArgs()[1]))
             {
@@ -930,6 +799,10 @@ namespace QuartetEditor.ViewModels
                 {
                     this.Model.Load(args[0]);
                 }
+            }
+            else if (System.IO.File.Exists(this.Config.OpenFilePath))
+            {
+                this.Model.Load(this.Config.OpenFilePath);
             }
         }
 

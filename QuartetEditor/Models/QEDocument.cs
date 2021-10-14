@@ -52,7 +52,7 @@ namespace QuartetEditor.Models
         /// </summary>
         static QEDocument()
         {
-#if DEBUG
+#if false
             var desctiption = new QuartetEditorDescription();
             desctiption.Node.Add(new QuartetEditorDescriptionItem() { Name = "ノード１", Content = "ノード１" });
             desctiption.Node[0].Children.Add(new QuartetEditorDescriptionItem() { Name = "ノード１-１", Content = "ノード１-１" });
@@ -161,6 +161,7 @@ namespace QuartetEditor.Models
                     {
                         this.FilePath = path;
                         this.Type = FileType.QEDocument;
+                        ConfigManager.Current.Config.OpenFilePath = path;
                         this.Content.OffEditFlag();
                         this.IsEdited = false;
                         result = true;
@@ -284,6 +285,9 @@ namespace QuartetEditor.Models
                         this.IsEdited = false;
                         this.FilePath = path;
                         this.Type = fileType.Value;
+
+                        // 開いたファイルの情報を更新
+                        ConfigManager.Current.Config.OpenFilePath = path;
                     }
                 }
                 catch
@@ -341,12 +345,6 @@ namespace QuartetEditor.Models
                         exportstr = NodeConverterUtility.ToHTML(new QuartetEditorDescription(this.Content.Tree), Path.GetFileNameWithoutExtension(this.FilePath));
                         ext = "html";
                         filter = "HTMLファイル(*.html)|*.html|全てのファイル(*.*)|*.*";
-                        break;
-                    case ExportKind.TreeText:
-                        var header = ConfigManager.Current.Config.TreeTextCharacters;
-                        exportstr = NodeConverterUtility.ToTreeText(new QuartetEditorDescription(this.Content.Tree), header.First());
-                        ext = "txt";
-                        filter = "テキストファイル(*.txt)|*.txt|全てのファイル(*.*)|*.*";
                         break;
                     default:
                         throw new NotImplementedException();

@@ -20,10 +20,5 @@ namespace QuartetEditor.Models
         /// HTMLファイル
         /// </summary>
         HTML,
-
-        /// <summary>
-        /// 階層付きテキストファイル
-        /// </summary>
-        TreeText,
     }
 }

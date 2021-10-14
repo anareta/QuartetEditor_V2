@@ -145,24 +145,6 @@ namespace QuartetEditor.Models
             }
         }
 
-        /// <summary>
-        /// 参照されているノードの参照フラグを再設定
-        /// </summary>
-        public void UpdatePanelReffer()
-        {
-            if (this.ParentNode != null)
-            {
-                this.ParentNode.IsReferred = ConfigManager.Current.Config.LeftPanelOpen;
-            }
-            if (this.PrevNode != null)
-            {
-                this.PrevNode.IsReferred = ConfigManager.Current.Config.TopPanelOpen;
-            }
-            if (this.NextNode != null)
-            {
-                this.NextNode.IsReferred = ConfigManager.Current.Config.BottomPanelOpen;
-            }
-        }
 
         /// <summary>
         /// ノード名変更モードを呼び出す
@@ -203,7 +185,6 @@ namespace QuartetEditor.Models
                 this.PrevNode = this.GetPrev(this.SelectedNode);
                 this.NextNode = this.GetNext(this.SelectedNode);
                 this.ParentNode = this.GetParent(this.SelectedNode);
-                this.UpdatePanelReffer();
 
                 this._ChangedCanMoveUp.OnNext(this.GetOlder(this.SelectedNode) != null);
                 this._ChangedCanMoveDown.OnNext(this.GetYounger(this.SelectedNode) != null);

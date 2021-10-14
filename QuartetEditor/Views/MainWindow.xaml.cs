@@ -27,55 +27,6 @@ namespace QuartetEditor.Views
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        #region PanelState
-        /// <summary>
-        /// 最後にパネルが開いていたときの大きさ
-        /// </summary>
-        public GridLength LeftPanelSize { get; set; }
-
-        /// <summary>
-        /// パネルが開いているか
-        /// </summary>
-        public bool LeftPanelOpen
-        {
-            get
-            {
-                return this._LeftTextBox.Visibility == Visibility.Visible;
-            }
-        }
-
-        /// <summary>
-        /// 最後にパネルが開いていたときの大きさ
-        /// </summary>
-        public GridLength TopPanelSize { get; set; }
-
-        /// <summary>
-        /// パネルが開いているか
-        /// </summary>
-        public bool TopPanelOpen
-        {
-            get
-            {
-                return this._TopTextBox.Visibility == Visibility.Visible;
-            }
-        }
-
-        /// <summary>
-        /// 最後にパネルが開いていたときの大きさ
-        /// </summary>
-        public GridLength BottomPanelSize { get; set; }
-
-        /// <summary>
-        /// パネルが開いているか
-        /// </summary>
-        public bool BottomPanelOpen
-        {
-            get
-            {
-                return this._BottomTextBox.Visibility == Visibility.Visible;
-            }
-        }
-        #endregion PanelState
 
         #region ExportDialog
 
@@ -140,15 +91,12 @@ namespace QuartetEditor.Views
             #region PanelSize
 
             var config = ConfigManager.Current.Config;
-            this._EditorGrid.ColumnDefinitions[0].Width = new GridLength(config.LeftPanelWidth, GridUnitType.Star);
-            this._EditorGrid.RowDefinitions[0].Height = new GridLength(config.TopPanelHeight, GridUnitType.Star);
-            this._EditorGrid.RowDefinitions[4].Height = new GridLength(config.BottomPanelHeight, GridUnitType.Star);
 
-            this._EditorGrid.ColumnDefinitions[2].Width = new GridLength(config.MainPanelWidth, GridUnitType.Star);
-            this._EditorGrid.RowDefinitions[2].Height = new GridLength(config.MainPanelHeight, GridUnitType.Star);
-
-            this._MainGrid.ColumnDefinitions[0].Width = new GridLength(config.NodePanelWidth, GridUnitType.Star);
-            this._MainGrid.ColumnDefinitions[2].Width = new GridLength(config.LeftPanelWidth + config.MainPanelWidth, GridUnitType.Star);
+            if (config.MainPanelWidth.HasValue && config.NodePanelWidth.HasValue)
+            {
+                this._MainGrid.ColumnDefinitions[0].Width = new GridLength(config.NodePanelWidth.Value, GridUnitType.Star);
+                this._MainGrid.ColumnDefinitions[2].Width = new GridLength(config.MainPanelWidth.Value, GridUnitType.Star);
+            }
             
             #endregion PanelSize
         }
@@ -292,21 +240,13 @@ namespace QuartetEditor.Views
             {
                 this.configSaving = true;
 
-                this.LeftPanelUpdate(true);
-                this.TopPanelUpdate(true);
-                this.BottomPanelUpdate(true);
-
                 await this.Dispatcher.InvokeAsync( () =>
                 {
                     {
                         var config = ConfigManager.Current.Config;
-                        config.LeftPanelWidth = this._EditorGrid.ColumnDefinitions[0].ActualWidth;
-                        config.TopPanelHeight = this._EditorGrid.RowDefinitions[0].ActualHeight;
-                        config.BottomPanelHeight = this._EditorGrid.RowDefinitions[4].ActualHeight;
 
                         config.NodePanelWidth = this._MainGrid.ColumnDefinitions[0].ActualWidth;
-                        config.MainPanelWidth = this._EditorGrid.ColumnDefinitions[2].ActualWidth;
-                        config.MainPanelHeight = this._EditorGrid.RowDefinitions[2].ActualHeight;
+                        config.MainPanelWidth = this._MainGrid.ColumnDefinitions[2].ActualWidth;
                     }
 
                     ConfigManager.Current.SaveConfig();
@@ -317,95 +257,6 @@ namespace QuartetEditor.Views
 
             }
         }
-
-        #region PanelUpdate
-
-        /// <summary>
-        /// 左パネルの開閉を更新
-        /// </summary>
-        /// <param name="state"></param>
-        public void LeftPanelUpdate(bool state)
-        {
-            if (this.LeftPanelOpen != state)
-            {
-                if (state)
-                {
-                    // 開く
-                    this._EditorGrid.ColumnDefinitions[0].Width = this.LeftPanelSize;
-                    this._LeftSplitter.Visibility = System.Windows.Visibility.Visible;
-                    this._LeftTextBox.Visibility = System.Windows.Visibility.Visible;
-                    this._EditorGrid.ColumnDefinitions[0].MinWidth = 20;
-                }
-                else
-                {
-                    // 閉じる
-                    this.LeftPanelSize = this._EditorGrid.ColumnDefinitions[0].Width;
-                    this._EditorGrid.ColumnDefinitions[0].MinWidth = 0;
-                    this._EditorGrid.ColumnDefinitions[0].Width = new GridLength(0);
-                    this._LeftSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                    this._LeftTextBox.Visibility = System.Windows.Visibility.Collapsed;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 下パネルの開閉を更新
-        /// </summary>
-        /// <param name="state"></param>
-        public void BottomPanelUpdate(bool state)
-        {
-            if (this.BottomPanelOpen != state)
-            {
-                if (state)
-                {
-                    // 開く
-                    this._EditorGrid.RowDefinitions[4].Height = this.BottomPanelSize;
-                    this._BottomSplitter.Visibility = System.Windows.Visibility.Visible;
-                    this._BottomTextBox.Visibility = System.Windows.Visibility.Visible;
-                    this._EditorGrid.RowDefinitions[4].MinHeight = 20;
-                }
-                else
-                {
-                    // 閉じる
-                    this.BottomPanelSize = this._EditorGrid.RowDefinitions[4].Height;
-                    this._EditorGrid.RowDefinitions[4].MinHeight = 0;
-                    this._EditorGrid.RowDefinitions[4].Height = new GridLength(0);
-                    this._BottomSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                    this._BottomTextBox.Visibility = System.Windows.Visibility.Collapsed;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 上パネルの開閉を更新
-        /// </summary>
-        /// <param name="state"></param>
-        public void TopPanelUpdate(bool state)
-        {
-            if (this.TopPanelOpen != state)
-            {
-                if (state)
-                {
-                    // 開く
-                    this._EditorGrid.RowDefinitions[0].Height = this.TopPanelSize;
-                    this._TopSplitter.Visibility = System.Windows.Visibility.Visible;
-                    this._TopTextBox.Visibility = System.Windows.Visibility.Visible;
-                    this._EditorGrid.RowDefinitions[0].MinHeight = 20;
-
-                }
-                else
-                {
-                    // 閉じる
-                    this.TopPanelSize = this._EditorGrid.RowDefinitions[0].Height;
-                    this._EditorGrid.RowDefinitions[0].MinHeight = 0;
-                    this._EditorGrid.RowDefinitions[0].Height = new GridLength(0);
-                    this._TopSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                    this._TopTextBox.Visibility = System.Windows.Visibility.Collapsed;
-                }
-            }
-        }
-
-        #endregion PanelUpdate
 
     }
 }

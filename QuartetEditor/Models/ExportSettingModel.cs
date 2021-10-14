@@ -57,7 +57,7 @@ namespace QuartetEditor.Models
         /// <summary>
         /// テキストの折り返し幅
         /// </summary>
-        private int _LineWrap = 80;
+        private int _LineWrap = 90;
 
         public int LineWrap
         {
@@ -79,7 +79,6 @@ namespace QuartetEditor.Models
         {
             this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.Text, "テキストファイル"));
             this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.HTML, "HTMLファイル"));
-            this.ComboBoxItemSource.Add(new Tuple<ExportKind, string>(ExportKind.TreeText, "階層付きテキストファイル"));
 
         }
 
