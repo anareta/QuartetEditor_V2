@@ -7,12 +7,12 @@ using System.Windows;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("QuartetEditor")]
-[assembly: AssemblyDescription("QuartetEditor")]
+[assembly: AssemblyTitle("DailyTree")]
+[assembly: AssemblyDescription("DailyTree")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("QuartetEditor")]
-[assembly: AssemblyProduct("QuartetEditor")]
-[assembly: AssemblyCopyright("Copyright © 2016 あぞ")]
+[assembly: AssemblyCompany("DailyTree")]
+[assembly: AssemblyProduct("DailyTree")]
+[assembly: AssemblyCopyright("Copyright © 2021 あぞ")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.14.0.3")]
-[assembly: AssemblyFileVersion("2.14.0.3")]
+[assembly: AssemblyVersion("1.1.0.1")]
+[assembly: AssemblyFileVersion("1.1.0.1")]
 [assembly: NeutralResourcesLanguage("ja")]
 
