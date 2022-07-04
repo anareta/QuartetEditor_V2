@@ -692,7 +692,7 @@ namespace QuartetEditor.ViewModels
                 dialog.Filter = tuple.Item1;
                 dialog.AddExtension = true;
                 dialog.DefaultExt = tuple.Item2;
-                dialog.FileName = string.IsNullOrWhiteSpace(this.Model.FilePath) ? "新規" : System.IO.Path.GetFileNameWithoutExtension(this.Model.FilePath);
+                dialog.FileName = DateTime.Now.ToString("yyyyMMdd");
                 string path = this.SaveDialogViewAction(dialog);
                 tuple.Item3(path);
             }).AddTo(this.Disposable);
