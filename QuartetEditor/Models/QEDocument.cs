@@ -161,7 +161,6 @@ namespace QuartetEditor.Models
                     {
                         this.FilePath = path;
                         this.Type = FileType.TreeText;
-                        ConfigManager.Current.Config.OpenFilePath = path;
                         this.Content.OffEditFlag();
                         this.IsEdited = false;
                         result = true;
@@ -214,6 +213,12 @@ namespace QuartetEditor.Models
                 {
                     File.Delete(path + "." + overwiteSuffix);
                 }
+
+                if (result)
+                {
+                    ConfigManager.Current.Config.OpenFilePath = path;
+                }
+
                 return result;
             }
             catch
